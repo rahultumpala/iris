@@ -1,0 +1,7 @@
+<.table id={@id} rows={@modules}>
+    <:col :let={entity} label="Module">
+        <button phx-click="inc_temperature">
+            {entity.module}
+        </button>
+    </:col>
+</.table>
