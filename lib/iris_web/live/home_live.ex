@@ -12,16 +12,43 @@ defmodule IrisWeb.HomeLive do
     socket =
       assign(socket, %{
         id: "Table1",
-        modules: modules
+        modules: modules,
+        selectedModule: Enum.at(modules, 0),
+        showExports: "visible",
+        showCode: "hidden"
       })
 
     {:ok, socket}
   end
 
-  def handle_event(event, unsigned_params, socket) do
-    IO.inspect(event)
-    IO.inspect(unsigned_params)
+  def handle_event("select_module", %{"module" => name} = _params, socket) do
+    modules = Interface.get_home()
+    selected = Enum.filter(modules, fn mod -> name == mod.module end) |> IO.inspect()
 
-    {:ok, socket}
+    {:noreply, assign(socket, %{selectedModule: Enum.at(selected, 0)})}
+  end
+
+  def handle_event("show_exports", %{"module" => name} = _params, socket) do
+    modules = Interface.get_home()
+    selected = Enum.filter(modules, fn mod -> name == mod.module end) |> IO.inspect()
+
+    {:noreply,
+     assign(socket, %{
+       selectedModule: Enum.at(selected, 0),
+       showExports: "visible",
+       showCode: "hidden"
+     })}
+  end
+
+  def handle_event("show_code", %{"module" => name} = _params, socket) do
+    modules = Interface.get_home()
+    selected = Enum.filter(modules, fn mod -> name == mod.module end) |> IO.inspect()
+
+    {:noreply,
+     assign(socket, %{
+       selectedModule: Enum.at(selected, 0),
+       showExports: "hidden",
+       showCode: "visible"
+     })}
   end
 end

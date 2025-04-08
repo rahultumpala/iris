@@ -1,7 +1,26 @@
-<.table id={@id} rows={@modules}>
-    <:col :let={entity} label="Module">
-        <button phx-click="inc_temperature">
-            {entity.module}
-        </button>
-    </:col>
-</.table>
+<div class="flex flex-row justify-around px-[5vw]">
+    <.table id={@id} rows={@modules}>
+        <:col :let={entity} label="Module">
+            <button class="text-lg" phx-click="select_module" phx-value-module={entity.module}>
+                {entity.module}
+            </button>
+        </:col>
+    </.table>
+    <div class="flex flex-col basis-2/3">
+        <div class="moduleName p-5 border-b border-zinc-200">
+            <h1 class="font-bold text-lg">{@selectedModule.module}</h1>
+        </div>
+        <div class="head flex flex-row border-b border-zinc-200">
+            <.button phx-click="show_exports" phx-value-module={@selectedModule.module}>
+                Methods
+            </.button>
+            <.button phx-click="show_code" phx-value-module={@selectedModule.module}>
+                Code
+            </.button>
+        </div>
+        <div class="view basis-full">
+            <.exports module={@selectedModule} show={@showExports} />
+            <.code module={@selectedModule} show={@showCode} />
+        </div>
+    </div>
+</div>

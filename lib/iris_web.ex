@@ -89,6 +89,7 @@ defmodule IrisWeb do
       import Phoenix.HTML
       # Core UI components
       import IrisWeb.CoreComponents
+      import IrisWeb.IrisComponents
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
