@@ -5,8 +5,13 @@ defmodule Iris.Application do
 
   use Application
 
+  alias Iris.Core
+  alias Iris.State
+
   @impl true
   def start(_type, _args) do
+    state = Core.build() |> State.new()
+
     children = [
       IrisWeb.Telemetry,
       {DNSCluster, query: Application.get_env(:iris, :dns_cluster_query) || :ignore},
@@ -16,7 +21,8 @@ defmodule Iris.Application do
       # Start a worker by calling: Iris.Worker.start_link(arg)
       # {Iris.Worker, arg},
       # Start to serve requests, typically the last entry
-      IrisWeb.Endpoint
+      IrisWeb.Endpoint,
+      {State, state}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

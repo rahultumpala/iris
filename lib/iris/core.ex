@@ -1,31 +1,56 @@
 defmodule Iris.Core do
   alias Iris.Entity
-
-  @methods_to_filter [:__info__, :module_info]
+  alias Iris.Entity.Module
+  alias Iris.Entity.Application
+  alias Iris.Entity.Module.Method
 
   def build() do
     files = get_beam_files()
-    entities = Enum.map(files, &build_from_beam_file/1)
-    entities
+    modules = Enum.map(files, &build_from_beam_file/1)
+    apps = build_applications(modules)
+
+    %Entity{
+      applications: apps
+    }
+  end
+
+  defp build_applications(modules) do
+    modules
+    |> Enum.group_by(fn mod ->
+      String.split(mod.module, ".")
+      |> Enum.at(0)
+    end)
+    |> Enum.map(fn {name, modules} ->
+      %Application{
+        application: name,
+        modules: modules
+      }
+    end)
   end
 
   defp build_from_beam_file(file) do
-    {:beam_file, mod_name, labeled_exports, attributes, compile_info, code} = file
+    {:beam_file, mod_name, labeled_exports, _attributes, _compile_info, _code} = file
 
-    mod_name = mod_name |> Atom.to_string()
+    mod_name = mod_name |> Atom.to_string() |> String.split("Elixir.") |> Enum.at(1)
 
     exports =
       labeled_exports
-      |> Enum.map(fn {name, arity, _label} -> %Entity.Method{name: name, arity: arity} end)
+      |> Enum.map(fn {name, arity, _label} ->
+        %Method{
+          name: Atom.to_string(name),
+          arity: arity,
+          module: mod_name
+        }
+      end)
 
-    %Entity{
+    %Module{
       module: mod_name,
       exports: exports
     }
   end
 
   def get_beam_files() do
-    main_mod = Application.get_application(__MODULE__) |> Atom.to_string()
+    main_mod = Elixir.Application.get_application(__MODULE__) |> Atom.to_string()
     path = File.cwd!() <> "/_build/dev/lib/" <> main_mod <> "/ebin/"
 
     files =

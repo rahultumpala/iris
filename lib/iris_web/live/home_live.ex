@@ -1,54 +1,36 @@
 defmodule IrisWeb.HomeLive do
   use IrisWeb, :live_view
 
-  alias Iris.Interface
+  alias Iris.State
 
-  def mount(params, session, socket) do
-    IO.inspect(params)
-    IO.inspect(session)
-
-    modules = Interface.get_home()
+  def mount(_params, _session, socket) do
+    state = State.get()
 
     socket =
       assign(socket, %{
-        id: "Table1",
-        modules: modules,
-        selectedModule: Enum.at(modules, 0),
-        showExports: "visible",
-        showCode: "hidden"
+        state: state
       })
 
     {:ok, socket}
   end
 
+  def handle_event("select_app", %{"application" => name} = _params, socket) do
+    State.select_app(name)
+    {:noreply, assign(socket, state: State.get())}
+  end
+
   def handle_event("select_module", %{"module" => name} = _params, socket) do
-    modules = Interface.get_home()
-    selected = Enum.filter(modules, fn mod -> name == mod.module end) |> IO.inspect()
-
-    {:noreply, assign(socket, %{selectedModule: Enum.at(selected, 0)})}
+    State.select_module(name)
+    {:noreply, assign(socket, state: State.get())}
   end
 
-  def handle_event("show_exports", %{"module" => name} = _params, socket) do
-    modules = Interface.get_home()
-    selected = Enum.filter(modules, fn mod -> name == mod.module end) |> IO.inspect()
-
-    {:noreply,
-     assign(socket, %{
-       selectedModule: Enum.at(selected, 0),
-       showExports: "visible",
-       showCode: "hidden"
-     })}
+  def handle_event("show_exports", _params, socket) do
+    State.show_exports()
+    {:noreply, assign(socket, state: State.get())}
   end
 
-  def handle_event("show_code", %{"module" => name} = _params, socket) do
-    modules = Interface.get_home()
-    selected = Enum.filter(modules, fn mod -> name == mod.module end) |> IO.inspect()
-
-    {:noreply,
-     assign(socket, %{
-       selectedModule: Enum.at(selected, 0),
-       showExports: "hidden",
-       showCode: "visible"
-     })}
+  def handle_event("show_code", _params, socket) do
+    State.show_code()
+    {:noreply, assign(socket, state: State.get())}
   end
 end

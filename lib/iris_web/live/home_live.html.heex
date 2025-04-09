@@ -1,26 +1,24 @@
-<div class="flex flex-row justify-around px-[5vw]">
-    <.table id={@id} rows={@modules}>
-        <:col :let={entity} label="Module">
-            <button class="text-lg" phx-click="select_module" phx-value-module={entity.module}>
-                {entity.module}
-            </button>
-        </:col>
-    </.table>
-    <div class="flex flex-col basis-2/3">
-        <div class="moduleName p-5 border-b border-zinc-200">
-            <h1 class="font-bold text-lg">{@selectedModule.module}</h1>
+<div class="flex flex-row relative h-screen justify-between">
+    <.sidebar heading="Modules" class="mr-3">
+        <span :for={module <- @state.selectedApp.modules} class="">
+            <.button phx-click="select_module" phx-value-module={module.module}>{module.module}</.button>
+        </span>
+    </.sidebar>
+    <div class="flex flex-col basis-3/4 ">
+        <div class="moduleName py-5 border-b border-zinc-200">
+            <h1 class="font-bold text-lg">{@state.selectedModule.module}</h1>
         </div>
         <div class="head flex flex-row border-b border-zinc-200">
-            <.button phx-click="show_exports" phx-value-module={@selectedModule.module}>
+            <.button phx-click="show_exports" phx-value-module={@state.selectedModule.module}>
                 Methods
             </.button>
-            <.button phx-click="show_code" phx-value-module={@selectedModule.module}>
+            <.button phx-click="show_code" phx-value-module={@state.selectedModule.module}>
                 Code
             </.button>
         </div>
         <div class="view basis-full">
-            <.exports module={@selectedModule} show={@showExports} />
-            <.code module={@selectedModule} show={@showCode} />
+            <.exports module={@state.selectedModule} show={@state.showExports} />
+            <.code module={@state.selectedModule} show={@state.showCode} />
         </div>
     </div>
 </div>
