@@ -26,10 +26,10 @@
       </.sidebar>
     </div>
   </div>
-  <div class="right px-3 max-h-[100vh] basis-full overflow-scroll no-scrollbar">
+  <div class="right max-h-[100vh] basis-full overflow-scroll no-scrollbar">
     <div class="basis-full">
-      <div class="right-heading sticky top-0 bg-white z-100">
-        <h1 class="font-bold text-lg py-2 border-b border-zinc-200">
+      <div class="right-heading sticky top-0 bg-white z-9999">
+        <h1 class="px-3 font-bold text-lg py-2 border-b border-zinc-200">
           {@state.selectedModule.module}
         </h1>
         <div class="head flex flex-row border-b border-zinc-200">
@@ -41,7 +41,7 @@
           </.button>
         </div>
       </div>
-      <div class="view overflow-scroll mr-2 mb-2">
+      <div class="view overflow-scroll mr-2 mb-2 flex flex-row">
         <.exports module={@state.selectedModule} show={@state.showExports} class="" />
         <.code module={@state.selectedModule} show={@state.showCode} />
       </div>

@@ -14,7 +14,7 @@ defmodule IrisWeb.IrisComponents do
       "exports visibility=#{@show}",
       @class
     ]}>
-      <span :for={method <- @module.exports} class="w-5 max-w-[5vh]">
+      <span :for={method <- @module.exports} class="m-2">
         {render_method_block(assigns, method)}
       </span>
     </div>
@@ -32,15 +32,15 @@ defmodule IrisWeb.IrisComponents do
 
   defp render_method_block(assigns, %Method{} = method) do
     ~H"""
-    <div class="flex flex-row border border-gray-200 shadow-2xs justify-around">
+    <div class="flex flex-row items-center justify-between">
       <div class="p-2">
         <div class="flex flex-row mx-2">
-          <p class="text-lg font-semibold text-gray-800">{method.name}</p>
-          <p class="text-lg text-gray-500">/{method.arity}</p>
+          <p class="text-md">{method.name}</p>
+          <p class="text-md">/{method.arity}</p>
         </div>
       </div>
-      <div class="font-semibold mx-2">
-        BIF
+      <div class="px-2 bg-zinc-50 text-sm text-zinc-500 mr-1">
+        <p>BIF</p>
       </div>
     </div>
     """
