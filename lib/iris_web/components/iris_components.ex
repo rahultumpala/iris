@@ -6,11 +6,15 @@ defmodule IrisWeb.IrisComponents do
 
   attr :show, :string, default: "hidden"
   attr :module, Iris.Entity.Module, required: true
+  attr :class, :string, default: nil
 
   def exports(assigns) do
     ~H"""
-    <div class={"mt-3 pt-3 basis-full flex flex-row max-h-[80vh] max-w-screen flex-row flex-wrap visibility=#{@show}"}>
-      <span :for={method <- @module.exports} class="m-1">
+    <div class={[
+      "exports visibility=#{@show}",
+      @class
+    ]}>
+      <span :for={method <- @module.exports} class="w-5 max-w-[5vh]">
         {render_method_block(assigns, method)}
       </span>
     </div>
@@ -28,33 +32,15 @@ defmodule IrisWeb.IrisComponents do
 
   defp render_method_block(assigns, %Method{} = method) do
     ~H"""
-    <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl">
-      <div class="bg-gray-100 border-b border-gray-200 rounded-t-xl py-1 px-4">
-        <p class="mt-1 text-sm text-gray-500 dark:text-neutral-500">
-          Built-in function
-        </p>
-      </div>
-      <div class="p-4 md:p-5">
-        <div class="flex flex-row">
-          <h3 class="text-lg font-bold text-gray-800">{method.name}</h3>
-          <h3 class="text-lg font-bold text-gray-500">/{method.arity}</h3>
+    <div class="flex flex-row border border-gray-200 shadow-2xs justify-around">
+      <div class="p-2">
+        <div class="flex flex-row mx-2">
+          <p class="text-lg font-semibold text-gray-800">{method.name}</p>
+          <p class="text-lg text-gray-500">/{method.arity}</p>
         </div>
       </div>
-      <div class="flex flex-row">
-        <.card_button
-          class="rounded-bl-lg basis-1/2"
-          phx-click="show_doc"
-          phx-value-module={method.name}
-        >
-          Doc
-        </.card_button>
-        <.card_button
-          class="rounded-br-lg basis-1/2"
-          phx-click="show_paths"
-          phx-value-module={method.name}
-        >
-          Paths
-        </.card_button>
+      <div class="font-semibold mx-2">
+        BIF
       </div>
     </div>
     """
@@ -80,7 +66,6 @@ defmodule IrisWeb.IrisComponents do
       type={@type}
       class={[
         "rounded-lg hover:bg-zinc-100 p-3",
-        "font-semibold",
         @class
       ]}
       {@rest}
@@ -120,7 +105,6 @@ defmodule IrisWeb.IrisComponents do
     """
   end
 
-  attr :heading, :string, required: true
   attr :class, :string, default: nil
 
   slot :inner_block, required: true
@@ -131,11 +115,23 @@ defmodule IrisWeb.IrisComponents do
       "flex flex-col h-screen",
       @class
     ]}>
-      <h1 class="font-bold text-lg">
-        {@heading}
-      </h1>
       {render_slot(@inner_block)}
     </div>
+    """
+  end
+
+  def header(assigns) do
+    ~H"""
+    <header class="bg-indigo-800 rounded-rt-md">
+      <div class="flex border-b justify-around gap-5 border-zinc-100 py-3 text-sm">
+        <p class="text-lg text-white rounded-sm px-4 font-medium leading-6">
+          Iris
+        </p>
+        <a href="https://github.com/rahultumpala/iris" class="font-medium text-white">
+          GitHub
+        </a>
+      </div>
+    </header>
     """
   end
 end

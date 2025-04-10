@@ -9,6 +9,9 @@ defmodule Iris.Core do
     modules = Enum.map(files, &build_from_beam_file/1)
     apps = build_applications(modules)
 
+    IO.inspect("ALL MODULES")
+    Enum.each(apps, fn app -> Enum.each(app.modules, fn mod -> IO.inspect(mod.module) end) end)
+
     %Entity{
       applications: apps
     }

@@ -1,24 +1,50 @@
-<div class="flex flex-row relative h-screen justify-between">
-    <.sidebar heading="Modules" class="mr-3">
-        <span :for={module <- @state.selectedApp.modules} class="">
-            <.button phx-click="select_module" phx-value-module={module.module}>{module.module}</.button>
-        </span>
-    </.sidebar>
-    <div class="flex flex-col basis-3/4 ">
-        <div class="moduleName py-5 border-b border-zinc-200">
-            <h1 class="font-bold text-lg">{@state.selectedModule.module}</h1>
-        </div>
-        <div class="head flex flex-row border-b border-zinc-200">
-            <.button phx-click="show_exports" phx-value-module={@state.selectedModule.module}>
-                Methods
+<div class="flex flex-row">
+  <div class="left bg-slate-50">
+    <.header />
+    <div class="p-3">
+      <.sidebar class="sidebar mr-3">
+        <div class="sidebar_col flex flex-col">
+          <h1 class="font-bold text-lg">
+            Applications
+          </h1>
+          <span :for={app <- @state.apps} class="">
+            <.button phx-click="select_app" phx-value-application={app.application}>
+              {app.application}
             </.button>
-            <.button phx-click="show_code" phx-value-module={@state.selectedModule.module}>
-                Code
+          </span>
+        </div>
+        <div class="sidebar_col flex flex-col">
+          <h1 class="font-bold text-lg">
+            Modules
+          </h1>
+          <span :for={module <- @state.selectedApp.modules} class="">
+            <.button phx-click="select_module" phx-value-module={module.module}>
+              {module.module}
             </.button>
+          </span>
         </div>
-        <div class="view basis-full">
-            <.exports module={@state.selectedModule} show={@state.showExports} />
-            <.code module={@state.selectedModule} show={@state.showCode} />
-        </div>
+      </.sidebar>
     </div>
+  </div>
+  <div class="right px-3 max-h-[100vh] basis-full overflow-scroll no-scrollbar">
+    <div class="basis-full">
+      <div class="right-heading sticky top-0 bg-white z-100">
+        <h1 class="font-bold text-lg py-2 border-b border-zinc-200">
+          {@state.selectedModule.module}
+        </h1>
+        <div class="head flex flex-row border-b border-zinc-200">
+          <.button phx-click="show_exports" phx-value-module={@state.selectedModule.module}>
+            Methods
+          </.button>
+          <.button phx-click="show_code" phx-value-module={@state.selectedModule.module}>
+            Code
+          </.button>
+        </div>
+      </div>
+      <div class="view overflow-scroll mr-2 mb-2">
+        <.exports module={@state.selectedModule} show={@state.showExports} class="" />
+        <.code module={@state.selectedModule} show={@state.showCode} />
+      </div>
+    </div>
+  </div>
 </div>

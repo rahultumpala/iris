@@ -33,4 +33,12 @@ defmodule IrisWeb.HomeLive do
     State.show_code()
     {:noreply, assign(socket, state: State.get())}
   end
+
+  def handle_event("show_doc", _params, socket) do
+    {:noreply, assign(socket, state: State.get())}
+  end
+
+  def handle_event("show_paths", _params, socket) do
+    {:noreply, assign(socket, state: State.get())}
+  end
 end
