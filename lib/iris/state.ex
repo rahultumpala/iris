@@ -4,6 +4,7 @@ defmodule Iris.State do
   defstruct [
     :selectedApp,
     :selectedModule,
+    :selectedMethod,
     :apps,
     :showExports,
     :showCode
@@ -12,11 +13,13 @@ defmodule Iris.State do
   def new(%Iris.Entity{} = crux) do
     selectedApp = crux.applications |> Enum.at(0)
     selectedMod = selectedApp.modules |> Enum.at(0)
+    selectedMethod = selectedMod.exports |> Enum.at(0)
 
     %Iris.State{
       apps: crux.applications,
       selectedApp: selectedApp,
       selectedModule: selectedMod,
+      selectedMethod: selectedMethod,
       showCode: "hidden",
       showExports: "visible"
     }
@@ -43,6 +46,18 @@ defmodule Iris.State do
       app = Enum.filter(state.apps, fn app -> app == state.selectedApp end) |> Enum.at(0)
       mod = Enum.filter(app.modules, fn m -> m.module == module_name end) |> Enum.at(0)
       %Iris.State{state | selectedModule: mod}
+    end)
+  end
+
+  def select_method(method, arity) do
+    Agent.update(__MODULE__, fn state ->
+      m =
+        Enum.filter(state.selectedModule.exports, fn m ->
+          m.name == method && Integer.to_string(m.arity) == arity
+        end)
+        |> Enum.at(0)
+
+      %Iris.State{state | selectedMethod: m}
     end)
   end
 

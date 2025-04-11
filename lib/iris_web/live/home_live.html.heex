@@ -42,12 +42,12 @@
     </div>
   </div>
   <%!--  --%>
-  <div class="right max-h-[100vh] basis-full overflow-scroll">
+  <div class="flex flex-col right max-h-[100vh] basis-full overflow-scroll">
     <h1 class="px-3 text-lg py-2 border-b border-zinc-200">
       Code
     </h1>
-    <div class="view overflow-scroll mr-2 mb-2 flex flex-row">
-      <.code module={@state.selectedModule} show={@state.showCode} />
+    <div class="view overflow-scroll mr-2 mb-2">
+      <.code module={@state.selectedModule} method={@state.selectedMethod} show={@state.showCode} />
     </div>
   </div>
 </div>

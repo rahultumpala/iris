@@ -41,4 +41,9 @@ defmodule IrisWeb.HomeLive do
   def handle_event("show_paths", _params, socket) do
     {:noreply, assign(socket, state: State.get())}
   end
+
+  def handle_event("select_method", %{"method" => method, "arity" => arity} = _params, socket) do
+    State.select_method(method, arity)
+    {:noreply, assign(socket, state: State.get())}
+  end
 end

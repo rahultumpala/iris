@@ -14,7 +14,13 @@ defmodule IrisWeb.IrisComponents do
       "exports visibility=#{@show}",
       @class
     ]}>
-      <span :for={method <- @module.exports} class="py-1 block hover:bg-zinc-100 hover:cursor-pointer">
+      <span
+        :for={method <- @module.exports}
+        class="py-1 block hover:bg-zinc-100 hover:cursor-pointer"
+        phx-click="select_method"
+        phx-value-method={method.name}
+        phx-value-arity={method.arity}
+      >
         {render_method_block(assigns, method)}
       </span>
     </div>
@@ -23,10 +29,24 @@ defmodule IrisWeb.IrisComponents do
 
   attr :show, :string, default: "hidden"
   attr :module, Iris.Entity.Module, required: true
+  attr :method, Iris.Entity.Module.Method, required: true
 
   def code(assigns) do
     ~H"""
-    <div class={"basis-full visibility=#{@show}"}></div>
+    <div class={"visibility=#{@show} flex flex-col"}>
+      <div class="max-w-[20%] justify-between flex flex-row p-5">
+        <div class="flex flex-row">
+          <div class="text-lg m-1 font-semibold">Name:</div>
+          <div class="val m-1 text-md place-content-center">{@method.name}</div>
+        </div>
+        <div class="flex flex-row">
+          <div class="text-lg m-1 font-semibold">Arity:</div>
+          <div class="text-md m-1 place-content-center">{@method.arity}</div>
+        </div>
+      </div>
+      <div class="basis-full"></div>
+      <%!-- {@method} --%>
+    </div>
     """
   end
 
