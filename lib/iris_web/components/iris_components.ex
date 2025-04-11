@@ -14,7 +14,7 @@ defmodule IrisWeb.IrisComponents do
       "exports visibility=#{@show}",
       @class
     ]}>
-      <span :for={method <- @module.exports} class="m-2">
+      <span :for={method <- @module.exports} class="py-1 block hover:bg-zinc-100 hover:cursor-pointer">
         {render_method_block(assigns, method)}
       </span>
     </div>
@@ -34,7 +34,7 @@ defmodule IrisWeb.IrisComponents do
     ~H"""
     <div class="flex flex-row items-center justify-between">
       <div class="p-2">
-        <div class="flex flex-row mx-2">
+        <div class="flex flex-row mr-2">
           <p class="text-md">{method.name}</p>
           <p class="text-md">/{method.arity}</p>
         </div>
@@ -66,6 +66,7 @@ defmodule IrisWeb.IrisComponents do
       type={@type}
       class={[
         "rounded-lg hover:bg-zinc-100 p-3",
+        "w-full text-left",
         @class
       ]}
       {@rest}
@@ -123,12 +124,12 @@ defmodule IrisWeb.IrisComponents do
   def header(assigns) do
     ~H"""
     <header class="bg-indigo-800 rounded-rt-md">
-      <div class="flex border-b justify-around gap-5 border-zinc-100 py-3 text-sm">
-        <p class="text-lg text-white rounded-sm px-4 font-medium leading-6">
+      <div class="flex border-b justify-around border-zinc-100 py-3 text-lg">
+        <p class="place-content-center text-white rounded-sm px-4">
           Iris
         </p>
-        <a href="https://github.com/rahultumpala/iris" class="font-medium text-white">
-          GitHub
+        <a href="https://github.com/rahultumpala/iris" class="text-white">
+          <img class="h-[2.5vh] w-full" src="images/github-mark-white.svg" />
         </a>
       </div>
     </header>

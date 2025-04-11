@@ -1,23 +1,24 @@
 <div class="flex flex-row">
-  <div class="left bg-slate-50">
+  <%!--  --%>
+  <div class="left bg-slate-50 w-[20%]">
     <.header />
     <div class="p-3">
       <.sidebar class="sidebar mr-3">
         <div class="sidebar_col flex flex-col">
-          <h1 class="font-bold text-lg">
+          <h1 class="font-bold text-md">
             Applications
           </h1>
-          <span :for={app <- @state.apps} class="">
+          <span :for={app <- @state.apps} class="text-sm">
             <.button phx-click="select_app" phx-value-application={app.application}>
               {app.application}
             </.button>
           </span>
         </div>
         <div class="sidebar_col flex flex-col">
-          <h1 class="font-bold text-lg">
+          <h1 class="font-bold text-md">
             Modules
           </h1>
-          <span :for={module <- @state.selectedApp.modules} class="">
+          <span :for={module <- @state.selectedApp.modules} class="text-sm">
             <.button phx-click="select_module" phx-value-module={module.module}>
               {module.module}
             </.button>
@@ -26,25 +27,27 @@
       </.sidebar>
     </div>
   </div>
-  <div class="right max-h-[100vh] basis-full overflow-scroll no-scrollbar">
-    <div class="basis-full">
-      <div class="right-heading sticky top-0 bg-white z-9999">
-        <h1 class="px-3 font-bold text-lg py-2 border-b border-zinc-200">
-          {@state.selectedModule.module}
-        </h1>
-        <div class="head flex flex-row border-b border-zinc-200">
-          <.button phx-click="show_exports" phx-value-module={@state.selectedModule.module}>
-            Methods
-          </.button>
-          <.button phx-click="show_code" phx-value-module={@state.selectedModule.module}>
-            Code
-          </.button>
-        </div>
+  <%!--  --%>
+  <div class="middle max-h-[100vh] min-w-fit overflow-x-scroll overflow-y-scroll basis-1/4">
+    <div class="middle-heading sticky top-0 bg-white z-9999 drop-shadow-sm">
+      <h1 class="px-2 font-bold text-lg py-2 border-b border-zinc-200">
+        {@state.selectedModule.module}
+      </h1>
+      <div class="head flex flex-row border-b border-zinc-200">
+        <p class="text-md p-2">Methods</p>
       </div>
-      <div class="view overflow-scroll mr-2 mb-2 flex flex-row">
-        <.exports module={@state.selectedModule} show={@state.showExports} class="" />
-        <.code module={@state.selectedModule} show={@state.showCode} />
-      </div>
+    </div>
+    <div class="view mr-2 mb-2">
+      <.exports module={@state.selectedModule} show={@state.showExports} class="text-sm" />
+    </div>
+  </div>
+  <%!--  --%>
+  <div class="right max-h-[100vh] basis-full overflow-scroll">
+    <h1 class="px-3 text-lg py-2 border-b border-zinc-200">
+      Code
+    </h1>
+    <div class="view overflow-scroll mr-2 mb-2 flex flex-row">
+      <.code module={@state.selectedModule} show={@state.showCode} />
     </div>
   </div>
 </div>
