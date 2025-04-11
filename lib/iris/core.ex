@@ -32,22 +32,40 @@ defmodule Iris.Core do
   end
 
   defp build_from_beam_file(file) do
-    {:beam_file, mod_name, labeled_exports, _attributes, _compile_info, _code} = file
+    {:beam_file, mod_name, labeled_exports, _attributes, _compile_info, compiled_code} = file
 
-    mod_name = mod_name |> Atom.to_string() |> String.split("Elixir.") |> Enum.at(1)
+    mod_name_str = mod_name |> Atom.to_string() |> String.split("Elixir.") |> Enum.at(1)
+
+    code_blocks =
+      compiled_code
+      |> Enum.group_by(fn {_type, name, arity, _label, _block} -> {name, arity} end)
 
     exports =
       labeled_exports
       |> Enum.map(fn {name, arity, _label} ->
+        {type, ^name, ^arity, _label, code} = Map.get(code_blocks, {name, arity}) |> Enum.at(0)
+
+        code_str =
+          get_calls(code)
+          |> Enum.reduce("", fn x, acc ->
+            x
+            |> Kernel.inspect()
+            |> Kernel.<>("\n\n")
+            |> Kernel.<>(acc)
+          end)
+
         %Method{
           name: Atom.to_string(name),
           arity: arity,
-          module: mod_name
+          module: mod_name_str,
+          type: Atom.to_string(type),
+          code: code_str,
+          compiled_code: compiled_code
         }
       end)
 
     %Module{
-      module: mod_name,
+      module: mod_name_str,
       exports: exports
     }
   end
@@ -73,5 +91,23 @@ defmodule Iris.Core do
   defp list_beam_files(path) do
     File.ls!(path)
     |> Enum.filter(fn name -> String.contains?(name, ".beam") end)
+  end
+
+  defp get_calls(code) do
+    code
+    |> Enum.map(fn instruction ->
+      ret =
+        case instruction do
+          {:call, a, f} -> {:call, a, f}
+          {:call_last, a, f, _n} -> {:call_last, a, f}
+          {:call_ext_last, a, f, _n} -> {:call_ext_last, a, f}
+          {:call_only, a, f} -> {:call_only, a, f}
+          {:call_ext_only, a, f} -> {:call_ext_only, a, f}
+          _ -> nil
+        end
+
+      ret
+    end)
+    |> Enum.filter(fn val -> val != nil end)
   end
 end

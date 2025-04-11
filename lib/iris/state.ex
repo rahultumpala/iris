@@ -57,6 +57,8 @@ defmodule Iris.State do
         end)
         |> Enum.at(0)
 
+        IO.inspect(m)
+
       %Iris.State{state | selectedMethod: m}
     end)
   end

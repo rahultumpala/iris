@@ -17,14 +17,22 @@ defmodule Iris.Entity.Application do
 end
 
 defmodule Iris.Entity.Module do
-  defstruct [:module, :exports, :code, :application]
+  defstruct [:module, :exports, :application]
 
   def new() do
     %Iris.Entity.Module{}
   end
 
   defmodule Method do
-    defstruct [:name, :arity, :module, is_export: false]
+    defstruct [
+      :name,
+      :arity,
+      :module,
+      :code,
+      :compiled_code,
+      :type,
+      is_export: false
+    ]
 
     def new() do
       %Iris.Entity.Module.Method{}

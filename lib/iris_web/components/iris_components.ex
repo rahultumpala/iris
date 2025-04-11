@@ -43,20 +43,27 @@ defmodule IrisWeb.IrisComponents do
           <div class="text-lg m-1 font-semibold">Arity:</div>
           <div class="text-md m-1 place-content-center">{@method.arity}</div>
         </div>
+        <div class="flex flex-row">
+          <div class="text-lg m-1 font-semibold">Type:</div>
+          <div class="val m-1 text-md place-content-center">{@method.type}</div>
+        </div>
       </div>
-      <div class="basis-full"></div>
-      <%!-- {@method} --%>
+      <div class="bg-zinc-50 basis-full p-5 whitespace-pre">
+        <p>{@method.code}</p>
+      </div>
     </div>
     """
   end
 
   defp render_method_block(assigns, %Method{} = method) do
+    assigns = assign(assigns, :method, method)
+
     ~H"""
     <div class="flex flex-row items-center justify-between">
       <div class="p-2">
         <div class="flex flex-row mr-2">
-          <p class="text-md">{method.name}</p>
-          <p class="text-md">/{method.arity}</p>
+          <p class="text-md">{@method.name}</p>
+          <p class="text-md">/{@method.arity}</p>
         </div>
       </div>
       <div class="px-2 bg-zinc-50 text-sm text-zinc-500 mr-1">
