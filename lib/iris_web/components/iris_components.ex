@@ -15,7 +15,7 @@ defmodule IrisWeb.IrisComponents do
       @class
     ]}>
       <span
-        :for={method <- @module.exports}
+        :for={method <- @module.methods}
         class="py-1 block hover:bg-zinc-100 hover:cursor-pointer"
         phx-click="select_method"
         phx-value-method={method.name}
@@ -34,7 +34,7 @@ defmodule IrisWeb.IrisComponents do
   def code(assigns) do
     ~H"""
     <div class={"visibility=#{@show} flex flex-col"}>
-      <div class="max-w-[20%] justify-between flex flex-row p-5">
+      <div class="flex flex-row p-5">
         <div class="flex flex-row">
           <div class="text-lg m-1 font-semibold">Name:</div>
           <div class="val m-1 text-md place-content-center">{@method.name}</div>
@@ -67,7 +67,7 @@ defmodule IrisWeb.IrisComponents do
         </div>
       </div>
       <div class="px-2 bg-zinc-50 text-sm text-zinc-500 mr-1">
-        <p>BIF</p>
+        <p>{method.html_type_text}</p>
       </div>
     </div>
     """

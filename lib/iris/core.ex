@@ -36,25 +36,18 @@ defmodule Iris.Core do
 
     mod_name_str = mod_name |> Atom.to_string() |> String.split("Elixir.") |> Enum.at(1)
 
+    labeled_exports_map =
+      labeled_exports
+      |> Enum.group_by(fn {name, arity, _label} -> {name, arity} end)
+
     code_blocks =
       compiled_code
-      |> Enum.group_by(fn {_type, name, arity, _label, _block} -> {name, arity} end)
-
-    exports =
-      labeled_exports
-      |> Enum.map(fn {name, arity, _label} ->
-        {type, ^name, ^arity, _label, code} = Map.get(code_blocks, {name, arity}) |> Enum.at(0)
-
+      |> Enum.map(fn {type, name, arity, _label, code} ->
         code_str =
           get_calls(code)
-          |> Enum.reduce("", fn x, acc ->
-            x
-            |> Kernel.inspect()
-            |> Kernel.<>("\n\n")
-            |> Kernel.<>(acc)
-          end)
+          |> calls_to_str()
 
-        %Method{
+        method = %Method{
           name: Atom.to_string(name),
           arity: arity,
           module: mod_name_str,
@@ -62,11 +55,20 @@ defmodule Iris.Core do
           code: code_str,
           compiled_code: compiled_code
         }
+
+        case Map.get(labeled_exports_map, {name, method.arity}, []) do
+          [] -> method
+          _ -> %Method{method | is_export: true, html_type_text: "EXP"}
+        end
       end)
+
+    code_blocks =
+      code_blocks
+      |> Enum.filter(fn method -> !String.starts_with?(method.name, "-") end)
 
     %Module{
       module: mod_name_str,
-      exports: exports
+      methods: code_blocks
     }
   end
 
@@ -109,5 +111,14 @@ defmodule Iris.Core do
       ret
     end)
     |> Enum.filter(fn val -> val != nil end)
+  end
+
+  defp calls_to_str(calls \\ []) do
+    Enum.reduce(calls, "", fn x, acc ->
+      x
+      |> Kernel.inspect()
+      |> Kernel.<>("\n\n")
+      |> Kernel.<>(acc)
+    end)
   end
 end

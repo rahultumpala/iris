@@ -1,5 +1,7 @@
 defmodule Iris.Entity do
-  defstruct [:applications]
+  defstruct [
+    :applications
+  ]
 
   def new() do
     %Iris.Entity{
@@ -9,7 +11,10 @@ defmodule Iris.Entity do
 end
 
 defmodule Iris.Entity.Application do
-  defstruct [:application, :modules]
+  defstruct [
+    :application,
+    :modules
+  ]
 
   def new() do
     %Iris.Entity.Application{}
@@ -17,7 +22,11 @@ defmodule Iris.Entity.Application do
 end
 
 defmodule Iris.Entity.Module do
-  defstruct [:module, :exports, :application]
+  defstruct [
+    :module,
+    :methods,
+    :application
+  ]
 
   def new() do
     %Iris.Entity.Module{}
@@ -31,7 +40,8 @@ defmodule Iris.Entity.Module do
       :code,
       :compiled_code,
       :type,
-      is_export: false
+      is_export: false,
+      html_type_text: "BIF"
     ]
 
     def new() do

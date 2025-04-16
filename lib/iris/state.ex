@@ -13,7 +13,7 @@ defmodule Iris.State do
   def new(%Iris.Entity{} = crux) do
     selectedApp = crux.applications |> Enum.at(0)
     selectedMod = selectedApp.modules |> Enum.at(0)
-    selectedMethod = selectedMod.exports |> Enum.at(0)
+    selectedMethod = selectedMod.methods |> Enum.at(0)
 
     %Iris.State{
       apps: crux.applications,
@@ -45,19 +45,18 @@ defmodule Iris.State do
     Agent.update(__MODULE__, fn state ->
       app = Enum.filter(state.apps, fn app -> app == state.selectedApp end) |> Enum.at(0)
       mod = Enum.filter(app.modules, fn m -> m.module == module_name end) |> Enum.at(0)
-      %Iris.State{state | selectedModule: mod}
+      selectedMethod = mod.methods |> Enum.at(0)
+      %Iris.State{state | selectedModule: mod, selectedMethod: selectedMethod}
     end)
   end
 
   def select_method(method, arity) do
     Agent.update(__MODULE__, fn state ->
       m =
-        Enum.filter(state.selectedModule.exports, fn m ->
+        Enum.filter(state.selectedModule.methods, fn m ->
           m.name == method && Integer.to_string(m.arity) == arity
         end)
         |> Enum.at(0)
-
-        IO.inspect(m)
 
       %Iris.State{state | selectedMethod: m}
     end)
