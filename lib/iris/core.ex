@@ -53,7 +53,7 @@ defmodule Iris.Core do
           module: mod_name_str,
           type: Atom.to_string(type),
           code: code_str,
-          compiled_code: compiled_code
+          compiled_code: code
         }
 
         case Map.get(labeled_exports_map, {name, method.arity}, []) do
@@ -62,9 +62,15 @@ defmodule Iris.Core do
         end
       end)
 
+    # Filter out auto generated methods
     code_blocks =
       code_blocks
       |> Enum.filter(fn method -> !String.starts_with?(method.name, "-") end)
+      |> Enum.filter(fn method -> !String.starts_with?(method.name, "__") end)
+      |> Enum.filter(fn method ->
+        [{:line, number} | _rest] = method.compiled_code
+        number != 0
+      end)
 
     %Module{
       module: mod_name_str,

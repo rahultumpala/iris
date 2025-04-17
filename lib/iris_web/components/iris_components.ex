@@ -29,28 +29,34 @@ defmodule IrisWeb.IrisComponents do
 
   attr :show, :string, default: "hidden"
   attr :module, Iris.Entity.Module, required: true
-  attr :method, Iris.Entity.Module.Method, required: true
+  attr :method, Iris.Entity.Module.Method
 
   def code(assigns) do
     ~H"""
     <div class={"visibility=#{@show} flex flex-col"}>
-      <div class="flex flex-row p-5">
-        <div class="flex flex-row">
-          <div class="text-lg m-1 font-semibold">Name:</div>
-          <div class="val m-1 text-md place-content-center">{@method.name}</div>
+      <%= if @method == nil do %>
+        <h3 class="p-5">
+          No methods defined in module
+        </h3>
+      <% else %>
+        <div class="flex flex-row p-5">
+          <div class="flex flex-row">
+            <div class="text-lg m-1 font-semibold">Name:</div>
+            <div class="val m-1 text-md place-content-center">{@method.name}</div>
+          </div>
+          <div class="flex flex-row">
+            <div class="text-lg m-1 font-semibold">Arity:</div>
+            <div class="text-md m-1 place-content-center">{@method.arity}</div>
+          </div>
+          <div class="flex flex-row">
+            <div class="text-lg m-1 font-semibold">Type:</div>
+            <div class="val m-1 text-md place-content-center">{@method.type}</div>
+          </div>
         </div>
-        <div class="flex flex-row">
-          <div class="text-lg m-1 font-semibold">Arity:</div>
-          <div class="text-md m-1 place-content-center">{@method.arity}</div>
+        <div class="bg-zinc-50 basis-full p-5 whitespace-pre">
+          <p>{@method.code}</p>
         </div>
-        <div class="flex flex-row">
-          <div class="text-lg m-1 font-semibold">Type:</div>
-          <div class="val m-1 text-md place-content-center">{@method.type}</div>
-        </div>
-      </div>
-      <div class="bg-zinc-50 basis-full p-5 whitespace-pre">
-        <p>{@method.code}</p>
-      </div>
+      <% end %>
     </div>
     """
   end

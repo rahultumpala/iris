@@ -41,7 +41,7 @@ defmodule Iris.Entity.Module do
       :compiled_code,
       :type,
       is_export: false,
-      html_type_text: "BIF"
+      html_type_text: "INT"
     ]
 
     def new() do
