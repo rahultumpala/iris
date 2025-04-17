@@ -37,7 +37,8 @@ defmodule Iris.State do
     Agent.update(__MODULE__, fn state ->
       app = Enum.filter(state.apps, fn x -> x.application == app_name end) |> Enum.at(0)
       mod = app.modules |> Enum.at(0)
-      %Iris.State{state | selectedApp: app, selectedModule: mod}
+      selectedMethod = mod.methods |> Enum.at(0)
+      %Iris.State{state | selectedApp: app, selectedModule: mod, selectedMethod: selectedMethod}
     end)
   end
 
