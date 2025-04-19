@@ -55,9 +55,8 @@ defmodule IrisWeb.IrisComponents do
             <div class="val m-1 text-md place-content-center">{@method.type}</div>
           </div>
         </div>
-        <div class="bg-zinc-50 basis-full p-5 whitespace-pre">
-          <%!-- <p>{raw(@method.ex_doc)}</p> --%>
-          <iframe class="w-[50vw] h-[50vh]" src={@method.ex_doc}> </iframe>
+        <div class="bg-zinc-50 basis-full p-5 align-start">
+          <p>{raw(@method.ex_doc)}</p>
         </div>
       <% end %>
     </div>
@@ -75,11 +74,11 @@ defmodule IrisWeb.IrisComponents do
           <p class="text-md">/{@method.arity}</p>
         </div>
       </div>
-      <div class="px-2 bg-zinc-50 text-sm text-zinc-500 mr-1 tooltip">
+      <div class="px-2 bg-zinc-50 text-sm text-zinc-500 mr-1">
         <div class="tooltiptext px-2 bg-zinc-50 text-sm text-zinc-500 mr-1">
           {get_tooltip_text(@method.html_type_text)}
         </div>
-        <p>{@method.html_type_text}</p>
+        <div class="tooltip">{@method.html_type_text}</div>
       </div>
     </div>
     """

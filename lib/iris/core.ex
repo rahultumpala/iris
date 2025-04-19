@@ -95,6 +95,8 @@ defmodule Iris.Core do
       |> Enum.map(fn method ->
         %Method{method | ex_doc: get_html_doc(mod_name_str, "#{method.name}/#{method.arity}")}
       end)
+      # show exports first
+      |> Enum.sort(fn ma, _mb -> ma.is_export end)
 
     %Module{
       module: mod_name_str,
@@ -155,8 +157,6 @@ defmodule Iris.Core do
   end
 
   defp get_html_doc(mod_name_str, selector) do
-    IO.inspect({mod_name_str, selector})
-
     with {:ok, cwd} <- File.cwd(),
          doc_path <- cwd <> "/doc",
          file_path <- doc_path <> "/#{mod_name_str}.html",
@@ -165,41 +165,12 @@ defmodule Iris.Core do
          {:ok, html} <- File.read(file_path),
          {:ok, document} <- Floki.parse_document(html) do
       case Floki.get_by_id(document, selector) do
-        nil ->
-          nil
-
-        html_node ->
-          section = Floki.raw_html(html_node)
-
-          head =
-            document
-            |> Floki.find("head")
-            |> Floki.raw_html()
-
-          html_out = """
-            #{head}
-            <body>
-                #{section}
-            </body>
-          """
-
-          File.mkdir_p(cwd <> "_iris/")
-          File.cp_r(cwd <> "/doc/", cwd <> "/_iris/")
-
-          selector = selector |> String.replace("/", "-")
-          out_path = cwd <> "/_iris/#{mod_name_str}-#{selector}.html"
-
-          IO.inspect(out_path)
-          case File.write(out_path, html_out) do
-            :ok -> "/_iris/#{mod_name_str}-#{selector}.html"
-            v -> IO.inspect(v)
-          end
+        nil -> nil
+        html_node -> Floki.raw_html(html_node)
       end
     else
       # match any un expected result and return nil
-      val ->
-        IO.inspect(val)
-        nil
+      _ -> nil
     end
   end
 end

@@ -8,19 +8,46 @@
 }
 
 .tooltip {
-  position: relative;
 }
 
 /* Tooltip text */
 .tooltiptext {
-  display: none;
-  z-index: 999;
+  display: none;  
 }
 
 .tooltip:hover .tooltiptext {
-  display: block;
-  position: absolute;
-  right: 80%;
-  bottom: 30%;
+  display: unset;
   white-space: nowrap;
+}
+
+.detail-header {
+  margin: 0 0 2% 0;
+}
+
+.signature {
+  font-size: x-large;
+  text-align: left;
+}
+
+.docstring {
+  font-size: medium;
+}
+
+.docstring li {
+  margin-top: 1%;
+}
+
+.docstring pre {
+  margin: 2%;
+  padding: 1%;
+  background-color: rgb(240, 240, 240);
+  overflow: scroll;
+  width: auto;
+  max-width: inherit;
+}
+
+.docstring .section-heading {
+  font-size: large;
+  margin: 1% 0;
+  font-weight: bold;
 }
