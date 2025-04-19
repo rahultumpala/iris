@@ -6,4 +6,12 @@ defmodule Iris do
   Contexts are also responsible for managing your data, regardless
   if it comes from the database, an external API or others.
   """
+
+  def get_tooltip_text(code) do
+    case code do
+      "INT" -> "Private method"
+      "EXT" -> "Exported method"
+    end
+  end
+
 end

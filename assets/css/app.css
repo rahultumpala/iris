@@ -4,5 +4,23 @@
 
 /* This file is for your main application CSS */
 ::-webkit-scrollbar {
-    display: none;
+  display: none;
+}
+
+.tooltip {
+  position: relative;
+}
+
+/* Tooltip text */
+.tooltiptext {
+  display: none;
+  z-index: 999;
+}
+
+.tooltip:hover .tooltiptext {
+  display: block;
+  position: absolute;
+  right: 80%;
+  bottom: 30%;
+  white-space: nowrap;
 }

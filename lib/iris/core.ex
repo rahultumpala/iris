@@ -31,14 +31,23 @@ defmodule Iris.Core do
     end)
   end
 
-  defp build_from_beam_file(file) do
+  defp build_from_beam_file({beam_bin, file}) do
+    # Get local methods
+    {:ok, {_, [{:locals, local_methods}]}} =
+      :beam_lib.chunks(beam_bin, [:locals])
+
+    locals_map =
+      Enum.map(local_methods, fn {name, arity} -> {Atom.to_string(name), arity} end)
+      |> Enum.filter(fn {name, _arity} -> !String.starts_with?(name, "-") end)
+      |> Enum.group_by(fn {name, arity} -> {name, arity} end)
+
     {:beam_file, mod_name, labeled_exports, _attributes, _compile_info, compiled_code} = file
 
     mod_name_str = mod_name |> Atom.to_string() |> String.split("Elixir.") |> Enum.at(1)
 
     labeled_exports_map =
       labeled_exports
-      |> Enum.group_by(fn {name, arity, _label} -> {name, arity} end)
+      |> Enum.group_by(fn {name, arity, _label} -> {Atom.to_string(name), arity} end)
 
     code_blocks =
       compiled_code
@@ -56,10 +65,7 @@ defmodule Iris.Core do
           compiled_code: code
         }
 
-        case Map.get(labeled_exports_map, {name, method.arity}, []) do
-          [] -> method
-          _ -> %Method{method | is_export: true, html_type_text: "EXP"}
-        end
+        method
       end)
 
     # Filter out auto generated methods
@@ -70,6 +76,19 @@ defmodule Iris.Core do
       |> Enum.filter(fn method ->
         [{:line, number} | _rest] = method.compiled_code
         number != 0
+      end)
+      |> Enum.filter(fn method ->
+        Map.has_key?(locals_map, {method.name, method.arity}) ||
+          Map.has_key?(labeled_exports_map, {method.name, method.arity})
+      end)
+
+    code_blocks =
+      code_blocks
+      |> Enum.map(fn method ->
+        case Map.has_key?(locals_map, {method.name, method.arity}) do
+          true -> %Method{method | is_export: true, html_type_text: "EXT"}
+          false -> %Method{method | is_export: false, html_type_text: "INT"}
+        end
       end)
 
     %Module{
@@ -90,7 +109,8 @@ defmodule Iris.Core do
       for file <- files do
         bin = File.read!(path <> file)
         beam_file = :beam_disasm.file(bin)
-        beam_file
+
+        {bin, beam_file}
       end
 
     files
@@ -119,7 +139,7 @@ defmodule Iris.Core do
     |> Enum.filter(fn val -> val != nil end)
   end
 
-  defp calls_to_str(calls \\ []) do
+  defp calls_to_str(calls) do
     Enum.reduce(calls, "", fn x, acc ->
       x
       |> Kernel.inspect()

@@ -3,6 +3,7 @@ defmodule IrisWeb.IrisComponents do
   use Gettext, backend: IrisWeb.Gettext
 
   alias Iris.Entity.Module.Method
+  import Iris
 
   attr :show, :string, default: "hidden"
   attr :module, Iris.Entity.Module, required: true
@@ -72,8 +73,11 @@ defmodule IrisWeb.IrisComponents do
           <p class="text-md">/{@method.arity}</p>
         </div>
       </div>
-      <div class="px-2 bg-zinc-50 text-sm text-zinc-500 mr-1">
-        <p>{method.html_type_text}</p>
+      <div class="px-2 bg-zinc-50 text-sm text-zinc-500 mr-1 tooltip">
+        <div class="tooltiptext px-2 bg-zinc-50 text-sm text-zinc-500 mr-1">
+          {get_tooltip_text(@method.html_type_text)}
+        </div>
+        <p>{@method.html_type_text}</p>
       </div>
     </div>
     """
