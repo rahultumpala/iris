@@ -25,7 +25,8 @@ defmodule Iris.Entity.Module do
   defstruct [
     :module,
     :methods,
-    :application
+    :application,
+    :ex_doc
   ]
 
   def new() do
@@ -40,6 +41,7 @@ defmodule Iris.Entity.Module do
       :code,
       :compiled_code,
       :type,
+      :ex_doc,
       is_export: false,
       html_type_text: "INT"
     ]

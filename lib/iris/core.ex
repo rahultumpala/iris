@@ -56,8 +56,10 @@ defmodule Iris.Core do
           get_calls(code)
           |> calls_to_str()
 
+        name = Atom.to_string(name)
+
         method = %Method{
-          name: Atom.to_string(name),
+          name: name,
           arity: arity,
           module: mod_name_str,
           type: Atom.to_string(type),
@@ -86,14 +88,18 @@ defmodule Iris.Core do
       code_blocks
       |> Enum.map(fn method ->
         case Map.has_key?(locals_map, {method.name, method.arity}) do
-          true -> %Method{method | is_export: true, html_type_text: "EXT"}
-          false -> %Method{method | is_export: false, html_type_text: "INT"}
+          false -> %Method{method | is_export: true, html_type_text: "EXT"}
+          true -> %Method{method | is_export: false, html_type_text: "INT"}
         end
+      end)
+      |> Enum.map(fn method ->
+        %Method{method | ex_doc: get_html_doc(mod_name_str, "#{method.name}/#{method.arity}")}
       end)
 
     %Module{
       module: mod_name_str,
-      methods: code_blocks
+      methods: code_blocks,
+      ex_doc: get_html_doc(mod_name_str, "moduledoc")
     }
   end
 
@@ -146,5 +152,54 @@ defmodule Iris.Core do
       |> Kernel.<>("\n\n")
       |> Kernel.<>(acc)
     end)
+  end
+
+  defp get_html_doc(mod_name_str, selector) do
+    IO.inspect({mod_name_str, selector})
+
+    with {:ok, cwd} <- File.cwd(),
+         doc_path <- cwd <> "/doc",
+         file_path <- doc_path <> "/#{mod_name_str}.html",
+         true <- File.dir?(doc_path),
+         true <- File.exists?(file_path),
+         {:ok, html} <- File.read(file_path),
+         {:ok, document} <- Floki.parse_document(html) do
+      case Floki.get_by_id(document, selector) do
+        nil ->
+          nil
+
+        html_node ->
+          section = Floki.raw_html(html_node)
+
+          head =
+            document
+            |> Floki.find("head")
+            |> Floki.raw_html()
+
+          html_out = """
+            #{head}
+            <body>
+                #{section}
+            </body>
+          """
+
+          File.mkdir_p(cwd <> "_iris/")
+          File.cp_r(cwd <> "/doc/", cwd <> "/_iris/")
+
+          selector = selector |> String.replace("/", "-")
+          out_path = cwd <> "/_iris/#{mod_name_str}-#{selector}.html"
+
+          IO.inspect(out_path)
+          case File.write(out_path, html_out) do
+            :ok -> "/_iris/#{mod_name_str}-#{selector}.html"
+            v -> IO.inspect(v)
+          end
+      end
+    else
+      # match any un expected result and return nil
+      val ->
+        IO.inspect(val)
+        nil
+    end
   end
 end

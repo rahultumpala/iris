@@ -4,6 +4,7 @@ defmodule IrisWeb.IrisComponents do
 
   alias Iris.Entity.Module.Method
   import Iris
+  import Phoenix.HTML
 
   attr :show, :string, default: "hidden"
   attr :module, Iris.Entity.Module, required: true
@@ -55,7 +56,8 @@ defmodule IrisWeb.IrisComponents do
           </div>
         </div>
         <div class="bg-zinc-50 basis-full p-5 whitespace-pre">
-          <p>{@method.code}</p>
+          <%!-- <p>{raw(@method.ex_doc)}</p> --%>
+          <iframe class="w-[50vw] h-[50vh]" src={@method.ex_doc}> </iframe>
         </div>
       <% end %>
     </div>

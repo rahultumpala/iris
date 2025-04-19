@@ -41,3 +41,5 @@ npm-debug.log
 .elixir_ls/
 
 *.log
+_iris
+priv/
