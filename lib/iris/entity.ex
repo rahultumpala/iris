@@ -38,10 +38,11 @@ defmodule Iris.Entity.Module do
       :name,
       :arity,
       :module,
-      :code,
+      :out_calls,
       :compiled_code,
       :type,
       :ex_doc,
+      view: false,
       is_export: false,
       html_type_text: "INT"
     ]

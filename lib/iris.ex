@@ -11,7 +11,9 @@ defmodule Iris do
     case code do
       "INT" -> "Private method"
       "EXT" -> "Exported method"
+      "AGF" -> "Auto generated function"
+      "IMP" -> "Imported Function"
+      "BIF" -> "Built in Function"
     end
   end
-
 end

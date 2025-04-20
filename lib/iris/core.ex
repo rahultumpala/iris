@@ -12,6 +12,8 @@ defmodule Iris.Core do
     IO.inspect("ALL MODULES")
     Enum.each(apps, fn app -> Enum.each(app.modules, fn mod -> IO.inspect(mod.module) end) end)
 
+    Enum.each(apps, fn app -> find_in_calls(app.modules) end)
+
     %Entity{
       applications: apps
     }
@@ -52,9 +54,7 @@ defmodule Iris.Core do
     code_blocks =
       compiled_code
       |> Enum.map(fn {type, name, arity, _label, code} ->
-        code_str =
-          get_calls(code)
-          |> calls_to_str()
+        out_calls = code |> get_call_instructions() |> get_out_calls()
 
         name = Atom.to_string(name)
 
@@ -63,40 +63,62 @@ defmodule Iris.Core do
           arity: arity,
           module: mod_name_str,
           type: Atom.to_string(type),
-          code: code_str,
+          out_calls: out_calls,
           compiled_code: code
         }
 
         method
       end)
 
+    code_blocks = code_blocks |> Enum.filter(fn method -> method != nil end)
+
     # Filter out auto generated methods
-    code_blocks =
+    auto_generated =
       code_blocks
-      |> Enum.filter(fn method -> !String.starts_with?(method.name, "-") end)
-      |> Enum.filter(fn method -> !String.starts_with?(method.name, "__") end)
       |> Enum.filter(fn method ->
-        [{:line, number} | _rest] = method.compiled_code
-        number != 0
+        line =
+          case method.compiled_code do
+            [{:line, number} | _rest] -> number
+            _ -> -1
+          end
+
+        String.starts_with?(method.name, "-") ||
+          String.starts_with?(method.name, "__") ||
+          line == 0 ||
+          !(Map.has_key?(locals_map, {method.name, method.arity}) ||
+              Map.has_key?(labeled_exports_map, {method.name, method.arity}))
       end)
-      |> Enum.filter(fn method ->
-        Map.has_key?(locals_map, {method.name, method.arity}) ||
-          Map.has_key?(labeled_exports_map, {method.name, method.arity})
-      end)
+      |> Enum.into(%{}, fn method -> {{method.name, method.arity}, method} end)
+
+    IO.inspect({"AUTO GENERATED", auto_generated})
 
     code_blocks =
       code_blocks
       |> Enum.map(fn method ->
-        case Map.has_key?(locals_map, {method.name, method.arity}) do
-          false -> %Method{method | is_export: true, html_type_text: "EXT"}
-          true -> %Method{method | is_export: false, html_type_text: "INT"}
+        cond do
+          # Auto Generated Function
+          Map.has_key?(auto_generated, {method.name, method.arity}) ->
+            %Method{method | html_type_text: "AGF"}
+
+          Map.has_key?(labeled_exports_map, {method.name, method.arity}) ->
+            %Method{method | is_export: true, html_type_text: "EXT", view: true}
+
+          Map.has_key?(locals_map, {method.name, method.arity}) ->
+            %Method{method | html_type_text: "INT", view: true}
         end
       end)
       |> Enum.map(fn method ->
         %Method{method | ex_doc: get_html_doc(mod_name_str, "#{method.name}/#{method.arity}")}
       end)
-      # show exports first
-      |> Enum.sort(fn ma, _mb -> ma.is_export end)
+      # EXT > INT > AGF
+      |> Enum.sort(fn ma, mb ->
+        case {ma.html_type_text, mb.html_type_text} do
+          {"EXT", "INT"} -> true
+          {"EXT", "AGF"} -> true
+          {"INT", "AGF"} -> true
+          _ -> false
+        end
+      end)
 
     %Module{
       module: mod_name_str,
@@ -129,7 +151,7 @@ defmodule Iris.Core do
     |> Enum.filter(fn name -> String.contains?(name, ".beam") end)
   end
 
-  defp get_calls(code) do
+  defp get_call_instructions(code) do
     code
     |> Enum.map(fn instruction ->
       ret =
@@ -147,13 +169,59 @@ defmodule Iris.Core do
     |> Enum.filter(fn val -> val != nil end)
   end
 
-  defp calls_to_str(calls) do
-    Enum.reduce(calls, "", fn x, acc ->
-      x
-      |> Kernel.inspect()
-      |> Kernel.<>("\n\n")
-      |> Kernel.<>(acc)
+  defp get_out_calls(instructions) do
+    instructions
+    |> Enum.map(fn instr ->
+      case instr do
+        {_call_inst, _arity, {:extfunc, m, f, a}} ->
+          {m, f, a}
+
+        {_call_inst, _arity, {m, f, a}} ->
+          {m, f, a}
+
+        inst ->
+          IO.inspect("get_out_calls Not implemented for instruction type #{inst}")
+          System.halt(1)
+      end
     end)
+    |> Enum.map(fn {m, f, a} -> {Atom.to_string(m), Atom.to_string(f), a} end)
+    |> Enum.map(fn {m, f, a} ->
+      cond do
+        String.starts_with?(m, "Elixir.") ->
+          m = m |> String.split("Elixir.") |> Enum.at(1)
+          {m, f, a}
+
+        true ->
+          {m, f, a}
+      end
+    end)
+  end
+
+  defp find_in_calls(modules) do
+    all_out_calls =
+      Enum.reduce(modules, [], fn mod, acc ->
+        out_calls =
+          Enum.map(mod.methods, fn method ->
+            Enum.map(method.out_calls, fn call ->
+              {method, call}
+            end)
+          end)
+          |> List.flatten()
+
+        [out_calls | acc]
+      end)
+      |> List.flatten()
+
+    # IO.inspect({"ALL OUT_CALLS in ALL MODULES", all_out_calls})
+
+    in_calls =
+      Enum.reduce(all_out_calls, %{}, fn {caller, callee}, acc ->
+        Map.update(acc, callee, [], fn val -> [caller | val] end)
+      end)
+
+    # IO.inspect({"ALL IN_CALLS in ALL MODULES", in_calls})
+
+    in_calls
   end
 
   defp get_html_doc(mod_name_str, selector) do
