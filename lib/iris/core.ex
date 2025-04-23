@@ -3,6 +3,7 @@ defmodule Iris.Core do
   alias Iris.Entity.Module
   alias Iris.Entity.Application
   alias Iris.Entity.Module.Method
+  alias Iris.Entity.Module.Method.Call
 
   def build() do
     files = get_beam_files()
@@ -12,6 +13,18 @@ defmodule Iris.Core do
     IO.inspect("ALL MODULES")
     Enum.each(apps, fn app -> Enum.each(app.modules, fn mod -> IO.inspect(mod.module) end) end)
 
+    all_methods = flatten_all_methods(apps)
+
+    # TODO: Map and construct Iris.Entity.Module.Method objects from out_calls
+    apps =
+      Enum.map(apps, fn app ->
+        modules =
+          Enum.map(app.modules, fn module -> construct_out_call_methods(module, all_methods) end)
+
+        %Iris.Entity.Application{app | modules: modules}
+      end)
+
+    # TOOD: Map and capture in_calls
     Enum.each(apps, fn app -> find_in_calls(app.modules) end)
 
     %Entity{
@@ -89,8 +102,6 @@ defmodule Iris.Core do
               Map.has_key?(labeled_exports_map, {method.name, method.arity}))
       end)
       |> Enum.into(%{}, fn method -> {{method.name, method.arity}, method} end)
-
-    IO.inspect({"AUTO GENERATED", auto_generated})
 
     code_blocks =
       code_blocks
@@ -212,14 +223,10 @@ defmodule Iris.Core do
       end)
       |> List.flatten()
 
-    # IO.inspect({"ALL OUT_CALLS in ALL MODULES", all_out_calls})
-
     in_calls =
       Enum.reduce(all_out_calls, %{}, fn {caller, callee}, acc ->
         Map.update(acc, callee, [], fn val -> [caller | val] end)
       end)
-
-    # IO.inspect({"ALL IN_CALLS in ALL MODULES", in_calls})
 
     in_calls
   end
@@ -239,6 +246,48 @@ defmodule Iris.Core do
     else
       # match any un expected result and return nil
       _ -> nil
+    end
+  end
+
+  defp flatten_all_methods(apps) do
+    all_methods =
+      Enum.reduce(apps, [], fn app, acc ->
+        Entity.Application.get_all_methods(app) ++ acc
+      end)
+
+    all_methods
+  end
+
+  defp construct_out_call_methods(%Iris.Entity.Module{} = module, all_methods) do
+    methods =
+      module.methods
+      |> Enum.map(fn method ->
+        out_calls =
+          method.out_calls
+          |> Enum.map(fn call ->
+            generate_call(call, all_methods)
+          end)
+
+        %Method{method | out_calls: out_calls}
+      end)
+
+    %{module | methods: methods}
+  end
+
+  defp generate_call(_call = {call_m, call_f, call_a}, all_methods) do
+    select =
+      all_methods
+      |> Enum.filter(fn m ->
+        m.module == call_m && m.name == call_f && m.arity == call_a
+      end)
+
+    case select do
+      [] ->
+        method = %Method{module: call_m, name: call_f, arity: call_a}
+        %Call{clickable: false, method: method}
+
+      [method] ->
+        %Call{clickable: true, method: method}
     end
   end
 end

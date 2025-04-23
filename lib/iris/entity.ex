@@ -1,37 +1,36 @@
 defmodule Iris.Entity do
-  defstruct [
-    :applications
-  ]
+  defstruct applications: []
 
-  def new() do
-    %Iris.Entity{
+  def new(),
+    do: %Iris.Entity{
       applications: []
     }
-  end
 end
 
 defmodule Iris.Entity.Application do
   defstruct [
     :application,
-    :modules
+    modules: []
   ]
 
-  def new() do
-    %Iris.Entity.Application{}
+  def new(), do: %Iris.Entity.Application{}
+
+  def get_all_methods(%__MODULE__{} = app) do
+    Enum.reduce(app.modules, [], fn module, acc ->
+      module.methods ++ acc
+    end)
   end
 end
 
 defmodule Iris.Entity.Module do
   defstruct [
     :module,
-    :methods,
     :application,
-    :ex_doc
+    :ex_doc,
+    methods: []
   ]
 
-  def new() do
-    %Iris.Entity.Module{}
-  end
+  def new(), do: %Iris.Entity.Module{}
 
   defmodule Method do
     defstruct [
@@ -47,8 +46,15 @@ defmodule Iris.Entity.Module do
       html_type_text: "INT"
     ]
 
-    def new() do
-      %Iris.Entity.Module.Method{}
+    def new(), do: %Iris.Entity.Module.Method{}
+
+    defmodule Call do
+      defstruct [
+        :method,
+        clickable: false
+      ]
+
+      def new(), do: %Iris.Entity.Module.Method.Call{}
     end
   end
 end
