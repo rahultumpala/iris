@@ -15,7 +15,7 @@ defmodule Iris.Core do
 
     all_methods = flatten_all_methods(apps)
 
-    # TODO: Map and construct Iris.Entity.Module.Method objects from out_calls
+    # Generate %Method{} structs from out_call {mod,fun,arity} tuples
     apps =
       Enum.map(apps, fn app ->
         modules =
@@ -24,8 +24,39 @@ defmodule Iris.Core do
         %Iris.Entity.Application{app | modules: modules}
       end)
 
-    # TOOD: Map and capture in_calls
-    Enum.each(apps, fn app -> find_in_calls(app.modules) end)
+    # TODO: REFACTOR
+    # Current implementation will fail when cyclic references are present (recursion)
+    # this is broken
+    all_in_calls =
+      Enum.reduce(apps, %{}, fn app, acc ->
+        calls = find_in_calls(app.modules)
+        Map.merge(acc, calls)
+      end)
+
+    IO.inspect(all_in_calls)
+
+    # add in_calls to each method
+    apps =
+      Enum.map(apps, fn app ->
+        modules =
+          Enum.map(app.modules, fn module ->
+            methods =
+              Enum.map(module.methods, fn method ->
+                in_calls = Map.get(all_in_calls, method, [])
+
+                IO.inspect({"IN_CALLS: ", in_calls})
+                IO.inspect({"METHOD: ", method})
+
+                %Method{method | in_calls: in_calls}
+              end)
+
+            %Module{module | methods: methods}
+          end)
+
+        %Iris.Entity.Application{app | modules: modules}
+      end)
+
+    # IO.inspect(apps)
 
     %Entity{
       applications: apps
@@ -208,29 +239,6 @@ defmodule Iris.Core do
     end)
   end
 
-  defp find_in_calls(modules) do
-    all_out_calls =
-      Enum.reduce(modules, [], fn mod, acc ->
-        out_calls =
-          Enum.map(mod.methods, fn method ->
-            Enum.map(method.out_calls, fn call ->
-              {method, call}
-            end)
-          end)
-          |> List.flatten()
-
-        [out_calls | acc]
-      end)
-      |> List.flatten()
-
-    in_calls =
-      Enum.reduce(all_out_calls, %{}, fn {caller, callee}, acc ->
-        Map.update(acc, callee, [], fn val -> [caller | val] end)
-      end)
-
-    in_calls
-  end
-
   defp get_html_doc(mod_name_str, selector) do
     with {:ok, cwd} <- File.cwd(),
          doc_path <- cwd <> "/doc",
@@ -284,10 +292,43 @@ defmodule Iris.Core do
     case select do
       [] ->
         method = %Method{module: call_m, name: call_f, arity: call_a}
+
+        method =
+          case call_m do
+            "erlang" -> %Method{method | html_type_text: "BIF"}
+            _ -> %Method{method | html_type_text: "IMP"}
+          end
+
         %Call{clickable: false, method: method}
 
       [method] ->
         %Call{clickable: true, method: method}
     end
+  end
+
+  # TODO: REFACTOR
+  defp find_in_calls(modules) do
+    all_out_calls =
+      Enum.reduce(modules, [], fn mod, acc ->
+        out_calls =
+          Enum.reduce(mod.methods, [], fn method, acc ->
+            Enum.map(method.out_calls, fn call ->
+              # {callee, caller}
+              {call.method, method}
+            end)
+            |> Kernel.++(acc)
+          end)
+
+        out_calls ++ acc
+      end)
+
+    in_calls =
+      Enum.reduce(all_out_calls, %{}, fn {callee, caller}, acc ->
+        # caller is guaranteed to be either EXT, INT or AGF
+        in_call = %Call{clickable: true, method: caller}
+        Map.update(acc, callee, [], fn val -> [in_call | val] end)
+      end)
+
+    in_calls
   end
 end

@@ -37,6 +37,7 @@ defmodule Iris.Entity.Module do
       :name,
       :arity,
       :module,
+      :in_calls,
       :out_calls,
       :compiled_code,
       :type,
