@@ -1,5 +1,6 @@
 defmodule Iris.Entity do
-  defstruct applications: []
+  defstruct applications: [],
+            all_out_calls: []
 
   def new(),
     do: %Iris.Entity{
@@ -27,7 +28,9 @@ defmodule Iris.Entity.Module do
     :module,
     :application,
     :ex_doc,
-    methods: []
+    methods: [],
+    in_calls: %{},
+    out_calls: %{}
   ]
 
   def new(), do: %Iris.Entity.Module{}
@@ -37,14 +40,13 @@ defmodule Iris.Entity.Module do
       :name,
       :arity,
       :module,
-      :in_calls,
-      :out_calls,
       :compiled_code,
       :type,
       :ex_doc,
       view: false,
       is_export: false,
-      html_type_text: "INT"
+      html_type_text: "INT",
+      call_instructions: []
     ]
 
     def new(), do: %Iris.Entity.Module.Method{}
@@ -55,7 +57,8 @@ defmodule Iris.Entity.Module do
         clickable: false
       ]
 
-      def new(), do: %Iris.Entity.Module.Method.Call{}
+      def new(%Method{} = method, clickable),
+        do: %Iris.Entity.Module.Method.Call{method: method, clickable: clickable}
     end
   end
 end

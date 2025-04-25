@@ -15,51 +15,47 @@ defmodule Iris.Core do
 
     all_methods = flatten_all_methods(apps)
 
-    # Generate %Method{} structs from out_call {mod,fun,arity} tuples
-    apps =
-      Enum.map(apps, fn app ->
-        modules =
-          Enum.map(app.modules, fn module -> construct_out_call_methods(module, all_methods) end)
+    all_out_calls =
+      Enum.reduce(all_methods, %{}, fn method, acc ->
+        calls =
+          get_out_calls(method.call_instructions)
+          |> Enum.map(&generate_call(&1, all_methods))
 
-        %Iris.Entity.Application{app | modules: modules}
+        Map.put(acc, method, calls)
       end)
 
-    # TODO: REFACTOR
-    # Current implementation will fail when cyclic references are present (recursion)
-    # this is broken
     all_in_calls =
-      Enum.reduce(apps, %{}, fn app, acc ->
-        calls = find_in_calls(app.modules)
-        Map.merge(acc, calls)
-      end)
-
-    IO.inspect(all_in_calls)
-
-    # add in_calls to each method
-    apps =
-      Enum.map(apps, fn app ->
-        modules =
-          Enum.map(app.modules, fn module ->
-            methods =
-              Enum.map(module.methods, fn method ->
-                in_calls = Map.get(all_in_calls, method, [])
-
-                IO.inspect({"IN_CALLS: ", in_calls})
-                IO.inspect({"METHOD: ", method})
-
-                %Method{method | in_calls: in_calls}
-              end)
-
-            %Module{module | methods: methods}
+      Enum.reduce(all_out_calls, %{}, fn {caller, callees}, acc ->
+        in_calls =
+          Enum.reduce(callees, %{}, fn callee, acc ->
+            # callee is %Call{} not %Method{} but we want key to be %Method{}
+            Map.update(acc, callee.method, [caller], &Kernel.++([caller], &1))
           end)
 
-        %Iris.Entity.Application{app | modules: modules}
+        Map.merge(acc, in_calls, fn _k, v1, v2 -> v2 ++ v1 end)
+      end)
+      |> Enum.into(%{}, fn {callee, callers} ->
+        # generate %Call{} from %Method{} caller
+        # Always clickable since they are not BIF/IMP methods
+        calls = Enum.map(callers, &Call.new(&1, true))
+
+        {callee, calls}
       end)
 
-    # IO.inspect(apps)
+    apps =
+      Enum.map(apps, fn app ->
+        modules =
+          Enum.map(
+            app.modules,
+            &assign_in_out_calls(&1, all_methods, all_out_calls, all_in_calls)
+          )
+
+        %Application{app | modules: modules}
+      end)
 
     %Entity{
-      applications: apps
+      applications: apps,
+      all_out_calls: all_out_calls
     }
   end
 
@@ -91,34 +87,29 @@ defmodule Iris.Core do
 
     mod_name_str = mod_name |> Atom.to_string() |> String.split("Elixir.") |> Enum.at(1)
 
-    labeled_exports_map =
-      labeled_exports
-      |> Enum.group_by(fn {name, arity, _label} -> {Atom.to_string(name), arity} end)
-
-    code_blocks =
+    methods =
       compiled_code
       |> Enum.map(fn {type, name, arity, _label, code} ->
-        out_calls = code |> get_call_instructions() |> get_out_calls()
-
-        name = Atom.to_string(name)
-
         method = %Method{
-          name: name,
+          name: Atom.to_string(name),
           arity: arity,
           module: mod_name_str,
           type: Atom.to_string(type),
-          out_calls: out_calls,
-          compiled_code: code
+          compiled_code: code,
+          call_instructions: code |> get_call_instructions()
         }
 
         method
       end)
-
-    code_blocks = code_blocks |> Enum.filter(fn method -> method != nil end)
+      |> Enum.filter(fn method -> method != nil end)
 
     # Filter out auto generated methods
+    labeled_exports_map =
+      labeled_exports
+      |> Enum.group_by(fn {name, arity, _label} -> {Atom.to_string(name), arity} end)
+
     auto_generated =
-      code_blocks
+      methods
       |> Enum.filter(fn method ->
         line =
           case method.compiled_code do
@@ -134,8 +125,9 @@ defmodule Iris.Core do
       end)
       |> Enum.into(%{}, fn method -> {{method.name, method.arity}, method} end)
 
-    code_blocks =
-      code_blocks
+    # Assign html type text
+    methods =
+      methods
       |> Enum.map(fn method ->
         cond do
           # Auto Generated Function
@@ -162,9 +154,10 @@ defmodule Iris.Core do
         end
       end)
 
+    # return
     %Module{
       module: mod_name_str,
-      methods: code_blocks,
+      methods: methods,
       ex_doc: get_html_doc(mod_name_str, "moduledoc")
     }
   end
@@ -258,28 +251,34 @@ defmodule Iris.Core do
   end
 
   defp flatten_all_methods(apps) do
-    all_methods =
-      Enum.reduce(apps, [], fn app, acc ->
-        Entity.Application.get_all_methods(app) ++ acc
-      end)
-
-    all_methods
+    Enum.reduce(apps, [], fn app, acc ->
+      Entity.Application.get_all_methods(app) ++ acc
+    end)
   end
 
-  defp construct_out_call_methods(%Iris.Entity.Module{} = module, all_methods) do
-    methods =
-      module.methods
-      |> Enum.map(fn method ->
-        out_calls =
-          method.out_calls
-          |> Enum.map(fn call ->
-            generate_call(call, all_methods)
-          end)
+  defp assign_in_out_calls(
+         %Iris.Entity.Module{} = module,
+         all_methods,
+         all_out_calls,
+         all_in_calls
+       ) do
+    module_methods = Enum.filter(all_methods, fn method -> method.module == module.module end)
 
-        %Method{method | out_calls: out_calls}
+    module_out_calls =
+      Enum.reduce(module_methods, %{}, fn method, acc ->
+        Map.put(acc, method, Map.get(all_out_calls, method, []))
       end)
 
-    %{module | methods: methods}
+    module_in_calls =
+      Enum.reduce(module_methods, %{}, fn method, acc ->
+        Map.put(acc, method, Map.get(all_in_calls, method, []))
+      end)
+
+    %Module{module | out_calls: module_out_calls, in_calls: module_in_calls}
+  end
+
+  defp generate_call(%Method{} = caller, all_methods) do
+    generate_call({caller.module, caller.name, caller.arity}, all_methods)
   end
 
   defp generate_call(_call = {call_m, call_f, call_a}, all_methods) do
@@ -304,31 +303,5 @@ defmodule Iris.Core do
       [method] ->
         %Call{clickable: true, method: method}
     end
-  end
-
-  # TODO: REFACTOR
-  defp find_in_calls(modules) do
-    all_out_calls =
-      Enum.reduce(modules, [], fn mod, acc ->
-        out_calls =
-          Enum.reduce(mod.methods, [], fn method, acc ->
-            Enum.map(method.out_calls, fn call ->
-              # {callee, caller}
-              {call.method, method}
-            end)
-            |> Kernel.++(acc)
-          end)
-
-        out_calls ++ acc
-      end)
-
-    in_calls =
-      Enum.reduce(all_out_calls, %{}, fn {callee, caller}, acc ->
-        # caller is guaranteed to be either EXT, INT or AGF
-        in_call = %Call{clickable: true, method: caller}
-        Map.update(acc, callee, [], fn val -> [in_call | val] end)
-      end)
-
-    in_calls
   end
 end
