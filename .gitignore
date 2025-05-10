@@ -1,59 +1,46 @@
 # The directory Mix will write compiled artifacts to.
-iris_ex/_build/
-# If you run "mix test --cover", coverage assets end up here.
-iris_ex/cover/
+/_build/
+
+# If you run "mix test --cover", coverage end up here.
+/cover/
+
 # The directory Mix downloads your dependencies sources to.
-iris_ex/deps/
-# Where 3rd-party dependencies like ExDoc output generated docs.
-iris_ex/doc/
-# Ignore .fetch files in case you like to edit your project deps locally.
-iris_ex/.fetch
+/deps/
+
+# Where third-party dependencies like ExDoc output generated docs.
+/doc/
+
 # If the VM crashes, it generates a dump, let's ignore it too.
-iris_ex/erl_crash.dump
+erl_crash.dump
+
 # Also ignore archive artifacts (built via "mix archive.build").
-iris_ex/*.ez
-# Temporary files, for example, from tests.
-iris_ex/tmp/
+*.ez
+
 # Ignore package tarball (built via "mix hex.build").
-iris_ex/iris-*.tar
-# Ignore assets that are produced by build tools.
-iris_ex/priv/static/assets/
-# Ignore digested assets cache.
-iris_ex/priv/static/cache_manifest.json
-# In case you use Node.js/npm, you want to ignore these.
-iris_ex/npm-debug.log
-iris_ex/assets/node_modules/
-# Others
-iris_ex/*.beam
-iris_ex/config/*.secret.exs
-iris_ex/.elixir_ls/
-iris_ex/.DS_Store
-iris_ex/*.log
-iris_ex/_iris
+iris-*.tar
+
+# Temporary files, for example, from tests.
+/tmp/
+
+.elixir_ls/
 
 # Logs
-iris_vue/logs
-iris_vue/*.log
-iris_vue/npm-debug.log*
-iris_vue/yarn-debug.log*
-iris_vue/yarn-error.log*
-iris_vue/pnpm-debug.log*
-iris_vue/lerna-debug.log*
-iris_vue/node_modules
-iris_vue/.DS_Store
-iris_vue/dist
-iris_vue/dist-ssr
-iris_vue/coverage
-iris_vue/*.local
-iris_vue/cypress/videos/
-iris_vue/cypress/screenshots/
-# Editor directories and files
-iris_vue/.vscode
-iris_vue/.idea
-iris_vue/*.suo
-iris_vue/*.ntvs*
-iris_vue/*.njsproj
-iris_vue/*.sln
-iris_vue/*.sw?
+logs
+*.log
+npm-debug.log*
 
-iris_vue/*.tsbuildinfo
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
