@@ -23,6 +23,8 @@ defmodule Mix.Tasks.Iris do
     core_entity = Core.build()
     {:ok, json} = Jason.encode(core_entity, [{:escape, :unicode_safe}, {:pretty, true}])
 
-    File.write!("entity.json", json)
+    path = "assets/entity.json"
+    IO.puts("Writing to #{path}")
+    File.write!(path, json)
   end
 end
