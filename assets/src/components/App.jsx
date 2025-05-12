@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 
-import { useGlobalDispatch } from "../ctx/globalContext.jsx";
-
-import { SidebarComponent } from "./Sidebar.jsx";
-import { ButtonComponent } from "./Button.jsx";
+import { useGlobalDispatch, useGlobalState } from "../ctx/globalContext.jsx";
+import { LeftHalf } from "./LeftHalf.jsx";
+import { LoadingState } from "./LoadingState.jsx";
 
 function App() {
   const globalDispatch = useGlobalDispatch();
+  let state = useGlobalState();
   useEffect(() => {
     /*
     FETCH ENTITY FROM FILE
@@ -15,7 +15,6 @@ function App() {
     async function initGlobalState() {
       let response = await fetch("entity.json");
       let entity = await response.json();
-      console.log(entity);
 
       let globalState = {
         entity,
@@ -31,16 +30,18 @@ function App() {
     }
 
     return initGlobalState;
-  }, [globalDispatch]);
+  }, []);
 
-  return (
-    <>
-      <div class="app">
-        <SidebarComponent></SidebarComponent>
-        <ButtonComponent></ButtonComponent>
-      </div>
-    </>
-  );
+  if (state == null) return <LoadingState></LoadingState>;
+  else {
+    return (
+      <>
+        <div className="app">
+          <LeftHalf></LeftHalf>
+        </div>
+      </>
+    );
+  }
 }
 
 export default App;
