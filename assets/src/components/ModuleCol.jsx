@@ -3,10 +3,16 @@ import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
 import { SidebarItem } from "flowbite-react";
 
 function ModuleItem({ module }) {
+  const dispatch = useGlobalDispatch();
+  let selectModule = () => {
+    dispatch({ type: "selectModule", module: module });
+  };
   return (
     <>
-      <SidebarItem className="text-sm">
-        <div className="module_item">{module.module}</div>
+      <SidebarItem className="text-sm w-auto">
+        <div className="module_item" onClick={selectModule}>
+          {module.module}
+        </div>
       </SidebarItem>
     </>
   );
@@ -14,7 +20,6 @@ function ModuleItem({ module }) {
 
 export function ModuleColumn() {
   const state = useGlobalState();
-  console.log(state);
   const app = state.selectedApplication;
 
   if (app.modules == undefined || app.modules == null) {
@@ -29,7 +34,7 @@ export function ModuleColumn() {
     <>
       {/* Title */}
       <div className="col_title_text">
-        <p className="">Modules</p>
+        <p className="">{app.application}</p>
       </div>
 
       {/* Module Items List */}

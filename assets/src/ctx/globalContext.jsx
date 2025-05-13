@@ -21,7 +21,6 @@ modifies curState based on the action and returns new state
 function globalReducer(curState, action) {
   switch (action.type) {
     case "selectApplication": {
-      console.log(`Selected Application ${action.application}`)
       return {
         ...curState,
         selectedApplication: action.application,

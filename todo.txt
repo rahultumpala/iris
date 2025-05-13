@@ -1,0 +1,4 @@
+1. Reference application in module. It's null right now.
+2. Add tooltip text to methods along with html_type_text
+3. Show tooltip when method_type is hovered
+4. Modify Scrollbar style in methods col

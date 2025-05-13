@@ -16,14 +16,30 @@ body {
 }
 
 .col_title_text {
-  padding: 0.5em 0;
+  padding: 0.5em 0.5em;
 }
 
 .module_item,
 .application_item {
+  width: max-content;
   cursor: pointer;
 }
 
-.methods-sidebar {
-  border-left: 0.5px ridge grey;
+.sidebar {
+  min-width: 15w;
+  width: max-content;
+  height: 100vh;
+}
+
+.vertical-separator {
+  height: 100vh;
+  background-color: #F9FAFB;
+  display: flex;
+  align-items: center;
+}
+
+.vertical-separator .child {
+  height: 95vh;
+  background-color: #E5E7EB;
+  width: 1px;
 }
