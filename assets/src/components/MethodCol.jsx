@@ -3,19 +3,39 @@ import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
 import { SidebarItem } from "flowbite-react";
 
 function MethodType({ text, tooltip }) {
+  const attributes = {
+    className: `method-type text-xs ${text == "INT" ? "method-type-internal" : "method-ext"}`,
+  };
+
   return (
     <>
-      <div className="method-type text-xs">{text}</div>
+      <div {...attributes}>{text}</div>
     </>
   );
 }
 
 function MethodItem({ method }) {
+  const dispatch = useGlobalDispatch();
+  const selectMethod = () => {
+    dispatch({
+      type: "selectMethod",
+      method: method,
+    });
+  };
+
+  const clickable =
+    method.html_type_text == "INT" || method.html_type_text == "EXT";
+
+  const attributes = {
+    onClick: clickable ? selectMethod : null,
+    className: clickable ? "method-item clickable-method" : "method-item",
+  };
+
   return (
     <>
-      <SidebarItem className="method-item">
+      <SidebarItem {...attributes}>
         <div className="flex flex-row justify-between items-center">
-          <div className="method_text mr-5 text-sm">
+          <div className="method-text mr-5 text-sm">
             {method.name} / {method.arity}
           </div>
           <MethodType

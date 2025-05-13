@@ -3,3 +3,5 @@
 3. Show tooltip when method_type is hovered
 4. Modify Scrollbar style in methods col
 5. make all css classes consistent. use hyphens instead of underscores
+6. Changing application should change module, methods
+7. Chaning module should change methods

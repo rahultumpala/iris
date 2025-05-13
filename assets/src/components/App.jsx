@@ -2,6 +2,7 @@ import { useEffect } from "react";
 
 import { useGlobalDispatch, useGlobalState } from "../ctx/globalContext.jsx";
 import { LeftHalf } from "./LeftHalf.jsx";
+import { RightHalf } from "./RightHalf.jsx";
 import { LoadingState } from "./LoadingState.jsx";
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
       <>
         <div className="app">
           <LeftHalf></LeftHalf>
+          <RightHalf></RightHalf>
         </div>
       </>
     );
