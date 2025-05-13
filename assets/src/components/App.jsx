@@ -18,9 +18,9 @@ function App() {
 
       let globalState = {
         entity,
-        selectedApplication: null,
-        selectedModule: null,
-        selectedMethod: null,
+        selectedApplication: entity.applications[0],
+        selectedModule: entity.applications[0].modules[0],
+        selectedMethod: entity.applications[0].modules[0].methods[0],
       };
 
       globalDispatch({

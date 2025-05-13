@@ -9,7 +9,10 @@ export function LeftHalf() {
     <>
       <div className="left_half flex flex-row">
         <div className="sidebar">
-          <Sidebar aria-label="Sidebar with content separator example">
+          <Sidebar
+            aria-label="Sidebar with apps and modules"
+            className="w-auto"
+          >
             <SidebarItems>
               {/* IRIS TITLE */}
               <SidebarItemGroup>
@@ -26,7 +29,11 @@ export function LeftHalf() {
             </SidebarItems>
           </Sidebar>
         </div>
-        <MethodColumn></MethodColumn>
+        <Sidebar aria-label="sidebar with methods" className="methods-sidebar">
+          <SidebarItems>
+            <MethodColumn></MethodColumn>
+          </SidebarItems>
+        </Sidebar>
       </div>
     </>
   );

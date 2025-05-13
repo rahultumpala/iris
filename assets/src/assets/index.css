@@ -14,3 +14,16 @@ body {
   height: 100vh;
   display: flex;
 }
+
+.col_title_text {
+  padding: 0.5em 0;
+}
+
+.module_item,
+.application_item {
+  cursor: pointer;
+}
+
+.methods-sidebar {
+  border-left: 0.5px ridge grey;
+}
