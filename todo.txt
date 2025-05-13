@@ -4,4 +4,6 @@
 4. Modify Scrollbar style in methods col
 5. make all css classes consistent. use hyphens instead of underscores
 6. Changing application should change module, methods
-7. Chaning module should change methods
+7. Changing module should change methods
+8. Filter duplicates before generating calls
+9. handle recursive code
