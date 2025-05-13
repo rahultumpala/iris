@@ -5,7 +5,7 @@ import { SidebarItem } from "flowbite-react";
 function MethodType({ text, tooltip }) {
   return (
     <>
-      <div className="method_type text-sm text-gray">{text}</div>
+      <div className="method-type text-xs">{text}</div>
     </>
   );
 }
@@ -13,8 +13,8 @@ function MethodType({ text, tooltip }) {
 function MethodItem({ method }) {
   return (
     <>
-      <SidebarItem>
-        <div className="method_item flex flex-row justify-between items-center">
+      <SidebarItem className="method-item">
+        <div className="flex flex-row justify-between items-center">
           <div className="method_text mr-5 text-sm">
             {method.name} / {method.arity}
           </div>

@@ -2,3 +2,4 @@
 2. Add tooltip text to methods along with html_type_text
 3. Show tooltip when method_type is hovered
 4. Modify Scrollbar style in methods col
+5. make all css classes consistent. use hyphens instead of underscores

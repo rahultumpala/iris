@@ -43,3 +43,36 @@ body {
   background-color: #E5E7EB;
   width: 1px;
 }
+
+.right-half {
+  height: 100vh;
+}
+
+.method-type {
+  background-color: gainsboro;
+  color: darkgray;
+  padding: 2px 5px;
+  margin: 0 0 0 2em;
+  border-radius: 5px;
+  min-width: 3em;
+  text-align: center;
+}
+
+.method-item {
+  padding-right: 0;
+  margin-right: 0;
+}
+
+/* SCROLLBAR for SIDEBAR */
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px #E5E7EB;
+}
+
+::-webkit-scrollbar {
+  width: 1px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.3);
+}
