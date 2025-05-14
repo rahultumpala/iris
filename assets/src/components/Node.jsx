@@ -3,7 +3,7 @@ import { Handle, Position } from "@xyflow/react";
 function Node({ data }) {
   return (
     <>
-      <div className="node">{data.displayName}</div>
+      <div className="node text-sm">{data.displayName}</div>
     </>
   );
 }

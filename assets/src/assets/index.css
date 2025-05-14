@@ -22,7 +22,7 @@ body {
 
 .module_item,
 .application_item {
-  width: max-content;
+  width: 100%;
   cursor: pointer;
 }
 
