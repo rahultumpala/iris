@@ -1,9 +1,10 @@
-1. Reference application in module. It's null right now.
-2. Add tooltip text to methods along with html_type_text
-3. Show tooltip when method_type is hovered
-4. Modify Scrollbar style in methods col
-5. make all css classes consistent. use hyphens instead of underscores
-6. Changing application should change module, methods
-7. Changing module should change methods
-8. Filter duplicates before generating calls
-9. handle recursive code
+UI:
+. Modify Scrollbar style in methods col > looks good now, change later maybe
+. Add tooltip text to methods along with html_type_text
+. Show tooltip when method_type is hovered
+. make all css classes consistent. use hyphens instead of underscores
+
+Elixir:
+. Reference application in module. It's null right now.
+. Filter duplicates before generating calls
+. handle recursive code

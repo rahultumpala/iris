@@ -23,7 +23,7 @@ function globalReducer(curState, action) {
     case "selectApplication": {
       return {
         ...curState,
-        selectedApplication: action.application,
+        ...chooseApplicationAndDescendants(action.application),
       };
     }
     case "selectModule": {
@@ -57,4 +57,15 @@ export function useGlobalState() {
 
 export function useGlobalDispatch() {
   return useContext(GlobalDispatchCtx);
+}
+
+/* internal helpers */
+function chooseApplicationAndDescendants(app) {
+  const module = app.modules?.[0];
+  const method = module?.methods?.[0];
+  return {
+    selectedApplication: app,
+    selectedModule: module,
+    selectedMethod: method,
+  };
 }
