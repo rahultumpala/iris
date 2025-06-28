@@ -1,7 +1,5 @@
 UI:
 . Modify Scrollbar style in methods col > looks good now, change later maybe
-. Add tooltip text to methods along with html_type_text
-. Show tooltip when method_type is hovered
 . make all css classes consistent. use hyphens instead of underscores
 
 Elixir:

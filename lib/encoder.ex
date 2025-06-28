@@ -50,7 +50,8 @@ defimpl Jason.Encoder, for: [Iris.Entity.Module.Method] do
         "view" => struct.view,
         "is_export" => struct.is_export,
         "html_type_text" => struct.html_type_text,
-        "call_instructions" => struct.call_instructions
+        "call_instructions" => struct.call_instructions,
+        "tooltip_text" => get_tooltip_text(struct.html_type_text)
       },
       opts
     )
@@ -61,6 +62,18 @@ defimpl Jason.Encoder, for: [Iris.Entity.Module.Method] do
     |> Tuple.to_list()
     |> List.flatten()
     |> Jason.Encoder.List.encode(opts)
+  end
+
+
+  defp get_tooltip_text(html_type) do
+    case html_type do
+      "INT" -> "Private Method"
+      "EXT" -> "External Method"
+      "AGF" -> "Auto Generated Function"
+      "BIF" -> "Built-In Function"
+      "IMP" -> "Imported Method"
+      _ -> ""
+    end
   end
 end
 

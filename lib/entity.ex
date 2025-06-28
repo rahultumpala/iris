@@ -43,6 +43,7 @@ defmodule Iris.Entity.Module do
       :compiled_code,
       :type,
       :ex_doc,
+      :tooltip_text, # populated in the encoder
       view: false,
       is_export: false,
       html_type_text: "INT",

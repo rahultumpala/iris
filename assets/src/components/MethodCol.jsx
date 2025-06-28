@@ -1,15 +1,19 @@
 import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
 
-import { SidebarItem } from "flowbite-react";
+import { SidebarItem, Tooltip } from "flowbite-react";
 
 function MethodType({ text, tooltip }) {
   const attributes = {
-    className: `method-type text-xs ${text == "INT" ? "method-type-internal" : "method-ext"}`,
+    className: `method-type text-xs ${
+      text == "INT" ? "method-type-internal" : "method-ext"
+    }`,
   };
 
   return (
     <>
-      <div {...attributes}>{text}</div>
+      <Tooltip content={tooltip} placement="right" className="text-xs font-normal bg-gray-900 ">
+        <div {...attributes}>{text}</div>
+      </Tooltip>
     </>
   );
 }

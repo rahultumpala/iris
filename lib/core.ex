@@ -245,7 +245,7 @@ defmodule Iris.Core do
         html_node -> Floki.raw_html(html_node)
       end
     else
-      # probably just no docs 
+      # probably just no docs
       false -> nil
       # match any un expected result and return nil
       e -> IO.inspect({"Unexpected error while fetching html docs", e})
