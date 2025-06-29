@@ -1,6 +1,7 @@
 UI:
 . Modify Scrollbar style in methods col > looks good now, change later maybe
 . make all css classes consistent. use hyphens instead of underscores
+. reset graph when app is changed. sometimes edges of prev graph remain
 
 Elixir:
 . Reference application in module. It's null right now.
