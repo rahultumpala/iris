@@ -107,13 +107,18 @@ function get_calls(module, calls, method) {
   return calls[key] == undefined ? [] : calls[key];
 }
 
-export function Flow() {
-  const state = useGlobalState();
-  const module = state.selectedModule;
-  const method = state.selectedMethod;
-  const in_calls = get_calls(module, module.in_calls, method);
-  const out_calls = get_calls(module, module.out_calls, method);
+function emptyGraph(ref, nodeTypes) {
+  return (
+    <div className="flow">
+      <ReactFlow ref={ref} nodes={[]} edges={[]} nodeTypes={nodeTypes}>
+        <Background />
+        <Controls />
+      </ReactFlow>
+    </div>
+  );
+}
 
+export function Flow() {
   const nodeTypes = {
     caller: Caller,
     callee: Callee,
@@ -128,6 +133,15 @@ export function Flow() {
     const { height, width } = ref.current.getBoundingClientRect();
     setDivMeasurements({ height, width });
   }, []);
+
+  const state = useGlobalState();
+  const module = state.selectedModule;
+  const method = state.selectedMethod;
+
+  if (module == null || method == null) return emptyGraph(ref, nodeTypes);
+
+  const in_calls = get_calls(module, module.in_calls, method);
+  const out_calls = get_calls(module, module.out_calls, method);
 
   const flow = generateFlow(in_calls, method, out_calls, divMeasurements);
 

@@ -39,6 +39,7 @@ function globalReducer(curState, action) {
       };
     }
     case "setGlobalState": {
+      // invoked only at the beginning of the app
       console.log("Setting Global State");
       return action.globalState;
     }
@@ -62,7 +63,11 @@ export function useGlobalDispatch() {
 /* internal helpers */
 function chooseApplicationAndDescendants(app) {
   const module = app.modules?.[0];
-  const method = module?.methods?.[0];
+  let method = module?.methods?.[0];
+  method =
+    method["html_type_text"] == "INT" || method["html_type_text"] == "EXT"
+      ? method
+      : null;
   return {
     selectedApplication: app,
     selectedModule: module,
