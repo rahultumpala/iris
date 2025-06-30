@@ -4,7 +4,6 @@ UI:
 . reset graph when app is changed. sometimes edges of prev graph remain
 
 Elixir:
-. Reference application in module. It's null right now. - to navigate in UI when method is clicked
 . Filter duplicates before generating calls
 . handle recursive code
 . Condense auto generated inline methods into parent method
