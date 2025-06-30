@@ -1,67 +1,48 @@
-import { useRef, useLayoutEffect, useState } from "react";
-import { ReactFlow, Controls, Background } from "@xyflow/react";
+import { useCallback, useMemo, useEffect } from "react";
+import Dagre from "@dagrejs/dagre";
+import {
+  ReactFlow,
+  Controls,
+  Background,
+  Panel,
+  useNodesState,
+  useEdgesState,
+  useReactFlow,
+} from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
 import { useGlobalState } from "../ctx/globalContext.jsx";
 import { Callee, Caller, MethodNode } from "./Node.jsx";
+import { Button, ButtonGroup } from "flowbite-react";
 
-function get_x_space(in_calls, method, out_calls) {
-  let len = 0;
-  in_calls.forEach((call) => {
-    len = Math.max(len, generate_method_display_name(call.method).length);
-  });
-  out_calls.forEach((call) => {
-    len = Math.max(len, generate_method_display_name(call.method).length);
-  });
-  len = Math.max(len, generate_method_display_name(method).length);
-  return len * 9;
-}
+/*
+--------------------------------------
+Generating nodes and edges from calls
+*/
 
 function generate_method_display_name(method) {
   return `${method.module}.${method.name}/${method.arity}`;
 }
 
-function generateFlow(in_calls, method, out_calls, { height, width }) {
-  let in_nodes = in_calls.map((call, idx) => generate_node(call.method));
-  let out_nodes = out_calls.map((call, idx) => generate_node(call.method));
-
-  const start_x = 20;
-  const start_y = height / 2;
-  const y_space = 100;
-  const x_space = get_x_space(in_calls, method, out_calls);
-
-  const in_mid = Math.floor(in_nodes.length / 2);
-  in_nodes = in_nodes.map((node, idx) => {
-    const in_y = start_y - (in_mid - idx) * y_space;
-    return {
-      ...node,
-      position: {
-        x: start_x,
-        y: in_y,
-      },
-      type: "caller",
-    };
-  });
-
-  let method_node = {
-    ...generate_node(method),
-    position: { x: start_x + x_space, y: start_y },
-    type: "methodNode",
+function generate_node(method, type) {
+  const name = generate_method_display_name(method);
+  return {
+    id: name,
+    data: {
+      displayName: name,
+      type: method.html_type_text,
+      method,
+    },
+    type,
   };
+}
 
-  const out_mid = Math.floor(out_nodes.length / 2);
-  out_nodes = out_nodes.map((node, idx) => {
-    const out_y = start_y - (out_mid - idx) * y_space;
-    return {
-      ...node,
-      position: {
-        x: start_x + 2 * x_space,
-        y: out_y,
-      },
-      type: "callee",
-    };
-  });
+function get_calls(module, calls, method) {
+  const key = `${module.module}.${method.name}`;
+  return calls[key] == undefined ? [] : calls[key];
+}
 
+function get_edges(in_nodes, method_node, out_nodes) {
   let edges = [];
   in_nodes.forEach((node) => {
     edges.push({
@@ -77,34 +58,27 @@ function generateFlow(in_calls, method, out_calls, { height, width }) {
       target: node.id,
     });
   });
+  return edges;
+}
 
+function generateFlow(in_calls, method, out_calls) {
+  const in_nodes = in_calls.map((call, idx) =>
+    generate_node(call.method, "caller")
+  );
+  const out_nodes = out_calls.map((call, idx) =>
+    generate_node(call.method, "callee")
+  );
+  const method_node = generate_node(method, "methodNode");
   let nodes = [...in_nodes, method_node, ...out_nodes];
-  console.log(nodes);
-  return {
-    nodes: nodes,
-    edges: edges,
-  };
-}
+  nodes = nodes.map((node, idx, _) => {
+    return { ...node, position: { x: 0, y: 100 * idx } };
+  });
+  const edges = get_edges(in_nodes, method_node, out_nodes);
 
-function generate_node(method) {
-  const name = generate_method_display_name(method);
   return {
-    id: name,
-    data: {
-      displayName: name,
-      type: method.html_type_text,
-      method,
-    },
-    position: {
-      x: 0,
-      y: 0,
-    },
+    gen_nodes: nodes,
+    gen_edges: edges,
   };
-}
-
-function get_calls(module, calls, method) {
-  const key = `${module.module}.${method.name}`;
-  return calls[key] == undefined ? [] : calls[key];
 }
 
 function emptyGraph(ref, nodeTypes) {
@@ -118,21 +92,70 @@ function emptyGraph(ref, nodeTypes) {
   );
 }
 
+/*
+--------------------------------------
+  Layout related
+*/
+
+function LayoutPanel({ onLayout }) {
+  return (
+    <Panel position="top-right">
+      <ButtonGroup>
+        <Button
+          color="alternative"
+          className="text-sm"
+          onClick={() => onLayout("TB")}
+        >
+          vertical layout
+        </Button>
+        <Button color="alternative" onClick={() => onLayout("LR")}>
+          horizontal layout
+        </Button>
+      </ButtonGroup>
+    </Panel>
+  );
+}
+
+const getLayoutedElements = (nodes, edges, options) => {
+  const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
+  g.setGraph({ rankdir: options.direction });
+
+  edges.forEach((edge) => g.setEdge(edge.source, edge.target));
+  nodes.forEach((node) =>
+    g.setNode(node.id, {
+      ...node,
+      width: node.measured?.width ?? 0,
+      height: node.measured?.height ?? 0,
+    })
+  );
+
+  Dagre.layout(g);
+
+  return {
+    nodes: nodes.map((node) => {
+      const position = g.node(node.id);
+      // We are shifting the dagre node position (anchor=center center) to the top left
+      // so it matches the React Flow node anchor point (top left).
+      const x = position.x - (node.measured?.width ?? 0) / 2;
+      const y = position.y - (node.measured?.height ?? 0) / 2;
+
+      return { ...node, position: { x, y } };
+    }),
+    edges,
+  };
+};
+/*
+--------------------------------------
+*/
+
 export function Flow() {
   const nodeTypes = {
     caller: Caller,
     callee: Callee,
     methodNode: MethodNode,
   };
-
-  // To be able to use the container height in calculating position of nodes
-  const ref = useRef(null);
-  const [divMeasurements, setDivMeasurements] = useState({});
-
-  useLayoutEffect(() => {
-    const { height, width } = ref.current.getBoundingClientRect();
-    setDivMeasurements({ height, width });
-  }, []);
+  // layout related
+  const { fitView } = useReactFlow();
 
   const state = useGlobalState();
   const module = state.selectedModule;
@@ -140,14 +163,45 @@ export function Flow() {
 
   if (module == null || method == null) return emptyGraph(ref, nodeTypes);
 
-  const in_calls = get_calls(module, module.in_calls, method);
-  const out_calls = get_calls(module, module.out_calls, method);
+  // React JS sorcery to update [nodes] when [gen_nodes] changes and re-render correctly AFTER first render
+  const { gen_nodes, gen_edges } = useMemo(() => {
+    const in_calls = get_calls(module, module.in_calls, method);
+    const out_calls = get_calls(module, module.out_calls, method);
+    return generateFlow(in_calls, method, out_calls);
+  }, [module, method]);
+  const [nodes, setNodes, onNodesChange] = useNodesState(gen_nodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(gen_edges);
+  useEffect(() => {
+    setNodes(gen_nodes);
+    setEdges(gen_edges);
+  }, [gen_nodes, gen_edges]);
+  useEffect(() => {
+    fitView();
+  }, [nodes, edges]);
 
-  const flow = generateFlow(in_calls, method, out_calls, divMeasurements);
+  // layout related
 
+  const onLayout = useCallback(
+    (direction) => {
+      const layouted = getLayoutedElements(nodes, edges, { direction });
+      setNodes([...layouted.nodes]);
+      setEdges([...layouted.edges]);
+      fitView();
+    },
+    [nodes, edges]
+  );
+  console.log(nodes);
   return (
-    <div className="flow" ref={ref}>
-      <ReactFlow nodes={flow.nodes} edges={flow.edges} nodeTypes={nodeTypes}>
+    <div className="flow">
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={nodeTypes}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        fitView={fitView}
+      >
+        <LayoutPanel onLayout={onLayout}></LayoutPanel>
         <Background />
         <Controls />
       </ReactFlow>

@@ -1,7 +1,8 @@
 UI:
 . Modify Scrollbar style in methods col > looks good now, change later maybe
 . make all css classes consistent. use hyphens instead of underscores
-. reset graph when app is changed. sometimes edges of prev graph remain
+. fix layout issues - generate_call breaks the whole graph
+. modify node_type edge connection points based on layout direction to show nodes correctly
 
 Elixir:
 . Filter duplicates before generating calls

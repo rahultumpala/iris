@@ -1,5 +1,6 @@
 import { Flow } from "./Flow.jsx";
 import { MethodHeader } from "./MethodHeader.jsx";
+import { ReactFlowProvider } from "@xyflow/react";
 
 export function RightHalf() {
   return (
@@ -9,7 +10,9 @@ export function RightHalf() {
         <MethodHeader></MethodHeader>
 
         {/* React Flow UI */}
-        <Flow></Flow>
+        <ReactFlowProvider>
+          <Flow></Flow>
+        </ReactFlowProvider>
       </div>
     </>
   );
