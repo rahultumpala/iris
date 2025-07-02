@@ -156,7 +156,7 @@ defmodule Iris.Core do
 
     # return
     %Module{
-      application: String.split(mod_name_str) |> Enum.at(0),
+      application: String.split(mod_name_str, ".") |> Enum.at(0),
       module: mod_name_str,
       methods: methods,
       ex_doc: get_html_doc(mod_name_str, "moduledoc")

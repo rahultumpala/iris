@@ -29,7 +29,7 @@ function globalReducer(curState, action) {
     case "selectModule": {
       return {
         ...curState,
-        selectedModule: action.module,
+        ...chooseModuleAndDescendants(curState, action.module),
       };
     }
     case "selectMethod": {
@@ -40,7 +40,7 @@ function globalReducer(curState, action) {
     }
     case "setGlobalState": {
       // invoked only at the beginning of the app
-      console.log("Setting Global State");
+      console.log("Setting Global State", action.globalState);
       return action.globalState;
     }
     default: {
@@ -61,16 +61,33 @@ export function useGlobalDispatch() {
 }
 
 /* internal helpers */
-function chooseApplicationAndDescendants(app) {
-  const module = app.modules?.[0];
-  let method = module?.methods?.[0];
-  method =
-    method["html_type_text"] == "INT" || method["html_type_text"] == "EXT"
-      ? method
-      : null;
+function chooseModuleAndDescendants(state, module) {
+  const app = state.entity.applications.filter(
+    (app) => app.application === module.application
+  )[0]; // Possible bug when selected there's no app for selected module in loaded apps
+  const method = chooseMethod(module);
   return {
     selectedApplication: app,
     selectedModule: module,
     selectedMethod: method,
   };
+}
+
+function chooseApplicationAndDescendants(app) {
+  const module = app.modules?.[0];
+  const method = chooseMethod(module);
+  return {
+    selectedApplication: app,
+    selectedModule: module,
+    selectedMethod: method,
+  };
+}
+
+function chooseMethod(module) {
+  let method = module?.methods?.[0];
+  method =
+    method["html_type_text"] == "INT" || method["html_type_text"] == "EXT"
+      ? method
+      : null;
+  return method;
 }

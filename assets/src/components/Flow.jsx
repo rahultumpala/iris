@@ -81,17 +81,6 @@ function generateFlow(in_calls, method, out_calls) {
   };
 }
 
-function emptyGraph(ref, nodeTypes) {
-  return (
-    <div className="flow">
-      <ReactFlow ref={ref} nodes={[]} edges={[]} nodeTypes={nodeTypes}>
-        <Background />
-        <Controls />
-      </ReactFlow>
-    </div>
-  );
-}
-
 /*
 --------------------------------------
   Layout related
@@ -156,29 +145,30 @@ export function Flow() {
   };
   // layout related
   const { fitView } = useReactFlow();
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   const state = useGlobalState();
   const module = state.selectedModule;
   const method = state.selectedMethod;
 
-  if (module == null || method == null) return emptyGraph(ref, nodeTypes);
-
   // React JS sorcery to update [nodes] when [gen_nodes] changes and re-render correctly AFTER first render
-  const { gen_nodes, gen_edges } = useMemo(() => {
+  useMemo(() => {
+    if (module == null || method == null) {
+      setNodes([]);
+      setEdges([]);
+      return;
+    }
+
     const in_calls = get_calls(module, module.in_calls, method);
     const out_calls = get_calls(module, module.out_calls, method);
-    return generateFlow(in_calls, method, out_calls);
-  }, [module, method]);
-  const [nodes, setNodes, onNodesChange] = useNodesState(gen_nodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(gen_edges);
-  useEffect(() => {
+    const { gen_nodes, gen_edges } = generateFlow(in_calls, method, out_calls);
     setNodes(gen_nodes);
     setEdges(gen_edges);
-  }, [gen_nodes, gen_edges]);
+  }, [module, method]);
   useEffect(() => {
     fitView();
-  }, [nodes, edges]);
-
+  }, [module, method]);
   // layout related
 
   const onLayout = useCallback(
@@ -190,7 +180,6 @@ export function Flow() {
     },
     [nodes, edges]
   );
-  console.log(nodes);
   return (
     <div className="flow">
       <ReactFlow

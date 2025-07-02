@@ -1,10 +1,9 @@
 UI:
 . Modify Scrollbar style in methods col > looks good now, change later maybe
 . make all css classes consistent. use hyphens instead of underscores
-. fix layout issues - generate_call breaks the whole graph
 . modify node_type edge connection points based on layout direction to show nodes correctly
 
 Elixir:
-. Filter duplicates before generating calls
+. Filter duplicates before generating calls - selecting Jason app in UI
 . handle recursive code
 . Condense auto generated inline methods into parent method
