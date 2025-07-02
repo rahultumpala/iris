@@ -4,7 +4,6 @@ import {
   ReactFlow,
   Controls,
   Background,
-  Panel,
   useNodesState,
   useEdgesState,
   useReactFlow,
@@ -12,8 +11,13 @@ import {
 import "@xyflow/react/dist/style.css";
 
 import { useGlobalState } from "../ctx/globalContext.jsx";
-import { Callee, Caller, MethodNode } from "./Node.jsx";
-import { Button, ButtonGroup } from "flowbite-react";
+import {
+  nodeTypes,
+  alignNodesWithDirection,
+  toggleDagreGraphDirection,
+} from "./Node.jsx";
+import { LayoutPanel } from "./LayoutPanel.jsx";
+import { GlobalConstants } from "../constants.js";
 
 /*
 --------------------------------------
@@ -24,7 +28,7 @@ function generate_method_display_name(method) {
   return `${method.module}.${method.name}/${method.arity}`;
 }
 
-function generate_node(method, type) {
+function generate_node(method, node_type) {
   const name = generate_method_display_name(method);
   return {
     id: name,
@@ -33,7 +37,7 @@ function generate_node(method, type) {
       type: method.html_type_text,
       method,
     },
-    type,
+    type: node_type, // not to be confused with method type
   };
 }
 
@@ -63,12 +67,15 @@ function get_edges(in_nodes, method_node, out_nodes) {
 
 function generateFlow(in_calls, method, out_calls) {
   const in_nodes = in_calls.map((call, idx) =>
-    generate_node(call.method, "caller")
+    generate_node(call.method, GlobalConstants.CALLER_NODE_VERTICAL)
   );
   const out_nodes = out_calls.map((call, idx) =>
-    generate_node(call.method, "callee")
+    generate_node(call.method, GlobalConstants.CALLEE_NODE_VERTICAL)
   );
-  const method_node = generate_node(method, "methodNode");
+  const method_node = generate_node(
+    method,
+    GlobalConstants.METHOD_NODE_VERTICAL
+  );
   let nodes = [...in_nodes, method_node, ...out_nodes];
   nodes = nodes.map((node, idx, _) => {
     return { ...node, position: { x: 0, y: 100 * idx } };
@@ -86,28 +93,10 @@ function generateFlow(in_calls, method, out_calls) {
   Layout related
 */
 
-function LayoutPanel({ onLayout }) {
-  return (
-    <Panel position="top-right">
-      <ButtonGroup>
-        <Button
-          color="alternative"
-          className="text-sm"
-          onClick={() => onLayout("TB")}
-        >
-          vertical layout
-        </Button>
-        <Button color="alternative" onClick={() => onLayout("LR")}>
-          horizontal layout
-        </Button>
-      </ButtonGroup>
-    </Panel>
-  );
-}
-
 const getLayoutedElements = (nodes, edges, options) => {
   const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
-  g.setGraph({ rankdir: options.direction });
+  const dir = toggleDagreGraphDirection(options.direction);
+  g.setGraph({ rankdir: dir });
 
   edges.forEach((edge) => g.setEdge(edge.source, edge.target));
   nodes.forEach((node) =>
@@ -138,11 +127,6 @@ const getLayoutedElements = (nodes, edges, options) => {
 */
 
 export function Flow() {
-  const nodeTypes = {
-    caller: Caller,
-    callee: Callee,
-    methodNode: MethodNode,
-  };
   // layout related
   const { fitView } = useReactFlow();
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -174,7 +158,8 @@ export function Flow() {
   const onLayout = useCallback(
     (direction) => {
       const layouted = getLayoutedElements(nodes, edges, { direction });
-      setNodes([...layouted.nodes]);
+      const new_nodes = alignNodesWithDirection([...layouted.nodes]);
+      setNodes(new_nodes);
       setEdges([...layouted.edges]);
       fitView();
     },
@@ -185,7 +170,7 @@ export function Flow() {
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        nodeTypes={nodeTypes}
+        nodeTypes={nodeTypes()}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         fitView={fitView}
