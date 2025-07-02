@@ -131,6 +131,12 @@ export function Flow() {
   const { fitView } = useReactFlow();
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const layoutTrigger = (direction) => {
+    const layouted = getLayoutedElements(nodes, edges, { direction });
+    const new_nodes = alignNodesWithDirection([...layouted.nodes]);
+    setNodes(new_nodes);
+    setEdges([...layouted.edges]);
+  };
 
   const state = useGlobalState();
   const module = state.selectedModule;
@@ -143,7 +149,6 @@ export function Flow() {
       setEdges([]);
       return;
     }
-
     const in_calls = get_calls(module, module.in_calls, method);
     const out_calls = get_calls(module, module.out_calls, method);
     const { gen_nodes, gen_edges } = generateFlow(in_calls, method, out_calls);
@@ -155,16 +160,6 @@ export function Flow() {
   }, [module, method]);
   // layout related
 
-  const onLayout = useCallback(
-    (direction) => {
-      const layouted = getLayoutedElements(nodes, edges, { direction });
-      const new_nodes = alignNodesWithDirection([...layouted.nodes]);
-      setNodes(new_nodes);
-      setEdges([...layouted.edges]);
-      fitView();
-    },
-    [nodes, edges]
-  );
   return (
     <div className="flow">
       <ReactFlow
@@ -175,7 +170,7 @@ export function Flow() {
         onEdgesChange={onEdgesChange}
         fitView={fitView}
       >
-        <LayoutPanel onLayout={onLayout}></LayoutPanel>
+        <LayoutPanel onLayout={layoutTrigger}></LayoutPanel>
         <Background />
         <Controls />
       </ReactFlow>

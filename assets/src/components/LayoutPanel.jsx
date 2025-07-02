@@ -1,6 +1,6 @@
 import { Panel } from "@xyflow/react";
 import { ButtonGroup, Button } from "flowbite-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 const H = "View Horizontal";
 const V = "View Vertical";

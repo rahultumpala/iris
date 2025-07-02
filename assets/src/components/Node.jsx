@@ -24,7 +24,7 @@ function SourceHandle({ dir }) {
   }
 }
 
-function TargetHandle(dir) {
+function TargetHandle({ dir }) {
   switch (dir) {
     case "H": {
       return (
