@@ -1,3 +1,4 @@
+Fixes:
 UI:
 . Modify Scrollbar style in methods col > looks good now, change later maybe
 . make all css classes consistent. use hyphens instead of underscores
@@ -6,3 +7,10 @@ Elixir:
 . Filter duplicates before generating calls - selecting Jason app in UI
 . handle recursive code
 . Condense auto generated inline methods into parent method
+
+
+Features:
+. show documentation
+. make the nodes in graph clickable & show popups (with documentation and other info)
+. expand paths by clicking on nodes in graph - maybe a button for this? like play |> button
+. global git revision changing option (re-render whole UI based on git revision [branch, commit] basis)
