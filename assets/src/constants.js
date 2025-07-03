@@ -4,5 +4,6 @@ export const GlobalConstants = {
     CALLEE_NODE_VERTICAL: "callee_v",
     CALLEE_NODE_HORIZONTAL: "callee_h",
     METHOD_NODE_VERTICAL: "method_node_v",
-    METHOD_NODE_HORIZONTAL: "method_node_h"
+    METHOD_NODE_HORIZONTAL: "method_node_h",
+    DEFAULT_GRAPH_DIRECTION: "V", // initial direction - if changed then change initial node types in Flow.jsx nodes also
 };

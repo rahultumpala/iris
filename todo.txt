@@ -1,7 +1,6 @@
 UI:
 . Modify Scrollbar style in methods col > looks good now, change later maybe
 . make all css classes consistent. use hyphens instead of underscores
-. modify node_type edge connection points based on layout direction to show nodes correctly
 
 Elixir:
 . Filter duplicates before generating calls - selecting Jason app in UI

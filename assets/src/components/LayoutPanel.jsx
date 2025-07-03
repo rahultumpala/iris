@@ -1,23 +1,26 @@
 import { Panel } from "@xyflow/react";
 import { ButtonGroup, Button } from "flowbite-react";
 import { useEffect, useState } from "react";
+import { GlobalConstants } from "../constants";
 
 const H = "View Horizontal";
 const V = "View Vertical";
 
 export function LayoutPanel({ onLayout }) {
-  // initial direction is V so setting display text to H
-  const displayText = H;
-  const [text, setText] = useState(displayText);
+  const toggleDir = (dir) => {
+    if (dir == "H") return "V";
+    else return "H";
+  };
+  const getText = (dir) => {
+    if (dir == "H") return V;
+    return H;
+  };
 
-  // initial direction - if changed then change initial node types in Flow.jsx nodes also
-  const initialDir = "V";
+  const initialDir = GlobalConstants.DEFAULT_GRAPH_DIRECTION;
   const [dir, setDir] = useState(initialDir);
 
-  const toggleDir = (dir) => {
-    if (dir == "H") setDir("V");
-    else setDir("H");
-  };
+  const displayText = getText(dir);
+  const [text, setText] = useState(displayText);
 
   useEffect(() => {
     if (dir == "V") setText(H);
@@ -31,8 +34,9 @@ export function LayoutPanel({ onLayout }) {
           color="alternative"
           className="text-sm"
           onClick={() => {
-            toggleDir(dir);
-            onLayout(dir);
+            const new_dir = toggleDir(dir);
+            setDir(new_dir);
+            onLayout(new_dir);
           }}
         >
           {text}

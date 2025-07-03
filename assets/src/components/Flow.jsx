@@ -14,7 +14,7 @@ import { useGlobalState } from "../ctx/globalContext.jsx";
 import {
   nodeTypes,
   alignNodesWithDirection,
-  toggleDagreGraphDirection,
+  getDagreGraphDirection,
 } from "./Node.jsx";
 import { LayoutPanel } from "./LayoutPanel.jsx";
 import { GlobalConstants } from "../constants.js";
@@ -95,15 +95,15 @@ function generateFlow(in_calls, method, out_calls) {
 
 const getLayoutedElements = (nodes, edges, options) => {
   const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
-  const dir = toggleDagreGraphDirection(options.direction);
+  const dir = getDagreGraphDirection(options.direction);
   g.setGraph({ rankdir: dir });
 
   edges.forEach((edge) => g.setEdge(edge.source, edge.target));
   nodes.forEach((node) =>
     g.setNode(node.id, {
       ...node,
-      width: node.measured?.width ?? 0,
-      height: node.measured?.height ?? 0,
+      width: node.measured?.width ?? 300,
+      height: node.measured?.height ?? 100,
     })
   );
 
@@ -128,14 +128,19 @@ const getLayoutedElements = (nodes, edges, options) => {
 
 export function Flow() {
   // layout related
-  const { fitView } = useReactFlow();
+  const reactFlow = useReactFlow();
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const layoutTrigger = (direction) => {
-    const layouted = getLayoutedElements(nodes, edges, { direction });
-    const new_nodes = alignNodesWithDirection([...layouted.nodes]);
+  const layoutTrigger = (direction, new_nodes, new_edges) => {
+    const layouted = getLayoutedElements(
+      new_nodes ? new_nodes : nodes,
+      new_edges ? new_edges : edges,
+      { direction }
+    );
+    new_nodes = alignNodesWithDirection([...layouted.nodes], direction);
     setNodes(new_nodes);
     setEdges([...layouted.edges]);
+    reactFlow.fitView();
   };
 
   const state = useGlobalState();
@@ -152,11 +157,11 @@ export function Flow() {
     const in_calls = get_calls(module, module.in_calls, method);
     const out_calls = get_calls(module, module.out_calls, method);
     const { gen_nodes, gen_edges } = generateFlow(in_calls, method, out_calls);
-    setNodes(gen_nodes);
-    setEdges(gen_edges);
-  }, [module, method]);
-  useEffect(() => {
-    fitView();
+    layoutTrigger(
+      GlobalConstants.DEFAULT_GRAPH_DIRECTION,
+      gen_nodes,
+      gen_edges
+    );
   }, [module, method]);
   // layout related
 
@@ -168,7 +173,10 @@ export function Flow() {
         nodeTypes={nodeTypes()}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        fitView={fitView}
+        fitView={true}
+        onInit={() => {
+          reactFlow.fitView()
+        }}
       >
         <LayoutPanel onLayout={layoutTrigger}></LayoutPanel>
         <Background />

@@ -91,11 +91,11 @@ function Method_V({ data }) {
   return <MethodNode dir={"V"} data={data} />;
 }
 
-export function alignNodesWithDirection(nodes) {
+export function alignNodesWithDirection(nodes, dir) {
   return nodes.map((node) => {
     return {
       ...node,
-      type: toggleNodeType(node.type),
+      type: getNodeType(node.type, dir),
     };
   });
 }
@@ -111,36 +111,33 @@ export function nodeTypes() {
   };
 }
 
-export function toggleDagreGraphDirection(dir) {
+export function getDagreGraphDirection(dir) {
   switch (dir) {
-    case "H": {
+    case "V": {
       return "TB";
     }
-    case "V": {
+    case "H": {
       return "LR";
     }
   }
 }
 
-function toggleNodeType(type) {
+function getNodeType(type, dir) {
   switch (type) {
-    case GlobalConstants.CALLEE_NODE_HORIZONTAL: {
-      return GlobalConstants.CALLEE_NODE_VERTICAL;
-    }
-    case GlobalConstants.CALLEE_NODE_VERTICAL: {
-      return GlobalConstants.CALLEE_NODE_HORIZONTAL;
-    }
-    case GlobalConstants.CALLER_NODE_HORIZONTAL: {
-      return GlobalConstants.CALLER_NODE_VERTICAL;
-    }
-    case GlobalConstants.CALLER_NODE_VERTICAL: {
-      return GlobalConstants.CALLER_NODE_HORIZONTAL;
-    }
-    case GlobalConstants.METHOD_NODE_HORIZONTAL: {
-      return GlobalConstants.METHOD_NODE_VERTICAL;
-    }
-    case GlobalConstants.METHOD_NODE_VERTICAL: {
-      return GlobalConstants.METHOD_NODE_HORIZONTAL;
-    }
+    case GlobalConstants.CALLER_NODE_HORIZONTAL:
+    case GlobalConstants.CALLER_NODE_VERTICAL:
+      return dir == "H"
+        ? GlobalConstants.CALLER_NODE_HORIZONTAL
+        : GlobalConstants.CALLER_NODE_VERTICAL;
+    case GlobalConstants.CALLEE_NODE_HORIZONTAL:
+    case GlobalConstants.CALLEE_NODE_VERTICAL:
+      return dir == "H"
+        ? GlobalConstants.CALLEE_NODE_HORIZONTAL
+        : GlobalConstants.CALLEE_NODE_VERTICAL;
+    case GlobalConstants.METHOD_NODE_HORIZONTAL:
+    case GlobalConstants.METHOD_NODE_VERTICAL:
+      return dir == "H"
+        ? GlobalConstants.METHOD_NODE_HORIZONTAL
+        : GlobalConstants.METHOD_NODE_VERTICAL;
   }
 }
