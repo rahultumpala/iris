@@ -140,7 +140,6 @@ export function Flow() {
     new_nodes = alignNodesWithDirection([...layouted.nodes], direction);
     setNodes(new_nodes);
     setEdges([...layouted.edges]);
-    reactFlow.fitView();
   };
 
   const state = useGlobalState();
@@ -171,11 +170,14 @@ export function Flow() {
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes()}
-        onNodesChange={onNodesChange}
+        onNodesChange={() => {
+          reactFlow.fitView();
+          return onNodesChange;
+        }}
         onEdgesChange={onEdgesChange}
         fitView={true}
         onInit={() => {
-          reactFlow.fitView()
+          reactFlow.fitView();
         }}
       >
         <LayoutPanel onLayout={layoutTrigger}></LayoutPanel>
