@@ -24,6 +24,7 @@ body {
 .application_item {
   width: 100%;
   cursor: pointer;
+  color: black;
 }
 
 .sidebar {
@@ -88,7 +89,7 @@ body {
 
 .clickable-method .method-type {
   background-color: rgb(31, 31, 31);
-  color: white;
+  /* color: white; */
   padding: 2px 5px;
   margin: 0 0 0 2em;
   border-radius: 5px;

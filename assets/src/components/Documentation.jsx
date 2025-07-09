@@ -6,7 +6,7 @@ export function Documentation({}) {
 
   return (
     <Card className="max-w-sm">
-      <h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+      <h5 className="text-xl font-bold tracking-tight text-gray-900">
         Documentation
       </h5>
     </Card>
