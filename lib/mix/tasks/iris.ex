@@ -2,6 +2,12 @@ defmodule Mix.Tasks.Iris do
   use Mix.Task
   alias Iris.Core
 
+  @moduledoc ~S"""
+  Generates an interactive web page from project sources.
+  """
+  @shortdoc "Generates iris view for the project"
+  @requirements ["compile", "app.config"]
+
   @doc false
   def run(args, config \\ Mix.Project.config()) do
     {:ok, _} = Application.ensure_all_started(:iris)
@@ -17,7 +23,6 @@ defmodule Mix.Tasks.Iris do
       Mix.raise("Extraneous arguments on the command line")
     end
 
-    IO.puts("\nYay! I have a working Mix Task")
     IO.inspect({"Project Config", config})
 
     core_entity = Core.build(config)
