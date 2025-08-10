@@ -2,6 +2,7 @@ Fixes:
 UI:
 . Modify Scrollbar style in methods col > looks good now, change later maybe
 . make all css classes consistent. use hyphens instead of underscores
+. View vertical/horizontal doesn't change to default when direction is toggled and a new method is selected.
 
 Elixir:
 . Filter duplicates before generating calls - selecting Jason app in UI

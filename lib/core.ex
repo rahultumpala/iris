@@ -5,8 +5,8 @@ defmodule Iris.Core do
   alias Iris.Entity.Module.Method
   alias Iris.Entity.Module.Method.Call
 
-  def build() do
-    files = get_beam_files()
+  def build(config) do
+    files = get_beam_files(config)
     modules = Enum.map(files, &build_from_beam_file/1)
     apps = build_applications(modules)
 
@@ -163,8 +163,8 @@ defmodule Iris.Core do
     }
   end
 
-  def get_beam_files() do
-    main_mod = Elixir.Application.get_application(__MODULE__) |> Atom.to_string()
+  def get_beam_files(config) do
+    main_mod = Keyword.get(config, :app) |> Atom.to_string()
     path = File.cwd!() <> "/_build/dev/lib/" <> main_mod <> "/ebin/"
 
     files =

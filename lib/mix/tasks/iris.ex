@@ -20,7 +20,7 @@ defmodule Mix.Tasks.Iris do
     IO.puts("\nYay! I have a working Mix Task")
     IO.inspect({"Project Config", config})
 
-    core_entity = Core.build()
+    core_entity = Core.build(config)
     {:ok, json} = Jason.encode(core_entity, [{:escape, :unicode_safe}, {:pretty, true}])
 
     path = "assets/entity.json"

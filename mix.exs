@@ -24,7 +24,6 @@ defmodule Iris.MixProject do
     [
       {:floki, ">= 0.37.0"},
       {:jason, "~> 1.2"},
-      {:ex_doc, "~> 0.34"}
     ]
   end
 
