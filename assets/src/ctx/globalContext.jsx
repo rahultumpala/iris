@@ -86,7 +86,7 @@ function chooseApplicationAndDescendants(app) {
 function chooseMethod(module) {
   let method = module?.methods?.[0];
   method =
-    method["html_type_text"] == "INT" || method["html_type_text"] == "EXT"
+    method["html_type_text"] == "INT" || method["html_type_text"] == "EXP"
       ? method
       : null;
   return method;

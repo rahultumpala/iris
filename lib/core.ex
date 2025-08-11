@@ -135,7 +135,7 @@ defmodule Iris.Core do
             %Method{method | html_type_text: "AGF"}
 
           Map.has_key?(labeled_exports_map, {method.name, method.arity}) ->
-            %Method{method | is_export: true, html_type_text: "EXT", view: true}
+            %Method{method | is_export: true, html_type_text: "EXP", view: true}
 
           Map.has_key?(locals_map, {method.name, method.arity}) ->
             %Method{method | html_type_text: "INT", view: true}
@@ -147,8 +147,8 @@ defmodule Iris.Core do
       # EXT > INT > AGF
       |> Enum.sort(fn ma, mb ->
         case {ma.html_type_text, mb.html_type_text} do
-          {"EXT", "INT"} -> true
-          {"EXT", "AGF"} -> true
+          {"EXP", "INT"} -> true
+          {"EXP", "AGF"} -> true
           {"INT", "AGF"} -> true
           _ -> false
         end

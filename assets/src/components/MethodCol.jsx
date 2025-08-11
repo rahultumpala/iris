@@ -28,7 +28,7 @@ function MethodItem({ method }) {
   };
 
   const clickable =
-    method.html_type_text == "INT" || method.html_type_text == "EXT";
+    method.html_type_text == "INT" || method.html_type_text == "EXP";
 
   const attributes = {
     onClick: clickable ? selectMethod : null,
