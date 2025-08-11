@@ -92,7 +92,7 @@ defmodule Iris.Core do
       |> Enum.map(fn {type, name, arity, _label, code} ->
         method = %Method{
           name: Atom.to_string(name),
-          arity: arity,
+          arity: Integer.to_string(arity),
           module: mod_name_str,
           type: Atom.to_string(type),
           compiled_code: code,
@@ -106,39 +106,58 @@ defmodule Iris.Core do
     # Filter out auto generated methods
     labeled_exports_map =
       labeled_exports
-      |> Enum.group_by(fn {name, arity, _label} -> {Atom.to_string(name), arity} end)
+      |> Enum.group_by(fn {name, arity, _label} -> {Atom.to_string(name), Integer.to_string(arity)} end)
 
-    auto_generated =
+    # Condense auto generated inlined, intermediate methods into the actual one
+    # turns list into map
+    methods =
+      methods
+      |> Enum.reduce(%{}, fn method, acc ->
+        {name, arity} = {method.name, method.arity}
+        {name, arity} = extract_name_from_auto_generated(name, arity)
+
+        # append call instructions if already found one method (auto generated or actual) with same name
+        if Map.has_key?(acc, {name, arity}) do
+          actual_method = Map.get(acc, {name, arity})
+
+          actual_method = %Method{
+            actual_method
+            | call_instructions: actual_method.call_instructions ++ method.call_instructions
+          }
+
+          # return new acc with updated method
+          Map.put(acc, {name, arity}, actual_method)
+        else
+          # put method in acc with {name, arity} as key
+          Map.put(acc, {name, arity}, method)
+        end
+      end)
+
+    # reverts map into list
+    methods = Map.values(methods)
+
+    # filters auto generated methods
+    methods =
       methods
       |> Enum.filter(fn method ->
-        line =
-          case method.compiled_code do
-            [{:line, number} | _rest] -> number
-            _ -> -1
-          end
-
-        String.starts_with?(method.name, "-") ||
-          String.starts_with?(method.name, "__") ||
-          line == 0 ||
-          !(Map.has_key?(locals_map, {method.name, method.arity}) ||
-              Map.has_key?(labeled_exports_map, {method.name, method.arity}))
+        # all methods that do not match the following regex.
+        !(Regex.match?(~r/^-inlined(.*)-$/, method.name) ||
+            Regex.match?(~r/^-(.*)-(fun|inlined)-(.*)-$/, method.name))
       end)
-      |> Enum.into(%{}, fn method -> {{method.name, method.arity}, method} end)
 
     # Assign html type text
     methods =
       methods
       |> Enum.map(fn method ->
         cond do
-          # Auto Generated Function
-          Map.has_key?(auto_generated, {method.name, method.arity}) ->
-            %Method{method | html_type_text: "AGF"}
-
           Map.has_key?(labeled_exports_map, {method.name, method.arity}) ->
             %Method{method | is_export: true, html_type_text: "EXP", view: true}
 
           Map.has_key?(locals_map, {method.name, method.arity}) ->
             %Method{method | html_type_text: "INT", view: true}
+
+          true ->
+            method
         end
       end)
       |> Enum.map(fn method ->
@@ -161,6 +180,29 @@ defmodule Iris.Core do
       methods: methods,
       ex_doc: get_html_doc(mod_name_str, "moduledoc")
     }
+  end
+
+  # returns {name, arity} from auto generated methods
+  # "-inlined-__help__/1-" --> {"__help__", 1}
+  # "-build_applications/1-(fun|inlined)-1-" --> {"build_applications", 1}
+  defp extract_name_from_auto_generated(name, arity) do
+    cond do
+      # anchors ^ and $ for precision matching
+      Regex.match?(~r/^-inlined(.*)-$/, name) ->
+        %{"name" => name, "arity" => arity} =
+          Regex.named_captures(~r/(-inlined-)(?<name>.*)\/(?<arity>.*)-/, name)
+
+        {name, arity}
+
+      Regex.match?(~r/^-(.*)-(fun|inlined)-(.*)-$/, name) ->
+        %{"name" => name, "arity" => arity} =
+          Regex.named_captures(~r/^(-)(?<name>.*)\/(?<arity>.*)-(fun|inlined)-(.*)-/, name)
+
+        {name, arity}
+
+      true ->
+        {name, arity}
+    end
   end
 
   def get_beam_files(config) do
@@ -216,7 +258,10 @@ defmodule Iris.Core do
           {m, f, a}
 
         inst ->
-          IO.inspect("get_out_calls Not implemented for instruction type #{inst}")
+          IO.inspect(
+            {"FATAL : EXITING : get_out_calls Not implemented for instruction type ", inst}
+          )
+
           System.halt(1)
       end
     end)
@@ -230,6 +275,12 @@ defmodule Iris.Core do
         true ->
           {m, f, a}
       end
+    end)
+    |> Enum.map(fn {m, f, a} ->
+      # using Integer.to_string to avoid failures when checking
+      # todo: fix this. standardize arity as string/integer in the entire code.
+      {f, a} = extract_name_from_auto_generated(f, Integer.to_string(a))
+      {m, f, a}
     end)
   end
 
