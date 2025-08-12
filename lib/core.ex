@@ -74,7 +74,38 @@ defmodule Iris.Core do
   end
 
   defp build_from_beam_file({beam_bin, file}) do
-    # Get local methods
+    {:beam_file, mod_name, labeled_exports, _attributes, _compile_info, compiled_code} = file
+
+    # private methods grouped by {name, arity}
+    locals_map = extract_locals_from_beam(beam_bin)
+
+    # exported methods - group labeled exports by {name, arity}
+    labeled_exports_map =
+      labeled_exports
+      |> Enum.group_by(fn {name, arity, _label} ->
+        {Atom.to_string(name), Integer.to_string(arity)}
+      end)
+
+    mod_name_str = mod_name |> Atom.to_string() |> String.split("Elixir.") |> Enum.at(1)
+
+    methods =
+      build_methods(compiled_code, mod_name_str)
+      |> condense_methods()
+      |> filter_auto_generated()
+      |> assign_html_type_text(labeled_exports_map, locals_map, mod_name_str)
+      |> sort_methods()
+
+    # return
+    %Module{
+      application: String.split(mod_name_str, ".") |> Enum.at(0),
+      module: mod_name_str,
+      methods: methods,
+      ex_doc: "" # TODO: take help of ex_doc for this.
+    }
+  end
+
+  # Extracts defined private methods from beam binary, groups them by {name, arity} and returns a map.
+  defp extract_locals_from_beam(beam_bin) do
     {:ok, {_, [{:locals, local_methods}]}} =
       :beam_lib.chunks(beam_bin, [:locals])
 
@@ -83,32 +114,27 @@ defmodule Iris.Core do
       |> Enum.filter(fn {name, _arity} -> !String.starts_with?(name, "-") end)
       |> Enum.group_by(fn {name, arity} -> {name, arity} end)
 
-    {:beam_file, mod_name, labeled_exports, _attributes, _compile_info, compiled_code} = file
+    locals_map
+  end
 
-    mod_name_str = mod_name |> Atom.to_string() |> String.split("Elixir.") |> Enum.at(1)
+  # builds a list of %Method{} from compiled_code extracted from beam binary
+  defp build_methods(compiled_code, mod_name_str) do
+    compiled_code
+    |> Enum.map(fn {type, name, arity, _label, code} ->
+      %Method{
+        name: Atom.to_string(name),
+        arity: Integer.to_string(arity),
+        module: mod_name_str,
+        type: Atom.to_string(type),
+        compiled_code: code,
+        call_instructions: code |> get_call_instructions()
+      }
+    end)
+  end
 
-    methods =
-      compiled_code
-      |> Enum.map(fn {type, name, arity, _label, code} ->
-        method = %Method{
-          name: Atom.to_string(name),
-          arity: Integer.to_string(arity),
-          module: mod_name_str,
-          type: Atom.to_string(type),
-          compiled_code: code,
-          call_instructions: code |> get_call_instructions()
-        }
-
-        method
-      end)
-      |> Enum.filter(fn method -> method != nil end)
-
-    # Filter out auto generated methods
-    labeled_exports_map =
-      labeled_exports
-      |> Enum.group_by(fn {name, arity, _label} -> {Atom.to_string(name), Integer.to_string(arity)} end)
-
-    # Condense auto generated inlined, intermediate methods into the actual one
+  # Condense auto generated inlined, intermediate methods into the actual one
+  # expects method list with each item being %Method{} struct
+  defp condense_methods(methods) do
     # turns list into map
     methods =
       methods
@@ -136,50 +162,20 @@ defmodule Iris.Core do
     # reverts map into list
     methods = Map.values(methods)
 
-    # filters auto generated methods
-    methods =
-      methods
-      |> Enum.filter(fn method ->
-        # all methods that do not match the following regex.
-        !(Regex.match?(~r/^-inlined(.*)-$/, method.name) ||
-            Regex.match?(~r/^-(.*)-(fun|inlined)-(.*)-$/, method.name))
-      end)
+    methods
+  end
 
-    # Assign html type text
-    methods =
-      methods
-      |> Enum.map(fn method ->
-        cond do
-          Map.has_key?(labeled_exports_map, {method.name, method.arity}) ->
-            %Method{method | is_export: true, html_type_text: "EXP", view: true}
-
-          Map.has_key?(locals_map, {method.name, method.arity}) ->
-            %Method{method | html_type_text: "INT", view: true}
-
-          true ->
-            method
-        end
-      end)
-      |> Enum.map(fn method ->
-        %Method{method | ex_doc: get_html_doc(mod_name_str, "#{method.name}/#{method.arity}")}
-      end)
-      # EXT > INT > AGF
-      |> Enum.sort(fn ma, mb ->
-        case {ma.html_type_text, mb.html_type_text} do
-          {"EXP", "INT"} -> true
-          {"EXP", "AGF"} -> true
-          {"INT", "AGF"} -> true
-          _ -> false
-        end
-      end)
-
-    # return
-    %Module{
-      application: String.split(mod_name_str, ".") |> Enum.at(0),
-      module: mod_name_str,
-      methods: methods,
-      ex_doc: get_html_doc(mod_name_str, "moduledoc")
-    }
+  # filters auto generated methods
+  # these methods are condensed into actual defined ones in [condense_methods/2]
+  # and are no longer required to be part of [methods] list
+  defp filter_auto_generated(methods) do
+    methods
+    |> Enum.filter(fn method ->
+      # all methods that do not match the following regex.
+      # this is the same regex used in [extract_name_from_auto_generated/2]
+      !(Regex.match?(~r/^-inlined(.*)-$/, method.name) ||
+          Regex.match?(~r/^-(.*)-(fun|inlined)-(.*)-$/, method.name))
+    end)
   end
 
   # returns {name, arity} from auto generated methods
@@ -203,6 +199,34 @@ defmodule Iris.Core do
       true ->
         {name, arity}
     end
+  end
+
+  # assigns the text EXP(when found in exports) or INT(when found in locals)
+  defp assign_html_type_text(methods, exports_map, locals_map, mod_name_str) do
+    methods
+    |> Enum.map(fn method ->
+      cond do
+        Map.has_key?(exports_map, {method.name, method.arity}) ->
+          %Method{method | is_export: true, html_type_text: "EXP", view: true}
+
+        Map.has_key?(locals_map, {method.name, method.arity}) ->
+          %Method{method | html_type_text: "INT", view: true}
+
+        true ->
+          method
+      end
+    end)
+  end
+
+  # sort based on the criteria EXP > INT
+  defp sort_methods(methods) do
+    methods
+    |> Enum.sort(fn ma, mb ->
+      case {ma.html_type_text, mb.html_type_text} do
+        {"EXP", "INT"} -> true
+        _ -> false
+      end
+    end)
   end
 
   def get_beam_files(config) do
@@ -282,26 +306,6 @@ defmodule Iris.Core do
       {f, a} = extract_name_from_auto_generated(f, Integer.to_string(a))
       {m, f, a}
     end)
-  end
-
-  defp get_html_doc(mod_name_str, selector) do
-    with {:ok, cwd} <- File.cwd(),
-         doc_path <- cwd <> "/doc",
-         file_path <- doc_path <> "/#{mod_name_str}.html",
-         true <- File.dir?(doc_path),
-         true <- File.exists?(file_path),
-         {:ok, html} <- File.read(file_path),
-         {:ok, document} <- Floki.parse_document(html) do
-      case Floki.get_by_id(document, selector) do
-        nil -> nil
-        html_node -> Floki.raw_html(html_node)
-      end
-    else
-      # probably just no docs
-      false -> nil
-      # match any un expected result and return nil
-      e -> IO.inspect({"Unexpected error while fetching html docs", e})
-    end
   end
 
   defp flatten_all_methods(apps) do
