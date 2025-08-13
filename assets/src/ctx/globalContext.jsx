@@ -41,7 +41,17 @@ function globalReducer(curState, action) {
     case "setGlobalState": {
       // invoked only at the beginning of the app
       console.log("Setting Global State", action.globalState);
-      return action.globalState;
+      return {
+        ...action.globalState,
+        // Default Flow direction, Toggle Button Text
+        flowDirection: "V",
+        flowDirectionToggleText: "View Horizontal",
+      };
+    }
+    case "toggleFlowDirection": {
+      // ignores the action as this is only a toggle.
+      console.log(curState, toggleFlowDirection(curState));
+      return toggleFlowDirection(curState);
     }
     default: {
       throw Error("Unknown action: " + action.type);
@@ -90,4 +100,16 @@ function chooseMethod(module) {
       ? method
       : null;
   return method;
+}
+
+function toggleFlowDirection(state) {
+  let currentDir = state.flowDirection;
+  let newDir = currentDir == "H" ? "V" : "H";
+  let displayText = newDir == "H" ? "View Vertical" : "View Horizontal";
+
+  return {
+    ...state,
+    flowDirection: newDir,
+    flowDirectionToggleText: displayText,
+  };
 }

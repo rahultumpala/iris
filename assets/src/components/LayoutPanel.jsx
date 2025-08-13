@@ -1,31 +1,22 @@
 import { Panel } from "@xyflow/react";
 import { ButtonGroup, Button } from "flowbite-react";
-import { useEffect, useState } from "react";
-import { GlobalConstants } from "../constants";
+import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
 
-const H = "View Horizontal";
-const V = "View Vertical";
+export function LayoutPanel({}) {
+  /*
+   state is not being used, it is here to listen to changes
+   and to reset the direction toggle button.
+  */
+  const state = useGlobalState();
+  const dispatch = useGlobalDispatch();
 
-export function LayoutPanel({ onLayout }) {
-  const toggleDir = (dir) => {
-    if (dir == "H") return "V";
-    else return "H";
+  const toggleDirection = () => {
+    dispatch({
+      type: "toggleFlowDirection",
+    });
   };
-  const getText = (dir) => {
-    if (dir == "H") return V;
-    return H;
-  };
 
-  const initialDir = GlobalConstants.DEFAULT_GRAPH_DIRECTION;
-  const [dir, setDir] = useState(initialDir);
-
-  const displayText = getText(dir);
-  const [text, setText] = useState(displayText);
-
-  useEffect(() => {
-    if (dir == "V") setText(H);
-    else setText(V);
-  }, [dir]);
+  const text = state.flowDirectionToggleText;
 
   return (
     <Panel position="top-right">
@@ -33,11 +24,7 @@ export function LayoutPanel({ onLayout }) {
         <Button
           color="alternative"
           className="text-sm"
-          onClick={() => {
-            const new_dir = toggleDir(dir);
-            setDir(new_dir);
-            onLayout(new_dir);
-          }}
+          onClick={toggleDirection}
         >
           {text}
         </Button>

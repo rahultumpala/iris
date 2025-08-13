@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useEffect } from "react";
+import { useMemo } from "react";
 import Dagre from "@dagrejs/dagre";
 import {
   ReactFlow,
@@ -145,6 +145,7 @@ export function Flow() {
   const state = useGlobalState();
   const module = state.selectedModule;
   const method = state.selectedMethod;
+  const flowDirection = state.flowDirection;
 
   // React JS sorcery to update [nodes] when [gen_nodes] changes and re-render correctly AFTER first render
   useMemo(() => {
@@ -156,12 +157,8 @@ export function Flow() {
     const in_calls = get_calls(module, module.in_calls, method);
     const out_calls = get_calls(module, module.out_calls, method);
     const { gen_nodes, gen_edges } = generateFlow(in_calls, method, out_calls);
-    layoutTrigger(
-      GlobalConstants.DEFAULT_GRAPH_DIRECTION,
-      gen_nodes,
-      gen_edges
-    );
-  }, [module, method]);
+    layoutTrigger(flowDirection, gen_nodes, gen_edges);
+  }, [module, method, flowDirection]);
   // layout related
 
   return (
