@@ -46,6 +46,7 @@ defmodule Iris.Entity.Module do
       :tooltip_text, # populated in the encoder
       view: false,
       is_export: false,
+      is_recursive: false,
       html_type_text: "INT",
       call_instructions: []
     ]

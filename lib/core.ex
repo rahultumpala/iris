@@ -18,7 +18,7 @@ defmodule Iris.Core do
     all_out_calls =
       Enum.reduce(all_methods, %{}, fn method, acc ->
         calls =
-          get_out_calls(method.call_instructions)
+          method.call_instructions
           |> Enum.map(&generate_call(&1, all_methods))
 
         Map.put(acc, method, calls)
@@ -94,13 +94,16 @@ defmodule Iris.Core do
       |> filter_auto_generated()
       |> assign_html_type_text(labeled_exports_map, locals_map, mod_name_str)
       |> sort_methods()
+      |> Enum.map(&normalize_call_instructions/1)
+      |> Enum.map(&filter_recursive_calls/1)
 
     # return
     %Module{
       application: String.split(mod_name_str, ".") |> Enum.at(0),
       module: mod_name_str,
       methods: methods,
-      ex_doc: "" # TODO: take help of ex_doc for this.
+      # TODO: take help of ex_doc for this.
+      ex_doc: ""
     }
   end
 
@@ -276,42 +279,65 @@ defmodule Iris.Core do
   end
 
   # returns the instruction in {m,f,a} format
-  # see [get_call_instructions/1] return type to understand [instructions] format
-  defp get_out_calls(instructions) do
-    instructions
-    |> Enum.map(fn instr ->
-      case instr do
-        {_call_inst, _arity, {:extfunc, m, f, a}} ->
-          {m, f, a}
+  # see [get_call_instructions/1] return type to understand instruction format
+  defp normalize_call_instructions(method) do
+    normalized_instr =
+      method.call_instructions
+      |> Enum.map(fn instr ->
+        case instr do
+          {_call_inst, _arity, {:extfunc, m, f, a}} ->
+            {m, f, a}
 
-        {_call_inst, _arity, {m, f, a}} ->
-          {m, f, a}
+          {_call_inst, _arity, {m, f, a}} ->
+            {m, f, a}
 
-        inst ->
-          IO.inspect(
-            {"FATAL : EXITING : get_out_calls Not implemented for instruction type ", inst}
-          )
+          inst ->
+            IO.inspect(
+              {"FATAL : EXITING : [normalize_call_instructions/1] not implemented for instruction type ",
+               inst}
+            )
 
-          System.halt(1)
-      end
-    end)
-    |> Enum.map(fn {m, f, a} -> {Atom.to_string(m), Atom.to_string(f), a} end)
-    |> Enum.map(fn {m, f, a} ->
-      cond do
-        String.starts_with?(m, "Elixir.") ->
-          m = m |> String.split("Elixir.") |> Enum.at(1)
-          {m, f, a}
+            System.halt(1)
+        end
+      end)
+      |> Enum.map(fn {m, f, a} -> {Atom.to_string(m), Atom.to_string(f), a} end)
+      |> Enum.map(fn {m, f, a} ->
+        cond do
+          String.starts_with?(m, "Elixir.") ->
+            m = m |> String.split("Elixir.") |> Enum.at(1)
+            {m, f, a}
 
-        true ->
-          {m, f, a}
-      end
-    end)
-    |> Enum.map(fn {m, f, a} ->
-      # using Integer.to_string to avoid inequality during comparison while generating calls
-      # todo: fix this. standardize arity as string/integer in the entire code.
-      {f, a} = extract_name_from_auto_generated(f, Integer.to_string(a))
-      {m, f, a}
-    end)
+          true ->
+            {m, f, a}
+        end
+      end)
+      |> Enum.map(fn {m, f, a} ->
+        # using Integer.to_string to avoid inequality during comparison while generating calls
+        # todo: fix this. standardize arity as string/integer in the entire code.
+        {f, a} = extract_name_from_auto_generated(f, Integer.to_string(a))
+        {m, f, a}
+      end)
+
+    %Method{method | call_instructions: normalized_instr}
+  end
+
+  # divides instructions into recursive and non-recursive
+  # if more than one recursive instruction is found method is flagged as recursive and only non_recursive instructions are returned
+  # else return all instructions
+  defp filter_recursive_calls(method) do
+    {recursive_calls, non_recursive_calls} =
+      method.call_instructions
+      |> Enum.reduce({[], []}, fn {m, f, a} = call, {rec, non_rec} ->
+        cond do
+          m == method.module && f == method.name && a == method.arity -> {[call | rec], non_rec}
+          true -> {rec, [call | non_rec]}
+        end
+      end)
+
+    case recursive_calls do
+      [] -> method
+      _ -> %Method{method | call_instructions: non_recursive_calls, is_recursive: true}
+    end
   end
 
   defp flatten_all_methods(apps) do
@@ -353,6 +379,9 @@ defmodule Iris.Core do
       end)
 
     case select do
+      # checks whether the method is part of current project
+      # if empty then it must be a built-in-function
+      # or method imported from a dependency
       [] ->
         method = %Method{module: call_m, name: call_f, arity: call_a}
 
@@ -364,6 +393,8 @@ defmodule Iris.Core do
 
         %Call{clickable: false, method: method}
 
+      # method is part of current project
+      # no need to change html_type_text.
       [method] ->
         %Call{clickable: true, method: method}
     end
