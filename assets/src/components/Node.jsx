@@ -15,7 +15,7 @@ function Node({ data }) {
               placement="right"
               className="text-xs font-normal bg-gray-900 "
             >
-              REC
+              <img src="rec-3.png" alt="recursive-icon" width="15" height="10"></img>
             </Tooltip>
           </div>
         </div>

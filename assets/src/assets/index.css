@@ -145,8 +145,8 @@ body {
   position: relative;
   font-size: 10px;
   margin: 0 0 0 1em;
-  background-color: var(--dark-gray-bg);
-  color: var(--text-on-dark-bg);
-  padding: 0  5px;
+  background-color: var(--text-on-dark-bg);
+  filter: invert();
+  padding: 0 2px;
   border-radius: 5px;
 }
