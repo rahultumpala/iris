@@ -81,7 +81,8 @@ defimpl String.Chars, for: [Iris.Entity.Module.Method] do
   def to_string(struct) do
     # This is used while generating the Key in KV pairs in in_calls & out_calls
     # Will need to modify to prefix Application name too.
-    struct.module <> "." <> struct.name
+    # output in MFA style to avoid ambiguity
+    struct.module <> "." <> struct.name <> "/" <> struct.arity
   end
 end
 

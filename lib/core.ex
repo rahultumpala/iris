@@ -15,6 +15,7 @@ defmodule Iris.Core do
 
     all_methods = flatten_all_methods(apps)
 
+    # key = %Method{}, value = [%Call{}, %Call{}..]
     all_out_calls =
       Enum.reduce(all_methods, %{}, fn method, acc ->
         calls =

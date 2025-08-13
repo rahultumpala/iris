@@ -42,7 +42,7 @@ function generate_node(method, node_type) {
 }
 
 function get_calls(module, calls, method) {
-  const key = `${module.module}.${method.name}`;
+  const key = `${module.module}.${method.name}/${method.arity}`;
   return calls[key] == undefined ? [] : calls[key];
 }
 
