@@ -1,12 +1,33 @@
 import { Handle, Position } from "@xyflow/react";
 import { GlobalConstants } from "../constants";
+import { Tooltip } from "flowbite-react";
 
 function Node({ data }) {
-  return (
-    <>
-      <div className="node text-sm">{data.displayName}</div>
-    </>
-  );
+  if (data.method.is_recursive) {
+    return (
+      <>
+        <div className={"node-base text-sm"}>
+          <div className="name">{data.displayName}</div>
+
+          <div className="node-recursive-tag">
+            <Tooltip
+              content="Recursive Method"
+              placement="right"
+              className="text-xs font-normal bg-gray-900 "
+            >
+              REC
+            </Tooltip>
+          </div>
+        </div>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <div className={"node-base text-sm"}>{data.displayName}</div>
+      </>
+    );
+  }
 }
 
 function SourceHandle({ dir }) {

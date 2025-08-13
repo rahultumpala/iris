@@ -5,6 +5,11 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --dark-gray-bg: rgb(100, 100, 100);
+  --text-on-dark-bg: gainsboro;
+}
+
 body {
   height: 100vh;
   overflow: hidden;
@@ -63,7 +68,7 @@ body {
 }
 
 .method-type {
-  background-color: gainsboro;
+  background-color: var(--text-on-dark-bg);
   color: darkgray;
   padding: 2px 5px;
   margin: 0 0 0 2em;
@@ -102,7 +107,7 @@ body {
 }
 
 .method-type-internal {
-  background-color: rgb(100, 100, 100) !important;
+  background-color: var(--dark-gray-bg) !important;
 }
 
 /* SCROLLBAR */
@@ -121,15 +126,27 @@ body {
 
 /* NODE */
 
-.node {
-  height: 5em;
-  width: max-content;
-  padding: 1em 1em;
+.node-base {
+  height: auto;
+  width: auto;
+  padding: 5px;
   background-color: white;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border-radius: 1em;
+  flex-direction: row;
+  justify-content: space-between;
+  border-radius: 5px;
+  align-content: center;
   border: 1px solid #E5E7EB;
+}
+
+.node-recursive-tag {
+  align-content: center;
+  width: fit-content;
+  position: relative;
+  font-size: 10px;
+  margin: 0 0 0 1em;
+  background-color: var(--dark-gray-bg);
+  color: var(--text-on-dark-bg);
+  padding: 0  5px;
+  border-radius: 5px;
 }
