@@ -96,6 +96,7 @@ defmodule Iris.Core do
       |> sort_methods()
       |> Enum.map(&normalize_call_instructions/1)
       |> Enum.map(&filter_recursive_calls/1)
+      |> Enum.map(&filter_duplicate_calls/1)
 
     # return
     %Module{
@@ -338,6 +339,11 @@ defmodule Iris.Core do
       [] -> method
       _ -> %Method{method | call_instructions: non_recursive_calls, is_recursive: true}
     end
+  end
+
+  # remove duplicate instructions
+  defp filter_duplicate_calls(method) do
+    %Method{method | call_instructions: Enum.uniq(method.call_instructions)}
   end
 
   defp flatten_all_methods(apps) do
