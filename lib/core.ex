@@ -253,6 +253,10 @@ defmodule Iris.Core do
     |> Enum.filter(fn name -> String.contains?(name, ".beam") end)
   end
 
+  # All call instructions that can be extracted from compiled code
+  # returns a list of instructions
+  # format { type, arity, function }
+  # function -> {module, function, arity}
   defp get_call_instructions(code) do
     code
     |> Enum.map(fn instruction ->
@@ -271,6 +275,8 @@ defmodule Iris.Core do
     |> Enum.filter(fn val -> val != nil end)
   end
 
+  # returns the instruction in {m,f,a} format
+  # see [get_call_instructions/1] return type to understand [instructions] format
   defp get_out_calls(instructions) do
     instructions
     |> Enum.map(fn instr ->
@@ -301,7 +307,7 @@ defmodule Iris.Core do
       end
     end)
     |> Enum.map(fn {m, f, a} ->
-      # using Integer.to_string to avoid failures when checking
+      # using Integer.to_string to avoid inequality during comparison while generating calls
       # todo: fix this. standardize arity as string/integer in the entire code.
       {f, a} = extract_name_from_auto_generated(f, Integer.to_string(a))
       {m, f, a}
