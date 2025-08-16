@@ -38,6 +38,7 @@ defimpl Jason.Encoder, for: [Iris.Entity.Module] do
 end
 
 defimpl Jason.Encoder, for: [Iris.Entity.Module.Method] do
+  require Protocol
   def encode(struct, opts) do
     Jason.Encode.map(
       %{

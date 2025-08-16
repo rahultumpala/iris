@@ -1,13 +1,11 @@
 defmodule Iris.Core do
-  alias Iris.Entity
-  alias Iris.Entity.Module
-  alias Iris.Entity.Application
-  alias Iris.Entity.Module.Method
-  alias Iris.Entity.Module.Method.Call
+  alias Iris.{Entity, Entity.Module, Entity.Application}
+  alias Iris.Entity.Module.{Method, Method.Call}
+  alias Iris.DocGen
 
   def build(config) do
     files = get_beam_files(config)
-    modules = Enum.map(files, &build_from_beam_file/1)
+    modules = Enum.map(files, &build_from_beam_file(&1, config))
     apps = build_applications(modules)
 
     IO.inspect("ALL MODULES")
@@ -74,8 +72,8 @@ defmodule Iris.Core do
     end)
   end
 
-  defp build_from_beam_file({beam_bin, file}) do
-    {:beam_file, mod_name, labeled_exports, _attributes, _compile_info, compiled_code} = file
+  defp build_from_beam_file({beam_bin, beam_obj}, config) do
+    {:beam_file, mod_name, labeled_exports, _attributes, _compile_info, compiled_code} = beam_obj
 
     # private methods grouped by {name, arity}
     locals_map = extract_locals_from_beam(beam_bin)
@@ -93,7 +91,7 @@ defmodule Iris.Core do
       build_methods(compiled_code, mod_name_str)
       |> condense_methods()
       |> filter_auto_generated()
-      |> assign_html_type_text(labeled_exports_map, locals_map, mod_name_str)
+      |> assign_html_type_text(labeled_exports_map, locals_map)
       |> sort_methods()
       |> Enum.map(&normalize_call_instructions/1)
       |> Enum.map(&filter_recursive_calls/1)
@@ -105,7 +103,7 @@ defmodule Iris.Core do
       module: mod_name_str,
       methods: methods,
       # TODO: take help of ex_doc for this.
-      ex_doc: ""
+      ex_doc: DocGen.generate_docs(mod_name, config)
     }
   end
 
@@ -207,7 +205,7 @@ defmodule Iris.Core do
   end
 
   # assigns the text EXP(when found in exports) or INT(when found in locals)
-  defp assign_html_type_text(methods, exports_map, locals_map, mod_name_str) do
+  defp assign_html_type_text(methods, exports_map, locals_map) do
     methods
     |> Enum.map(fn method ->
       cond do
@@ -235,16 +233,16 @@ defmodule Iris.Core do
   end
 
   def get_beam_files(config) do
-    main_mod = Keyword.get(config, :app) |> Atom.to_string()
-    path = File.cwd!() <> "/_build/dev/lib/" <> main_mod <> "/ebin/"
+    IO.inspect(({"CONFIG", config}))
+    path = config.source_beam
 
     files =
       path
       |> list_beam_files()
 
     files =
-      for file <- files do
-        bin = File.read!(path <> file)
+      for fileName <- files do
+        bin = File.read!(fileName)
         beam_file = :beam_disasm.file(bin)
 
         {bin, beam_file}
@@ -254,8 +252,7 @@ defmodule Iris.Core do
   end
 
   defp list_beam_files(path) do
-    File.ls!(path)
-    |> Enum.filter(fn name -> String.contains?(name, ".beam") end)
+    Path.wildcard(Path.expand("*.beam", path))
   end
 
   # All call instructions that can be extracted from compiled code

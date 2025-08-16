@@ -25,11 +25,34 @@ defmodule Mix.Tasks.Iris do
 
     IO.inspect({"Project Config", config})
 
+    compile_path = normalize_source_beam(config)
+    config = config |> ExDoc.Config.build(config[:version] || "dev", [])
+    config = %ExDoc.Config{config | source_beam: compile_path}
+
     core_entity = Core.build(config)
     {:ok, json} = Jason.encode(core_entity, [{:escape, :unicode_safe}, {:pretty, true}])
 
     path = "assets/entity.json"
     IO.puts("Writing to #{path}")
     File.write!(path, json)
+  end
+
+  defp normalize_source_beam(config) do
+    compile_path =
+      if Mix.Project.umbrella?(config) do
+        umbrella_compile_paths()
+      else
+        Mix.Project.compile_path()
+      end
+
+    compile_path
+  end
+
+  defp umbrella_compile_paths() do
+    build = Mix.Project.build_path()
+
+    for {app, _} <- Mix.Project.apps_paths() do
+      Path.join([build, "lib", Atom.to_string(app), "ebin"])
+    end
   end
 end
