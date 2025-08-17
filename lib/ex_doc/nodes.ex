@@ -1,5 +1,5 @@
 # TODO: source_doc should only be a string once we remove application/html+erlang.
-defmodule ExDoc.ModuleNode do
+defmodule Iris.ExDoc.ModuleNode do
   @moduledoc false
   defstruct id: nil,
             title: nil,
@@ -52,7 +52,7 @@ defmodule ExDoc.ModuleNode do
         }
 end
 
-defmodule ExDoc.DocNode do
+defmodule Iris.ExDoc.DocNode do
   @moduledoc false
 
   defstruct id: nil,

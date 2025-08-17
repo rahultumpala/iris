@@ -1,4 +1,4 @@
-defmodule ExDoc.Retriever do
+defmodule Iris.ExDoc.Retriever do
   # Functions to extract documentation information from modules.
   @moduledoc false
 
@@ -7,8 +7,8 @@ defmodule ExDoc.Retriever do
     defexception [:message]
   end
 
-  alias ExDoc.GroupMatcher
-  alias ExDoc.Retriever.Error
+  alias Iris.ExDoc.GroupMatcher
+  alias Iris.ExDoc.Retriever.Error
 
   def get_module(module, config) do
     with {:docs_v1, _, language, _, _, _metadata, _} = docs_chunk <- docs_chunk(module),
@@ -74,7 +74,7 @@ defmodule ExDoc.Retriever do
     group = GroupMatcher.match_module(config.groups_for_modules, module, module_data.id, metadata)
     {nested_title, nested_context} = module_data.nesting_info || {nil, nil}
 
-    %ExDoc.ModuleNode{
+    %Iris.ExDoc.ModuleNode{
       id: module_data.id,
       title: module_data.title,
       nested_title: nested_title,
@@ -141,7 +141,7 @@ defmodule ExDoc.Retriever do
 
     group = group_for_doc.(metadata) || doc_data.default_group
 
-    %ExDoc.DocNode{
+    %Iris.ExDoc.DocNode{
       id: doc_data.id_key <> nil_or_name(name, arity),
       name: name,
       arity: arity,

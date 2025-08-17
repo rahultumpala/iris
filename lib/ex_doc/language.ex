@@ -1,4 +1,4 @@
-defmodule ExDoc.Language do
+defmodule Iris.ExDoc.Language do
   @moduledoc false
 
   @type spec_ast() :: term()
@@ -49,7 +49,7 @@ defmodule ExDoc.Language do
   @doc """
   Returns a map with module information.
   """
-  @callback module_data(module(), tuple(), ExDoc.Config.t()) :: module_data() | false
+  @callback module_data(module(), tuple(), Iris.ExDoc.Config.t()) :: module_data() | false
 
   @doc """
   Returns a map with documentation information about a given node or `false`.
@@ -93,7 +93,7 @@ defmodule ExDoc.Language do
   @doc """
   Autolinks docs.
   """
-  @callback autolink_doc(doc :: ExDoc.DocAST.t(), opts :: keyword()) :: ExDoc.DocAST.t()
+  @callback autolink_doc(doc :: Iris.ExDoc.DocAST.t(), opts :: keyword()) :: Iris.ExDoc.DocAST.t()
 
   @doc """
   Autolinks typespecs.
@@ -112,7 +112,7 @@ defmodule ExDoc.Language do
   @doc """
   Return an attribute in the canonical representation.
   """
-  @callback format_spec_attribute(%ExDoc.DocNode{}) :: String.t()
+  @callback format_spec_attribute(%Iris.ExDoc.DocNode{}) :: String.t()
 
   @doc """
   Parse a module.function string and return it.
@@ -152,8 +152,8 @@ defmodule ExDoc.Language do
             ) ::
               nil | String.t()
 
-  def get(:elixir, _module), do: {:ok, ExDoc.Language.Elixir}
-  def get(:erlang, _module), do: {:ok, ExDoc.Language.Erlang}
+  def get(:elixir, _module), do: {:ok, Iris.ExDoc.Language.Elixir}
+  def get(:erlang, _module), do: {:ok, Iris.ExDoc.Language.Erlang}
 
   def get(language, module) when is_atom(language) and is_atom(module) do
     ExDoc.Utils.warn(

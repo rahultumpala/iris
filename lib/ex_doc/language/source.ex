@@ -1,4 +1,4 @@
-defmodule ExDoc.Language.Source do
+defmodule Iris.ExDoc.Language.Source do
   # Shared helpers used by both Erlang and Elixir.
   @moduledoc false
 

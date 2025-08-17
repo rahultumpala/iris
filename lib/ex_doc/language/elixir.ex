@@ -1,10 +1,10 @@
-defmodule ExDoc.Language.Elixir do
+defmodule Iris.ExDoc.Language.Elixir do
   @moduledoc false
 
   @behaviour ExDoc.Language
 
-  alias ExDoc.Autolink
-  alias ExDoc.Language.Source
+  alias Iris.ExDoc.Autolink
+  alias Iris.ExDoc.Language.Source
 
   @impl true
   @spec module_data(atom, any, any) ::

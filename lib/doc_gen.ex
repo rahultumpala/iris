@@ -3,7 +3,7 @@ defmodule Iris.DocGen do
   A wrapper around ExDoc lib to fetch documentation in HTML
   """
 
-  alias ExDoc.Retriever
+  alias Iris.ExDoc.Retriever
 
   def generate_docs(beam_bin, config) do
     case Retriever.get_module(beam_bin, config) do

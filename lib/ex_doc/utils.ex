@@ -1,4 +1,4 @@
-defmodule ExDoc.Utils do
+defmodule Iris.ExDoc.Utils do
   # General helpers used throughout ExDoc or extracted for testing.
   # Avoid adding functions to this module whenever possible,
   # instead prefer defining modules closer to the context they are used.

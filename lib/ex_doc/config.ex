@@ -1,4 +1,4 @@
-defmodule ExDoc.Config do
+defmodule Iris.ExDoc.Config do
   @moduledoc false
 
   # Defaults

@@ -1,4 +1,4 @@
-defmodule ExDoc.GroupMatcher do
+defmodule Iris.ExDoc.GroupMatcher do
   # General helpers for dealing with grouping functionality.
   # Extracted for organization and testability.
   @moduledoc false

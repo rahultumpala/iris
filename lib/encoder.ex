@@ -108,7 +108,7 @@ defimpl Jason.Encoder, for: Tuple do
   end
 end
 
-defimpl Jason.Encoder, for: ExDoc.DocNode do
+defimpl Jason.Encoder, for: Iris.ExDoc.DocNode do
   def encode(struct, opts) do
     try do
       Jason.Encode.map(
@@ -135,7 +135,7 @@ defimpl Jason.Encoder, for: ExDoc.DocNode do
   end
 end
 
-defimpl Jason.Encoder, for: ExDoc.ModuleNode do
+defimpl Jason.Encoder, for: Iris.ExDoc.ModuleNode do
   def encode(struct, opts) do
     Jason.Encode.map(
       %{

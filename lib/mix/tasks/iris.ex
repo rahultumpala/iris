@@ -26,8 +26,8 @@ defmodule Mix.Tasks.Iris do
     IO.inspect({"Project Config", config})
 
     compile_path = normalize_source_beam(config)
-    config = config |> ExDoc.Config.build(config[:version] || "dev", [])
-    config = %ExDoc.Config{config | source_beam: compile_path}
+    config = config |> Iris.ExDoc.Config.build(config[:version] || "dev", [])
+    config = %Iris.ExDoc.Config{config | source_beam: compile_path}
 
     core_entity = Core.build(config)
     {:ok, json} = Jason.encode(core_entity, [{:escape, :unicode_safe}, {:pretty, true}])

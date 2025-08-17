@@ -105,7 +105,7 @@ defmodule Iris.Core do
     module_doc =
       case module_doc do
         nil -> nil
-        %ExDoc.ModuleNode{} -> %ExDoc.ModuleNode{module_doc | docs: nil}
+        %Iris.ExDoc.ModuleNode{} -> %Iris.ExDoc.ModuleNode{module_doc | docs: nil}
       end
 
     module_doc =
@@ -445,7 +445,7 @@ defmodule Iris.Core do
         nil ->
           %{}
 
-        %ExDoc.ModuleNode{} ->
+        %Iris.ExDoc.ModuleNode{} ->
           module_doc.docs
           # remove empty doc structs
           |> Enum.filter(&filter_empty_docs/1)
@@ -458,8 +458,8 @@ defmodule Iris.Core do
 
   defp filter_empty_docs(doc) do
     case doc do
-      %ExDoc.ModuleNode{} -> doc.source_doc != :none
-      %ExDoc.DocNode{} -> doc.source_doc != :none
+      %Iris.ExDoc.ModuleNode{} -> doc.source_doc != :none
+      %Iris.ExDoc.DocNode{} -> doc.source_doc != :none
       _ -> false
     end
   end

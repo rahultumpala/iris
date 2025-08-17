@@ -1,10 +1,10 @@
-defmodule ExDoc.Language.Erlang do
+defmodule Iris.ExDoc.Language.Erlang do
   @moduledoc false
 
-  @behaviour ExDoc.Language
+  @behaviour Iris.ExDoc.Language
 
-  alias ExDoc.Language.Source
-  alias ExDoc.{Autolink, Refs}
+  alias Iris.ExDoc.Language.Source
+  alias Iris.ExDoc.{Autolink, Refs}
 
   @impl true
   @spec module_data(atom, any, any) ::
