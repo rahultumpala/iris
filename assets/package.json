@@ -11,11 +11,12 @@
     "postinstall": "flowbite-react patch"
   },
   "dependencies": {
+    "@dagrejs/dagre": "^1.1.5",
     "@xyflow/react": "^12.6.1",
     "flowbite-react": "^0.11.7",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "@dagrejs/dagre": "^1.1.5"
+    "react-markdown": "^10.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

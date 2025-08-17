@@ -118,6 +118,7 @@ body {
 
 ::-webkit-scrollbar {
   width: 1px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -157,8 +158,11 @@ body {
 .doc-card {
   z-index: 9;
   position: absolute;
-  width: 50%;
+  min-width: 50%;
+  max-width: 75%;
+  max-height: 100%;
   justify-self: end;
+  overflow: scroll;
 }
 
 .doc-card-header {
@@ -169,7 +173,7 @@ body {
   align-content: center;
   justify-items: center;
   height: fit-content;
-} 
+}
 
 .doc-card-close-btn {
   height: fit-content;

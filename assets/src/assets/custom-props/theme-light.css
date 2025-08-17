@@ -1,0 +1,95 @@
+:root {
+  --background:                  var(--white);
+  --contrast:                    var(--black);
+  --textBody:                    var(--gray800);
+  --textHeaders:                 var(--gray900);
+  --textDetailAccent:            var(--mainLight);
+  --textDetailBackground:        var(--coldGrayFaint);
+
+  --iconAction:                  var(--coldGray);
+  --iconActionHover:             var(--gray800);
+
+  --blockquoteBackground:        var(--coldGrayFaint);
+  --blockquoteBorder:            var(--coldGrayLight);
+
+  --tableHeadBorder:             var(--gray100);
+  --tableBodyBorder:             var(--gray50);
+
+  --warningBackground:           hsl( 33, 100%,  97%);
+  --warningHeadingBackground:    hsl( 33,  87%,  64%);
+  --warningHeading:              var(--black);
+  --errorBackground:             hsl(  7,  81%,  96%);
+  --errorHeadingBackground:      hsl(  6,  80%,  60%);
+  --errorHeading:                var(--white);
+  --infoBackground:              hsl(206,  91%,  96%);
+  --infoHeadingBackground:       hsl(213,  92%,  62%);
+  --infoHeading:                 var(--white);
+  --neutralBackground:           hsl(212,  29%,  92%);
+  --neutralHeadingBackground:    hsl(220,  43%,  11%);
+  --neutralHeading:              var(--white);
+  --tipBackground:               hsl(142,  31%,  93%);
+  --tipHeadingBackground:        hsl(134,  39%,  36%);
+  --tipHeading:                  var(--white);
+
+  --fnSpecAttr:                  var(--coldGray);
+  --fnDeprecated:                var(--yellowLight);
+  --blink:                       var(--yellowLight);
+
+  --codeBackground:              var(--gray25);
+  --codeBorder:                  var(--gray100);
+  --codeScrollThumb:             var(--gray400);
+  --codeScrollBackground:        var(--codeBorder);
+  --admCodeBackground:           var(--gray25);
+  --admCodeBorder:               var(--gray100);
+  --admCodeColor:                var(--black);
+  --admInlineCodeColor:          var(--black);
+  --admInlineCodeBackground:     var(--gray25);
+  --admInlineCodeBorder:         var(--gray100);
+
+  --tabBorder:                   var(--gray300);
+  --tabBorderTop:                var(--gray100);
+  --tabShadow:                   var(--gray25);
+
+  --bottomActionsBtnBorder:      var(--black-opacity-10);
+  --bottomActionsBtnTitle:       var(--mainDark);
+
+  --modalBackground:             var(--white);
+
+  --settingsInput:               var(--gray500);
+  --settingsInputBackground:     var(--white);
+  --settingsInputBorder:         var(--gray300);
+  --settingsSectionBorder:       var(--gray300);
+
+  --quickSwitchInput:            var(--gray500);
+  --quickSwitchContour:          var(--coldGray);
+
+  --success:                     var(--green);
+  --progressBarColor:            var(--gray400);
+
+  --sidebarAccentMain:           var(--black);
+  --sidebarBackground:           var(--gray50);
+  --sidebarHeader:               var(--gray100);
+  --sidebarMuted:                var(--gray800);
+  --sidebarHover:                var(--black);
+  --sidebarStaleVersion:         var(--orangeDark);
+  --sidebarSubheadings:          var(--gray500);
+  --sidebarItem:                 var(--black);
+  --sidebarInactiveItemBorder:   var(--gray500);
+  --sidebarInactiveItemMarker:   var(--gray200);
+  --sidebarLanguageAccentBar:    var(--mainDark);
+  --sidebarActiveItem:           var(--mainDarkest);
+  --searchBarBorder:             var(--gray200);
+  --searchAccentMain:            var(--gray600);
+  --searchLanguageAccentBar:     var(--main);
+  --searchSearch:                var(--white);
+  --autocompleteBorder:          rgba(3, 9, 19, 0.10);
+  --autocompletePreview:         var(--gray25);
+  --autocompleteSelected:        var(--gray25);
+  --autocompleteHover:           var(--gray50);
+  --autocompleteBackground:      var(--white);
+  --suggestionBorder:            var(--gray200);
+  --autocompleteResults:         var(--gray600);
+  --autocompleteResultsBold:     var(--gray800);
+  --autocompleteLabelBack:       var(--gray100);
+  --autocompleteLabelFont:       var(--gray600);
+}

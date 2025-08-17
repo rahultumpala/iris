@@ -1,5 +1,6 @@
 import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
 import { Card, Button } from "flowbite-react";
+import Markdown from "react-markdown";
 
 export function Documentation({}) {
   const state = useGlobalState();
@@ -31,7 +32,9 @@ export function Documentation({}) {
             x
           </Button>
         </div>
-        <div className="markdown"> {docMarkdown} </div>
+        <div className="markdown content-inner">
+          <Markdown>{docMarkdown}</Markdown>
+        </div>
       </Card>
     );
   }
