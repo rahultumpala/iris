@@ -86,6 +86,9 @@ defmodule Iris.Core do
       end)
 
     mod_name_str = mod_name |> Atom.to_string() |> String.split("Elixir.") |> Enum.at(1)
+    module_doc = DocGen.generate_docs(mod_name, config)
+    # group method docs by {name}/{arity} as key
+    method_docs = module_doc |> group_method_docs()
 
     methods =
       build_methods(compiled_code, mod_name_str)
@@ -96,14 +99,28 @@ defmodule Iris.Core do
       |> Enum.map(&normalize_call_instructions/1)
       |> Enum.map(&filter_recursive_calls/1)
       |> Enum.map(&filter_duplicate_calls/1)
+      |> Enum.map(&set_method_docs(&1, method_docs))
+
+    # set docs as null to avoid repetition
+    module_doc =
+      case module_doc do
+        nil -> nil
+        %ExDoc.ModuleNode{} -> %ExDoc.ModuleNode{module_doc | docs: nil}
+      end
+
+    module_doc =
+      cond do
+        filter_empty_docs(module_doc) != false -> module_doc
+        # return nil when filter evaluates to false
+        true -> nil
+      end
 
     # return
     %Module{
       application: String.split(mod_name_str, ".") |> Enum.at(0),
       module: mod_name_str,
       methods: methods,
-      # TODO: take help of ex_doc for this.
-      ex_doc: DocGen.generate_docs(mod_name, config)
+      ex_doc: module_doc
     }
   end
 
@@ -233,7 +250,7 @@ defmodule Iris.Core do
   end
 
   def get_beam_files(config) do
-    IO.inspect(({"CONFIG", config}))
+    IO.inspect({"CONFIG", config})
     path = config.source_beam
 
     files =
@@ -371,6 +388,23 @@ defmodule Iris.Core do
     %Module{module | out_calls: module_out_calls, in_calls: module_in_calls}
   end
 
+  defp set_method_docs(%Method{} = method, %{} = method_docs) do
+    key = method.name <> "/" <> method.arity
+
+    case Map.get(method_docs, key, nil) do
+      nil -> method
+      doc -> %Method{method | ex_doc: doc}
+    end
+
+    with doc <- Map.get(method_docs, key, nil),
+         false <- is_nil(doc),
+         false <- doc.source_doc == :none do
+      %Method{method | ex_doc: doc}
+    else
+      _ -> method
+    end
+  end
+
   defp generate_call(%Method{} = caller, all_methods) do
     generate_call({caller.module, caller.name, caller.arity}, all_methods)
   end
@@ -401,6 +435,32 @@ defmodule Iris.Core do
       # no need to change html_type_text.
       [method] ->
         %Call{clickable: true, method: method}
+    end
+  end
+
+  defp group_method_docs(module_doc) do
+    # group method docs by {name}/{arity} as key from module docs node
+    method_docs =
+      case module_doc do
+        nil ->
+          %{}
+
+        %ExDoc.ModuleNode{} ->
+          module_doc.docs
+          # remove empty doc structs
+          |> Enum.filter(&filter_empty_docs/1)
+          |> Enum.reduce(%{}, fn method_doc, acc ->
+            key = Atom.to_string(method_doc.name) <> "/" <> Integer.to_string(method_doc.arity)
+            Map.put(acc, key, method_doc)
+          end)
+      end
+  end
+
+  defp filter_empty_docs(doc) do
+    case doc do
+      %ExDoc.ModuleNode{} -> doc.source_doc != :none
+      %ExDoc.DocNode{} -> doc.source_doc != :none
+      _ -> false
     end
   end
 end

@@ -39,6 +39,7 @@ end
 
 defimpl Jason.Encoder, for: [Iris.Entity.Module.Method] do
   require Protocol
+
   def encode(struct, opts) do
     Jason.Encode.map(
       %{
@@ -104,5 +105,61 @@ defimpl Jason.Encoder, for: Tuple do
     data
     |> Tuple.to_list()
     |> Jason.Encoder.List.encode(opts)
+  end
+end
+
+defimpl Jason.Encoder, for: ExDoc.DocNode do
+  def encode(struct, opts) do
+    try do
+      Jason.Encode.map(
+        %{
+          "id" => struct.id,
+          "name" => struct.name,
+          "arity" => struct.arity,
+          "defaults" => struct.defaults,
+          "deprecated" => struct.deprecated,
+          "doc" => struct.doc,
+          "source_doc" => struct.source_doc,
+          "type" => Atom.to_string(struct.type),
+          "signature" => struct.signature,
+          "annotations" => struct.annotations,
+          "group" => struct.group,
+          "doc_line" => struct.doc_line,
+          "doc_file" => struct.doc_file
+        },
+        opts
+      )
+    rescue
+      e -> IO.inspect({"ERROR", e})
+    end
+  end
+end
+
+defimpl Jason.Encoder, for: ExDoc.ModuleNode do
+  def encode(struct, opts) do
+    Jason.Encode.map(
+      %{
+        "id" => struct.id,
+        "title" => struct.title,
+        "nested_context" => struct.nested_context,
+        "nested_title" => struct.nested_title,
+        "module" => struct.module,
+        "group" => struct.group,
+        "deprecated" => struct.deprecated,
+        "doc_format" => struct.doc_format,
+        "doc" => struct.doc,
+        "source_doc" => struct.source_doc,
+        "moduledoc_line" => struct.moduledoc_line,
+        "moduledoc_file" => struct.moduledoc_file,
+        "docs_groups" => struct.docs_groups,
+        "docs" => struct.docs,
+        "typespecs" => struct.typespecs,
+        "type" => struct.type,
+        "language" => struct.language,
+        "annotations" => struct.annotations,
+        # "metadata" => struct.metadata
+      },
+      opts
+    )
   end
 end

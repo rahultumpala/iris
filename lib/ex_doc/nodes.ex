@@ -1,7 +1,6 @@
 # TODO: source_doc should only be a string once we remove application/html+erlang.
 defmodule ExDoc.ModuleNode do
   @moduledoc false
-  @derive [Jason.Encoder]
   defstruct id: nil,
             title: nil,
             nested_context: nil,
@@ -56,7 +55,6 @@ end
 defmodule ExDoc.DocNode do
   @moduledoc false
 
-  @derive [Jason.Encoder]
   defstruct id: nil,
             name: nil,
             arity: 0,

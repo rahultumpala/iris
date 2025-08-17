@@ -6,6 +6,13 @@ defmodule Iris.DocGen do
   alias ExDoc.Retriever
 
   def generate_docs(beam_bin, config) do
-    Retriever.get_module(beam_bin, config)
+    case Retriever.get_module(beam_bin, config) do
+      {:ok, module_node} ->
+        module_node
+
+      {:error, err} ->
+        IO.inspect({"Error generating module doc for:", err})
+        nil
+    end
   end
 end
