@@ -12,7 +12,7 @@ defmodule Iris.ExDoc.Language.Erlang do
           | %{
               docs: any,
               id: binary,
-              language: ExDoc.Language.Erlang,
+              language: Iris.ExDoc.Language.Erlang,
               source_line: pos_integer,
               source_file: Path.t(),
               source_basedir: Path.t(),
@@ -52,7 +52,7 @@ defmodule Iris.ExDoc.Language.Erlang do
         }
       }
     else
-      ExDoc.Utils.warn("skipping docs for module #{inspect(module)}, reason: :no_debug_info", [])
+      Iris.ExDoc.Utils.warn("skipping docs for module #{inspect(module)}, reason: :no_debug_info", [])
       false
     end
   end
@@ -181,10 +181,10 @@ defmodule Iris.ExDoc.Language.Erlang do
           _ ->
             "Equivalent to `#{equiv}`."
         end
-        |> ExDoc.DocAST.parse!("text/markdown")
+        |> Iris.ExDoc.DocAST.parse!("text/markdown")
 
       equiv ->
-        ExDoc.Utils.warn("invalid equiv #{inspect(equiv)}",
+        Iris.ExDoc.Utils.warn("invalid equiv #{inspect(equiv)}",
           file: file,
           line: line,
           module: module

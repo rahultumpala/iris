@@ -80,7 +80,7 @@ defmodule Iris.ExDoc.Language do
               %{
                 id_key: binary(),
                 default_group: binary(),
-                doc_fallback: (-> ExDoc.DocAST.t()),
+                doc_fallback: (-> Iris.ExDoc.DocAST.t()),
                 extra_annotations: [String.t()],
                 signature: [binary()],
                 source_file: String.t() | nil,
@@ -156,7 +156,7 @@ defmodule Iris.ExDoc.Language do
   def get(:erlang, _module), do: {:ok, Iris.ExDoc.Language.Erlang}
 
   def get(language, module) when is_atom(language) and is_atom(module) do
-    ExDoc.Utils.warn(
+    Iris.ExDoc.Utils.warn(
       "skipping module #{module}, reason: unsupported language (#{language})",
       []
     )

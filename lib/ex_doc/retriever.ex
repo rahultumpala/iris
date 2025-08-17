@@ -12,7 +12,7 @@ defmodule Iris.ExDoc.Retriever do
 
   def get_module(module, config) do
     with {:docs_v1, _, language, _, _, _metadata, _} = docs_chunk <- docs_chunk(module),
-         {:ok, language} <- ExDoc.Language.get(language, module),
+         {:ok, language} <- Iris.ExDoc.Language.get(language, module),
          %{} = module_data <- language.module_data(module, docs_chunk, config) do
       {:ok, generate_node(module, module_data, config)}
     else
@@ -35,7 +35,7 @@ defmodule Iris.ExDoc.Retriever do
             docs
 
           {:error, reason} ->
-            ExDoc.Utils.warn("skipping docs for module #{inspect(module)}, reason: #{reason}", [])
+            Iris.ExDoc.Utils.warn("skipping docs for module #{inspect(module)}, reason: #{reason}", [])
             false
         end
 
@@ -84,7 +84,7 @@ defmodule Iris.ExDoc.Retriever do
       type: module_data.type,
       deprecated: metadata[:deprecated],
       docs_groups: config.docs_groups ++ module_data.default_groups,
-      docs: ExDoc.Utils.natural_sort_by(docs, &"#{&1.name}/#{&1.arity}"),
+      docs: Iris.ExDoc.Utils.natural_sort_by(docs, &"#{&1.name}/#{&1.arity}"),
       doc_format: format,
       doc: nil,
       source_doc: source_doc,
@@ -150,7 +150,7 @@ defmodule Iris.ExDoc.Retriever do
       source_doc: source_doc,
       doc_line: doc_line,
       doc_file: doc_file,
-      defaults: ExDoc.Utils.natural_sort_by(defaults, fn {name, arity} -> "#{name}/#{arity}" end),
+      defaults: Iris.ExDoc.Utils.natural_sort_by(defaults, fn {name, arity} -> "#{name}/#{arity}" end),
       signature: signature(doc_data.signature),
       specs: doc_data.specs,
       source_url: source_url,

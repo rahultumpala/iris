@@ -1,7 +1,7 @@
 defmodule Iris.ExDoc.Language.Elixir do
   @moduledoc false
 
-  @behaviour ExDoc.Language
+  @behaviour Iris.ExDoc.Language
 
   alias Iris.ExDoc.Autolink
   alias Iris.ExDoc.Language.Source
@@ -12,7 +12,7 @@ defmodule Iris.ExDoc.Language.Elixir do
           | %{
               docs: any,
               id: binary,
-              language: ExDoc.Language.Erlang,
+              language: Iris.ExDoc.Language.Erlang,
               source_line: pos_integer,
               source_file: Path.t(),
               source_basedir: Path.t(),
@@ -67,7 +67,7 @@ defmodule Iris.ExDoc.Language.Elixir do
         }
 
       true ->
-        ExDoc.Utils.warn(
+        Iris.ExDoc.Utils.warn(
           "skipping docs for module #{inspect(module)}, reason: :no_debug_info",
           []
         )
@@ -384,7 +384,7 @@ defmodule Iris.ExDoc.Language.Elixir do
       ast
       |> Macro.to_string()
       |> safe_format_string!()
-      |> ExDoc.Utils.h()
+      |> Iris.ExDoc.Utils.h()
 
     name = typespec_name(ast)
     {name, rest} = split_name(string, name)
@@ -699,7 +699,7 @@ defmodule Iris.ExDoc.Language.Elixir do
         end
 
       if url do
-        ~s[<a href="#{url}">#{ExDoc.Utils.h(call_string)}</a>]
+        ~s[<a href="#{url}">#{Iris.ExDoc.Utils.h(call_string)}</a>]
       else
         call_string
       end <> do_typespec(rest, config)
