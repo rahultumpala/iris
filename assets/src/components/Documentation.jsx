@@ -1,14 +1,39 @@
-import { useGlobalState } from "../ctx/globalContext.jsx";
-import { Card } from "flowbite-react";
+import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
+import { Card, Button } from "flowbite-react";
 
 export function Documentation({}) {
   const state = useGlobalState();
+  const dispatch = useGlobalDispatch();
 
-  return (
-    <Card className="max-w-sm">
-      <h5 className="text-xl font-bold tracking-tight text-gray-900">
-        Documentation
-      </h5>
-    </Card>
-  );
+  const method = state.selectedMethod;
+  const docMarkdown = method?.["ex_doc"]?.["source_doc"]?.["en"];
+  const showDocumentation = state.showDocumentation;
+
+  const toggle = () => {
+    dispatch({
+      type: "toggleDocumentationDisplay",
+    });
+  };
+
+  if (showDocumentation) {
+    return (
+      <Card className="doc-card">
+        <div className="doc-card-header">
+          <h5 className="text-xl font-bold tracking-tight text-gray-900">
+            Documentation
+          </h5>
+          <Button
+            size="sm"
+            color="alternative"
+            onClick={toggle}
+            className="doc-card-close-btn"
+          >
+            x
+          </Button>
+        </div>
+        <div className="markdown"> {docMarkdown} </div>
+      </Card>
+    );
+  }
+  return <></>;
 }

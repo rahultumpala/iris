@@ -59,6 +59,7 @@ body {
 .flow {
   height: 100%;
   width: 100%;
+  position: relative;
 }
 
 /* METHODS RELATED */
@@ -148,5 +149,34 @@ body {
   /* background-color: var(--text-on-dark-bg); */
   /* filter: invert(); */
   padding: 0 2px;
+  border-radius: 5px;
+}
+
+/* Documentation */
+
+.doc-card {
+  z-index: 9;
+  position: absolute;
+  width: 50%;
+  justify-self: end;
+}
+
+.doc-card-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+  justify-items: center;
+  height: fit-content;
+} 
+
+.doc-card-close-btn {
+  height: fit-content;
+  width: fit-content;
+  padding: 1px 7px;
+  background-color: rgb(31, 31, 31);
+  color: white;
+  font-size: small;
   border-radius: 5px;
 }

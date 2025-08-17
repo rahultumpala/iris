@@ -19,6 +19,8 @@ import {
 import { LayoutPanel } from "./LayoutPanel.jsx";
 import { GlobalConstants } from "../constants.js";
 
+import { Documentation } from "./Documentation.jsx";
+
 /*
 --------------------------------------
 Generating nodes and edges from calls
@@ -146,6 +148,7 @@ export function Flow() {
   const module = state.selectedModule;
   const method = state.selectedMethod;
   const flowDirection = state.flowDirection;
+  const showDocumentation = state.showDocumentation;
 
   // React JS sorcery to update [nodes] when [gen_nodes] changes and re-render correctly AFTER first render
   useMemo(() => {
@@ -163,6 +166,7 @@ export function Flow() {
 
   return (
     <div className="flow">
+      <Documentation></Documentation>
       <ReactFlow
         nodes={nodes}
         edges={edges}

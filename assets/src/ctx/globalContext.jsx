@@ -24,18 +24,21 @@ function globalReducer(curState, action) {
       return {
         ...curState,
         ...chooseApplicationAndDescendants(action.application),
+        showDocumentation: false,
       };
     }
     case "selectModule": {
       return {
         ...curState,
         ...chooseModuleAndDescendants(curState, action.module),
+        showDocumentation: false,
       };
     }
     case "selectMethod": {
       return {
         ...curState,
         selectedMethod: action.method,
+        showDocumentation: false,
       };
     }
     case "setGlobalState": {
@@ -43,15 +46,29 @@ function globalReducer(curState, action) {
       console.log("Setting Global State", action.globalState);
       return {
         ...action.globalState,
-        // Default Flow direction, Toggle Button Text
+        // DEFAULTS: Flow direction, Toggle Button Text, Documentation Card Display
         flowDirection: "V",
         flowDirectionToggleText: "View Horizontal",
+        showDocumentation: false,
       };
     }
     case "toggleFlowDirection": {
       // ignores the action as this is only a toggle.
-      console.log(curState, toggleFlowDirection(curState));
+      console.log(
+        "toggling flow direction",
+        curState,
+        toggleFlowDirection(curState)
+      );
       return toggleFlowDirection(curState);
+    }
+    case "toggleDocumentationDisplay": {
+      // ignores the action as this is only a toggle.
+      console.log(
+        "toggling documentation display",
+        curState,
+        toggleDocumentationDisplay(curState)
+      );
+      return toggleDocumentationDisplay(curState);
     }
     default: {
       throw Error("Unknown action: " + action.type);
@@ -111,5 +128,13 @@ function toggleFlowDirection(state) {
     ...state,
     flowDirection: newDir,
     flowDirectionToggleText: displayText,
+    showDocumentation: false,
+  };
+}
+
+function toggleDocumentationDisplay(state) {
+  return {
+    ...state,
+    showDocumentation: !state.showDocumentation,
   };
 }
