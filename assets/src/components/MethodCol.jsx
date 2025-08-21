@@ -2,6 +2,8 @@ import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
 
 import { SidebarItem, Tooltip } from "flowbite-react";
 
+import { RecursionIcon } from "./RecursionIcon.jsx";
+
 function MethodType({ text, tooltip }) {
   const attributes = {
     className: `method-type text-xs ${
@@ -11,14 +13,18 @@ function MethodType({ text, tooltip }) {
 
   return (
     <>
-      <Tooltip content={tooltip} placement="right" className="text-xs font-normal bg-gray-900 ">
+      <Tooltip
+        content={tooltip}
+        placement="right"
+        className="text-xs font-normal bg-gray-900 "
+      >
         <div {...attributes}>{text}</div>
       </Tooltip>
     </>
   );
 }
 
-function MethodItem({ method }) {
+function MethodItem({ method, selectedMethod }) {
   const dispatch = useGlobalDispatch();
   const selectMethod = () => {
     dispatch({
@@ -29,23 +35,39 @@ function MethodItem({ method }) {
 
   const clickable =
     method.html_type_text == "INT" || method.html_type_text == "EXP";
+  const isSelected = method == selectedMethod;
 
   const attributes = {
     onClick: clickable ? selectMethod : null,
-    className: clickable ? "method-item clickable-method" : "method-item",
+    className:
+      (clickable ? "method-item clickable-method " : "method-item ") +
+      (isSelected ? "selected-method" : ""),
   };
 
   return (
     <>
       <SidebarItem {...attributes}>
+        {/* LEFT HALF */}
         <div className="flex flex-row justify-between items-center">
           <div className="method-text mr-5 text-sm">
             {method.name} / {method.arity}
           </div>
-          <MethodType
-            text={method.html_type_text}
-            tooltip={method.tooltip_text}
-          ></MethodType>
+
+          {/* RIGHT HALF */}
+          <div className="right-end flex flex-row justify-between items-center">
+            {method.is_recursive ? (
+              <RecursionIcon
+                className={"in-method-col"}
+                selectedMethod={isSelected}
+              ></RecursionIcon>
+            ) : (
+              <></>
+            )}
+            <MethodType
+              text={method.html_type_text}
+              tooltip={method.tooltip_text}
+            ></MethodType>
+          </div>
         </div>
       </SidebarItem>
     </>
@@ -77,7 +99,11 @@ export function MethodColumn() {
       {/* Method Items List */}
       <div className="method_col">
         {module.methods.map((method, idx) => (
-          <MethodItem key={idx} method={method}></MethodItem>
+          <MethodItem
+            key={idx}
+            method={method}
+            selectedMethod={state.selectedMethod}
+          ></MethodItem>
         ))}
       </div>
     </>

@@ -1,6 +1,6 @@
 import { Handle, Position } from "@xyflow/react";
 import { GlobalConstants } from "../constants";
-import { Tooltip } from "flowbite-react";
+import { RecursionIcon } from "./RecursionIcon";
 
 function Node({ data }) {
   if (data.method.is_recursive) {
@@ -8,16 +8,7 @@ function Node({ data }) {
       <>
         <div className={"node-base text-sm"}>
           <div className="name">{data.displayName}</div>
-
-          <div className="node-recursive-tag">
-            <Tooltip
-              content="Recursive Method"
-              placement="right"
-              className="text-xs font-normal bg-gray-900 "
-            >
-              <img src="rec-3.png" alt="recursive-icon" width="15" height="10"></img>
-            </Tooltip>
-          </div>
+          <RecursionIcon></RecursionIcon>
         </div>
       </>
     );

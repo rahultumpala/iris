@@ -2,14 +2,17 @@ import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
 
 import { SidebarItem } from "flowbite-react";
 
-function ModuleItem({ module }) {
+function ModuleItem({ module, selectedModule }) {
   const dispatch = useGlobalDispatch();
   let selectModule = () => {
     dispatch({ type: "selectModule", module: module });
   };
+  const isSelected = module == selectedModule;
+  const className = "text-sm w-auto " + (isSelected ? "selected-module" : "");
+
   return (
     <>
-      <SidebarItem className="text-sm w-auto">
+      <SidebarItem className={className}>
         <div className="module_item" onClick={selectModule}>
           {module.module}
         </div>
@@ -40,7 +43,11 @@ export function ModuleColumn() {
       {/* Module Items List */}
       <div className="module_col">
         {app.modules.map((mod, idx) => (
-          <ModuleItem key={mod.module} module={mod}></ModuleItem>
+          <ModuleItem
+            key={mod.module}
+            module={mod}
+            selectedModule={state.selectedModule}
+          ></ModuleItem>
         ))}
       </div>
     </>

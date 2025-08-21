@@ -2,15 +2,18 @@ import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
 
 import { SidebarItem } from "flowbite-react";
 
-function ApplicationItem({ app }) {
+function ApplicationItem({ app, selectedApp }) {
   const dispatch = useGlobalDispatch();
   let selectApplication = () => {
     dispatch({ type: "selectApplication", application: app });
   };
 
+  const isSelected = app == selectedApp;
+  const className = isSelected ? "selected-app" : "";
+
   return (
     <>
-      <SidebarItem className="">
+      <SidebarItem className={className}>
         <div className="application_item text-md" onClick={selectApplication}>
           {app.application}
         </div>
@@ -42,7 +45,11 @@ export function ApplicationColumn() {
 
         {/* Application Items List */}
         {applications.map((app, idx) => (
-          <ApplicationItem key={app.application} app={app}></ApplicationItem>
+          <ApplicationItem
+            key={app.application}
+            app={app}
+            selectedApp={state.selectedApplication}
+          ></ApplicationItem>
         ))}
       </div>
     </>
