@@ -3,10 +3,16 @@ import { GlobalConstants } from "../constants";
 import { RecursionIcon } from "./RecursionIcon";
 
 function Node({ data }) {
-  if (data.method.is_recursive) {
+  const method = data.call.method;
+  const clickable = data.call.clickable;
+  const isCurrentlySelectedMethod = data.isSelectedMethod;
+  const className = `node-base text-sm ${
+    !clickable && !isCurrentlySelectedMethod ? "not-clickable-method-node" : ""
+  }`;
+  if (method.is_recursive) {
     return (
       <>
-        <div className={"node-base text-sm"}>
+        <div className={className}>
           <div className="name">{data.displayName}</div>
           <RecursionIcon></RecursionIcon>
         </div>
@@ -15,7 +21,7 @@ function Node({ data }) {
   } else {
     return (
       <>
-        <div className={"node-base text-sm"}>{data.displayName}</div>
+        <div className={className}>{data.displayName}</div>
       </>
     );
   }

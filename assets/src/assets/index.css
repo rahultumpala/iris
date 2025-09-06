@@ -233,3 +233,8 @@ body {
   font-size: small;
   border-radius: 5px;
 }
+
+.not-clickable-method-node {
+  color: gray
+}
+

@@ -3,6 +3,9 @@ defmodule Iris.Core do
   alias Iris.Entity.Module.{Method, Method.Call}
   alias Iris.DocGen
 
+  @doc ~S"""
+   Main entry pont.
+  """
   def build(config) do
     files = get_beam_files(config)
     modules = Enum.map(files, &build_from_beam_file(&1, config))
