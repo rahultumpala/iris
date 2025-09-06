@@ -83,7 +83,7 @@ export function generateFlow(module, method) {
 
 export function handleExpansionToggle(cur_nodes, cur_edges, toggleData) {
 
-    console.log("TOGGLE DATA", toggleData, cur_nodes.length, cur_edges.length);
+    console.log("TOGGLE DATA", toggleData, cur_nodes, cur_edges);
 
     const toggleMethod = toggleData.method;
     const toggleModule = toggleData.module;
@@ -110,17 +110,17 @@ export function handleExpansionToggle(cur_nodes, cur_edges, toggleData) {
 
     if (isAlreadyExpanded) {
         // group nodes by incoming edges.
-        const incomingEdges = cur_edges.reduce((accMap, edge) => {
+        const incomingEdges = out_edges.reduce((accMap, edge) => {
             accMap[edge.target] = (accMap[edge.target] || 0) + 1;
             return accMap;
         }, {});
         // add only those nodes from [out_nodes] that have only 1 incoming edge
         // accumulate into a map
-        const delNodes = out_nodes.filter(node => incomingEdges[node.id] == 1).reduce((acc, node) => acc[node] = node, {});
-        const delEdges = out_edges.reduce((acc, edge) => acc[edge] = edge, {});
+        const delNodes = out_nodes.filter(node => incomingEdges[node.id] == 1).reduce((acc, node) => { acc[node.id] = node; return acc; }, {});
+        const delEdges = out_edges.reduce((acc, edge) => acc[edge.id] = edge, {});
 
-        cur_nodes = cur_nodes.filter(node => delNodes[node] == undefined); // filter those that are not deleted.
-        cur_edges = cur_edges.filter(edge => delEdges[edge] == undefined); // filter those that are not deleted.
+        cur_nodes = cur_nodes.filter(node => delNodes[node.id] == undefined); // filter those that are not deleted.
+        cur_edges = cur_edges.filter(edge => delEdges[edge.id] == undefined); // filter those that are not deleted.
     } else {
         cur_nodes = cur_nodes.concat(out_nodes);
         cur_edges = cur_edges.concat(out_edges);

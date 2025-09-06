@@ -24,6 +24,14 @@ export function Flow() {
   const reactFlow = useReactFlow();
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
+  const state = useGlobalState();
+  const globalDispatch = useGlobalDispatch();
+  const module = state.selectedModule;
+  const method = state.selectedMethod;
+  const flowDirection = state.flowDirection;
+  const pathExpansionToggleNode = state.togglePathExpansion;
+
   const layoutTrigger = (direction, new_nodes, new_edges) => {
     const layouted = getLayoutedElements(
       new_nodes ? new_nodes : nodes,
@@ -34,13 +42,6 @@ export function Flow() {
     setNodes(new_nodes);
     setEdges([...layouted.edges]);
   };
-
-  const state = useGlobalState();
-  const globalDispatch = useGlobalDispatch();
-  const module = state.selectedModule;
-  const method = state.selectedMethod;
-  const flowDirection = state.flowDirection;
-  const pathExpansionToggleNode = state.togglePathExpansion;
 
   // React JS sorcery to update [nodes] when [gen_nodes] changes and re-render correctly AFTER first render
   useMemo(() => {
@@ -72,6 +73,16 @@ export function Flow() {
     setNodes(gen_nodes);
     setEdges(gen_edges);
     layoutTrigger(flowDirection, gen_nodes, gen_edges);
+
+    setTimeout(() => {
+      if (pathExpansionToggleNode.nodeData != undefined) {
+        reactFlow.fitView({
+          nodes: [{ id: pathExpansionToggleNode.nodeData.displayName }],
+          duration: 250,
+          includeHiddenNodes: true
+        });
+      }
+    }, 100);
   }, [pathExpansionToggleNode]);
 
   const togglePathExpansion = (_event, node) => {
