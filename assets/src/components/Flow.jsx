@@ -9,14 +9,14 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
-import { useGlobalState } from "../ctx/globalContext.jsx";
+import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
 import { nodeTypes, alignNodesWithDirection } from "./Node.jsx";
 import { LayoutPanel } from "./LayoutPanel.jsx";
 import { Documentation } from "./Documentation.jsx";
 import {
   generateFlow,
   getLayoutedElements,
-  get_calls,
+  handleExpansionToggle,
 } from "../helpers/flowHelper.js";
 
 export function Flow() {
@@ -36,9 +36,11 @@ export function Flow() {
   };
 
   const state = useGlobalState();
+  const globalDispatch = useGlobalDispatch();
   const module = state.selectedModule;
   const method = state.selectedMethod;
   const flowDirection = state.flowDirection;
+  const pathExpansionToggleNode = state.togglePathExpansion;
 
   // React JS sorcery to update [nodes] when [gen_nodes] changes and re-render correctly AFTER first render
   useMemo(() => {
@@ -47,12 +49,42 @@ export function Flow() {
       setEdges([]);
       return;
     }
-    const in_calls = get_calls(module, module.in_calls, method);
-    const out_calls = get_calls(module, module.out_calls, method);
-    const { gen_nodes, gen_edges } = generateFlow(in_calls, method, out_calls);
+    const { gen_nodes, gen_edges } = generateFlow(module, method);
     layoutTrigger(flowDirection, gen_nodes, gen_edges);
   }, [module, method, flowDirection]);
-  // layout related
+
+  // Append to OR Delete from [nodes], [edges] the out calls generated from toggled method.
+  useMemo(() => {
+    // do Nothing if toggleNode is undefined -- this is the case during init.
+    if (
+      pathExpansionToggleNode.module == undefined ||
+      pathExpansionToggleNode.method == undefined ||
+      pathExpansionToggleNode.nodeData == undefined
+    )
+      return;
+
+    const { gen_nodes, gen_edges } = handleExpansionToggle(
+      nodes,
+      edges,
+      pathExpansionToggleNode
+    );
+
+    setNodes(gen_nodes);
+    setEdges(gen_edges);
+    layoutTrigger(flowDirection, gen_nodes, gen_edges);
+  }, [pathExpansionToggleNode]);
+
+  const togglePathExpansion = (_event, node) => {
+    // _event is React.MouseEvent
+    if (node.data.call.isSelectedMethod || !node.data.call.clickable) {
+      // Do not toggle expansion as method is already selected.
+      return;
+    }
+    globalDispatch({
+      type: "togglePathExpansion",
+      toggleNode: node.data,
+    });
+  };
 
   return (
     <div className="flow">
@@ -66,6 +98,7 @@ export function Flow() {
           return onNodesChange;
         }}
         onEdgesChange={onEdgesChange}
+        onNodeClick={togglePathExpansion}
         fitView={true}
         onInit={() => {
           reactFlow.fitView();

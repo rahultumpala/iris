@@ -14,7 +14,7 @@ export function RecursionIcon({ className, selectedMethod }) {
           }
         >
           <img
-            class="recursion-svg"
+            className="recursion-svg"
             src="rec-3.png"
             alt="recursive-icon"
             width="15"

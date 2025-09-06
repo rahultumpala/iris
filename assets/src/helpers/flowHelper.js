@@ -9,10 +9,6 @@ import {
 Generating nodes and edges from calls
 */
 
-function generate_method_display_name(method) {
-    return `${method.module}.${method.name}/${method.arity}`;
-}
-
 function generate_node(call, node_type) {
     const name = generate_method_display_name(call.method);
     return {
@@ -21,7 +17,8 @@ function generate_node(call, node_type) {
             displayName: name,
             type: call.method.html_type_text,
             call,
-            isSelectedMethod: call.isSelectedMethod
+            isSelectedMethod: call.isSelectedMethod,
+            isExpanded: false, // set to false by default - will be toggled if [toggleExpansionPath] is invoked.
         },
         type: node_type, // not to be confused with method type
     };
@@ -46,12 +43,19 @@ function get_edges(in_nodes, method_node, out_nodes) {
     return edges;
 }
 
-export function get_calls(module, calls, method) {
+function get_calls(module, calls, method) {
     const key = `${module.module}.${method.name}/${method.arity}`;
     return calls[key] == undefined ? [] : calls[key];
 }
 
-export function generateFlow(in_calls, method, out_calls) {
+export function generate_method_display_name(method) {
+    return `${method.module}.${method.name}/${method.arity}`;
+}
+
+export function generateFlow(module, method) {
+    const in_calls = get_calls(module, module.in_calls, method);
+    const out_calls = get_calls(module, module.out_calls, method);
+
     const in_nodes = in_calls.map((call, idx) =>
         generate_node(call, GlobalConstants.CALLER_NODE_VERTICAL)
     );
@@ -74,6 +78,77 @@ export function generateFlow(in_calls, method, out_calls) {
     return {
         gen_nodes: nodes,
         gen_edges: edges,
+    };
+}
+
+export function handleExpansionToggle(cur_nodes, cur_edges, toggleData) {
+
+    console.log("TOGGLE DATA", toggleData, cur_nodes.length, cur_edges.length);
+
+    const toggleMethod = toggleData.method;
+    const toggleModule = toggleData.module;
+    const toggleNodeData = toggleData.nodeData;
+    const toggleNode = cur_nodes.filter(node => node.data == toggleNodeData)[0];
+
+    const isAlreadyExpanded = toggleNodeData.isExpanded;
+    console.log("isAlreadyExpanded", isAlreadyExpanded);
+
+    const out_calls = get_calls(toggleModule, toggleModule.out_calls, toggleMethod);
+    const out_nodes = out_calls.map((call, idx) =>
+        generate_node(call, GlobalConstants.CALLEE_NODE_VERTICAL)
+    );
+    const out_edges = get_edges([], toggleNode, out_nodes);
+
+    /*
+     If already expanded then delete all out_edges and out_nodes emanating from toggleNode
+     Take care not to delete nodes that have more than one incoming edge
+
+     Else append out_nodes and out_edges to cur_nodes and cur_edges
+
+     toggle [isExpanded] field
+     */
+
+    if (isAlreadyExpanded) {
+        // group nodes by incoming edges.
+        const incomingEdges = cur_edges.reduce((accMap, edge) => {
+            accMap[edge.target] = (accMap[edge.target] || 0) + 1;
+            return accMap;
+        }, {});
+        // add only those nodes from [out_nodes] that have only 1 incoming edge
+        // accumulate into a map
+        const delNodes = out_nodes.filter(node => incomingEdges[node.id] == 1).reduce((acc, node) => acc[node] = node, {});
+        const delEdges = out_edges.reduce((acc, edge) => acc[edge] = edge, {});
+
+        cur_nodes = cur_nodes.filter(node => delNodes[node] == undefined); // filter those that are not deleted.
+        cur_edges = cur_edges.filter(edge => delEdges[edge] == undefined); // filter those that are not deleted.
+    } else {
+        cur_nodes = cur_nodes.concat(out_nodes);
+        cur_edges = cur_edges.concat(out_edges);
+    }
+
+    // Toggle
+    cur_nodes = cur_nodes.map(node => {
+        if (node == toggleNode) {
+            return {
+                ...node,
+                data: {
+                    ...node.data,
+                    isExpanded: !isAlreadyExpanded,
+                },
+                type: isAlreadyExpanded ? GlobalConstants.CALLEE_NODE_VERTICAL : GlobalConstants.METHOD_NODE_VERTICAL
+            };
+        }
+        return node;
+    });
+    cur_nodes = cur_nodes.map((node, idx, _) => {
+        return { ...node, position: { x: 0, y: 100 * idx } };
+    });
+
+    console.log("RETURN DATA", toggleData, cur_nodes, cur_edges);
+
+    return {
+        gen_nodes: cur_nodes,
+        gen_edges: cur_edges
     };
 }
 

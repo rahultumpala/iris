@@ -1,4 +1,8 @@
 import { createContext, useContext, useReducer } from "react";
+import {
+  getTogglePathExpansionDetails,
+  getAllModules,
+} from "../helpers/stateHelper";
 
 const GlobalCtx = createContext(null);
 const GlobalDispatchCtx = createContext(null);
@@ -50,6 +54,12 @@ function globalReducer(curState, action) {
         flowDirection: "V",
         flowDirectionToggleText: "View Horizontal",
         showDocumentation: false,
+        // this is to be used when pathExpansion is toggled by clicking on a clickable node in the flow
+        togglePathExpansion: {
+          method: undefined,
+          module: undefined,
+          node: undefined,
+        },
       };
     }
     case "toggleFlowDirection": {
@@ -69,6 +79,15 @@ function globalReducer(curState, action) {
         toggleDocumentationDisplay(curState)
       );
       return toggleDocumentationDisplay(curState);
+    }
+    case "togglePathExpansion": {
+      /*
+        Path expansion is toggled for nodes that are NOT already expanded
+        Multiple nodes CAN be in the expanded state simultaneously
+        Flow generator MUST figure out whether the [toggleNode] is already expanded or not.
+        Path expansion triggers a flow re-render
+      */
+      return togglePathExpansion(curState, action.toggleNode);
     }
     default: {
       throw Error("Unknown action: " + action.type);
@@ -92,7 +111,7 @@ function chooseModuleAndDescendants(state, module) {
   const app = state.entity.applications.filter(
     (app) => app.application === module.application
   )[0]; // Possible bug when selected there's no app for selected module in loaded apps
-  const method = chooseMethod(module);
+  const method = chooseDefaultMethod(module);
   return {
     selectedApplication: app,
     selectedModule: module,
@@ -102,7 +121,7 @@ function chooseModuleAndDescendants(state, module) {
 
 function chooseApplicationAndDescendants(app) {
   const module = app.modules?.[0];
-  const method = chooseMethod(module);
+  const method = chooseDefaultMethod(module);
   return {
     selectedApplication: app,
     selectedModule: module,
@@ -110,7 +129,7 @@ function chooseApplicationAndDescendants(app) {
   };
 }
 
-function chooseMethod(module) {
+function chooseDefaultMethod(module) {
   let method = module?.methods?.[0];
   method =
     method["html_type_text"] == "INT" || method["html_type_text"] == "EXP"
@@ -136,5 +155,15 @@ function toggleDocumentationDisplay(state) {
   return {
     ...state,
     showDocumentation: !state.showDocumentation,
+  };
+}
+
+function togglePathExpansion(curState, toggleNode) {
+  return {
+    ...curState,
+    togglePathExpansion: getTogglePathExpansionDetails(
+      getAllModules(curState),
+      toggleNode
+    ),
   };
 }

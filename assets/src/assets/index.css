@@ -179,6 +179,10 @@ body {
   border: 1px solid #E5E7EB;
 }
 
+.node-base:hover {
+  cursor: pointer;
+}
+
 .node-recursive-tag {
   align-content: center;
   width: fit-content;
@@ -238,3 +242,6 @@ body {
   color: gray
 }
 
+.not-clickable-method-node:hover {
+  cursor: not-allowed;
+}
