@@ -18,6 +18,7 @@ import {
   getLayoutedElements,
   handleExpansionToggle,
 } from "../helpers/flowHelper.js";
+import { isCallerNode } from "../helpers/nodeHelper.js";
 
 export function Flow() {
   // layout related
@@ -60,7 +61,9 @@ export function Flow() {
     if (
       pathExpansionToggleNode.module == undefined ||
       pathExpansionToggleNode.method == undefined ||
-      pathExpansionToggleNode.nodeData == undefined
+      pathExpansionToggleNode.node == undefined ||
+      // disallow expansion of caller nodes as they could alter methodnode as well.
+      isCallerNode(pathExpansionToggleNode.node)
     )
       return;
 
@@ -75,13 +78,11 @@ export function Flow() {
     layoutTrigger(flowDirection, gen_nodes, gen_edges);
 
     setTimeout(() => {
-      if (pathExpansionToggleNode.nodeData != undefined) {
-        reactFlow.fitView({
-          nodes: [{ id: pathExpansionToggleNode.nodeData.displayName }],
-          duration: 250,
-          includeHiddenNodes: true
-        });
-      }
+      reactFlow.fitView({
+        nodes: [{ id: pathExpansionToggleNode.node.data.displayName }],
+        duration: 250,
+        includeHiddenNodes: true,
+      });
     }, 100);
   }, [pathExpansionToggleNode]);
 
@@ -93,7 +94,7 @@ export function Flow() {
     }
     globalDispatch({
       type: "togglePathExpansion",
-      toggleNode: node.data,
+      toggleNode: node,
     });
   };
 

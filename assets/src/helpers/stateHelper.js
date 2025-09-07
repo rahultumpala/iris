@@ -1,13 +1,14 @@
 import { generate_method_display_name } from "./flowHelper.js";
 
 /*
-NodeData contains the call object.
+[node] contains the entire node object
+[node.data] contains node data
 Fetch the associated [module] and method object from [globalState]
 [out_calls] can be fetched from [module]
 */
-export function getTogglePathExpansionDetails(allModules, nodeData) {
-    const nodeModule = nodeData.call.method.module;
-    const nodeDisplayName = nodeData.displayName;
+export function getTogglePathExpansionDetails(allModules, node) {
+    const nodeModule = node.data.call.method.module;
+    const nodeDisplayName = node.data.displayName;
 
     const module = allModules.filter(m => m.module == nodeModule)[0];
 
@@ -18,7 +19,7 @@ export function getTogglePathExpansionDetails(allModules, nodeData) {
     return {
         module,
         method,
-        nodeData: nodeData
+        node
     }
 }
 

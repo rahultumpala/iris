@@ -105,12 +105,16 @@ function getExpandedNodesChildrenIds(all_edges, toggleNode) {
     return delNodes.reduce((acc, id) => { acc[id] = id; return acc; }, {}); // return as map
 }
 
+/*
+[toggleData] contains the stateObject [togglePathExpansion] data that is of the form
+{method, module, node}
+*/
 export function handleExpansionToggle(cur_nodes, cur_edges, toggleData) {
 
     const toggleMethod = toggleData.method;
     const toggleModule = toggleData.module;
-    const toggleNodeData = toggleData.nodeData;
-    const toggleNode = cur_nodes.filter(node => node.data == toggleNodeData)[0];
+    const toggleNode = toggleData.node;
+    const toggleNodeData = toggleData.node.data;
 
     const isAlreadyExpanded = toggleNodeData.isExpanded;
 
@@ -138,9 +142,10 @@ export function handleExpansionToggle(cur_nodes, cur_edges, toggleData) {
         cur_edges = cur_edges.concat(out_edges);
     }
 
-    // Toggle
+    // Toggle the node type to add extra handle for outgoing edges
+    // or to remove handle when contracted.
     cur_nodes = cur_nodes.map(node => {
-        if (node == toggleNode) {
+        if (node.id == toggleNode.id) {
             return {
                 ...node,
                 data: {
