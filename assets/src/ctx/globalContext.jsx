@@ -45,6 +45,7 @@ function globalReducer(curState, action) {
         showDocumentation: false,
       };
     }
+    // <<< SET INIT DEFAULTS HERE >>>
     case "setGlobalState": {
       // invoked only at the beginning of the app
       console.log("Setting Global State", action.globalState);
@@ -54,6 +55,7 @@ function globalReducer(curState, action) {
         flowDirection: "V",
         flowDirectionToggleText: "View Horizontal",
         showDocumentation: false,
+        docsMethod: undefined, // this will be used when set. else [selectedMethod] will be used as fallback
         // this is to be used when pathExpansion is toggled by clicking on a clickable node in the flow
         togglePathExpansion: {
           method: undefined,
@@ -72,13 +74,17 @@ function globalReducer(curState, action) {
       return toggleFlowDirection(curState);
     }
     case "toggleDocumentationDisplay": {
-      // ignores the action as this is only a toggle.
-      console.log(
-        "toggling documentation display",
+      /*
+        [action.docsMethod] - display docs of this method
+        [action.keepDisplaying] - bool - this will be true when docs btn of some other method is clicked.
+            do not stop displaying the docs component. update the content.
+            when false - stop displaying the docs component.
+      */
+      return toggleDocumentationDisplay(
         curState,
-        toggleDocumentationDisplay(curState)
+        action.docsMethod,
+        action.keepDisplaying
       );
-      return toggleDocumentationDisplay(curState);
     }
     case "togglePathExpansion": {
       /*
@@ -151,10 +157,12 @@ function toggleFlowDirection(state) {
   };
 }
 
-function toggleDocumentationDisplay(state) {
+function toggleDocumentationDisplay(state, method, keepDisplaying) {
   return {
     ...state,
-    showDocumentation: !state.showDocumentation,
+    showDocumentation:
+      keepDisplaying == false && state.showDocumentation ? false : true,
+    docsMethod: method || state.selectedMethod, // use state.selectedMethod as the default fallback
   };
 }
 

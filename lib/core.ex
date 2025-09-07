@@ -252,6 +252,10 @@ defmodule Iris.Core do
     end)
   end
 
+  @doc ~S"""
+    Fetches generated .beam files from local build directory
+    and dissassembles them using :beam_disasm
+  """
   def get_beam_files(config) do
     IO.inspect({"CONFIG", config})
     path = config.source_beam

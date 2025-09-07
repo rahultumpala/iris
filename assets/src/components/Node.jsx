@@ -1,6 +1,8 @@
 import { Handle, Position } from "@xyflow/react";
 import { GlobalConstants } from "../constants";
 import { RecursionIcon } from "./RecursionIcon";
+import { methodHasDocumentation } from "../helpers/stateHelper";
+import { DocumentationIcon } from "./DocumentationIcon";
 
 function Node({ data }) {
   const method = data.call.method;
@@ -9,22 +11,19 @@ function Node({ data }) {
   const className = `node-base text-sm ${
     !clickable && !isCurrentlySelectedMethod ? "not-clickable-method-node" : ""
   }`;
-  if (method.is_recursive) {
-    return (
-      <>
-        <div className={className}>
-          <div className="name">{data.displayName}</div>
-          <RecursionIcon></RecursionIcon>
-        </div>
-      </>
-    );
-  } else {
-    return (
-      <>
-        <div className={className}>{data.displayName}</div>
-      </>
-    );
-  }
+  return (
+    <>
+      <div className={className}>
+        <div className="name">{data.displayName}</div>
+        {method.is_recursive ? <RecursionIcon></RecursionIcon> : <></>}
+        {methodHasDocumentation(method) ? (
+          <DocumentationIcon method={method}></DocumentationIcon>
+        ) : (
+          <></>
+        )}
+      </div>
+    </>
+  );
 }
 
 function SourceHandle({ dir }) {

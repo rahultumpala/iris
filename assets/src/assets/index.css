@@ -48,7 +48,6 @@ body {
   color: gainsboro;
 }
 
-
 .sidebar {
   min-width: 15w;
   width: max-content;
@@ -57,14 +56,14 @@ body {
 
 .vertical-separator {
   height: 100vh;
-  background-color: #F9FAFB;
+  background-color: #f9fafb;
   display: flex;
   align-items: center;
 }
 
 .vertical-separator .child {
   height: 95vh;
-  background-color: #E5E7EB;
+  background-color: #e5e7eb;
   width: 1px;
 }
 
@@ -104,7 +103,7 @@ body {
 .method-header {
   max-height: 5vh;
   min-height: fit-content;
-  border-bottom: 0.5px ridge #E5E7EB;
+  border-bottom: 0.5px ridge #e5e7eb;
 }
 
 .clickable-method {
@@ -151,7 +150,7 @@ body {
 
 /* SCROLLBAR */
 ::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px #E5E7EB;
+  -webkit-box-shadow: inset 0 0 6px #e5e7eb;
 }
 
 ::-webkit-scrollbar {
@@ -162,7 +161,6 @@ body {
 ::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.3);
 }
-
 
 /* NODE */
 
@@ -176,14 +174,15 @@ body {
   justify-content: space-between;
   border-radius: 5px;
   align-content: center;
-  border: 1px solid #E5E7EB;
+  border: 1px solid #e5e7eb;
 }
 
 .node-base:hover {
   cursor: pointer;
 }
 
-.node-recursive-tag {
+.node-recursive-tag,
+.node-docs-icon {
   align-content: center;
   width: fit-content;
   position: relative;
@@ -239,7 +238,7 @@ body {
 }
 
 .not-clickable-method-node {
-  color: gray
+  color: gray;
 }
 
 .not-clickable-method-node:hover {

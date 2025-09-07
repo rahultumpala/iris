@@ -26,3 +26,11 @@ export function getTogglePathExpansionDetails(allModules, node) {
 export function getAllModules(globalState) {
     return globalState.entity.applications.reduce((allModules, app) => allModules.concat(app.modules), []);
 }
+
+export function methodHasDocumentation(method) {
+    return method?.["ex_doc"]?.["source_doc"]?.["en"] != null;
+}
+
+export function getMethodDocs(method) {
+    return method?.["ex_doc"]?.["source_doc"]?.["en"];
+}

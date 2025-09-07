@@ -1,6 +1,6 @@
 import { Tooltip } from "flowbite-react";
 
-export function RecursionIcon({ className, selectedMethod }) {
+export function RecursionIcon({ className }) {
   return (
     <div className={"node-recursive-tag " + className}>
       <Tooltip
@@ -8,11 +8,7 @@ export function RecursionIcon({ className, selectedMethod }) {
         placement="right"
         className="text-xs font-normal bg-gray-900"
       >
-        <div
-          className={
-            "img-container " + (selectedMethod ? "selected-method" : "")
-          }
-        >
+        <div className={"img-container "}>
           <img
             className="recursion-svg"
             src="rec-3.png"
