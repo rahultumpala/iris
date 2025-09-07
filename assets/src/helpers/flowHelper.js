@@ -81,9 +81,31 @@ export function generateFlow(module, method) {
     };
 }
 
-export function handleExpansionToggle(cur_nodes, cur_edges, toggleData) {
+/*
+    Returns as a map the ids of all nodes that have an incoming edge from
+    a node that has been expanded or from the children of a node that has been expanded.
+*/
+function getExpandedNodesChildrenIds(all_edges, toggleNode) {
+    let children = []; // contains only ids not node objects
+    let idx = -1;
+    while (idx < children.length) {
+        let child = idx == -1 ? toggleNode.id : children[idx];
+        all_edges.forEach(edge => {
+            if (edge.source == child)
+                children.push(edge.target)
+        });
+        idx += 1;
+    }
+    const childrenMap = children.reduce((acc, id) => { acc[id] = id; return acc; }, {}); // turn into a map
+    // find those nodes which have an incoming edges from nodes that are part of the contraction
+    // or from the toggleNode. these can be deleted.
+    // i.e edges whose target is in [children] and source is in [children] or equal to [toggleNode.id]
+    const delNodes = all_edges.filter(edge => childrenMap[edge.target] != undefined && (childrenMap[edge.source] != undefined || edge.source == toggleNode.id))
+        .map(edge => edge.target);
+    return delNodes.reduce((acc, id) => { acc[id] = id; return acc; }, {}); // return as map
+}
 
-    console.log("TOGGLE DATA", toggleData, cur_nodes, cur_edges);
+export function handleExpansionToggle(cur_nodes, cur_edges, toggleData) {
 
     const toggleMethod = toggleData.method;
     const toggleModule = toggleData.module;
@@ -91,7 +113,6 @@ export function handleExpansionToggle(cur_nodes, cur_edges, toggleData) {
     const toggleNode = cur_nodes.filter(node => node.data == toggleNodeData)[0];
 
     const isAlreadyExpanded = toggleNodeData.isExpanded;
-    console.log("isAlreadyExpanded", isAlreadyExpanded);
 
     const out_calls = get_calls(toggleModule, toggleModule.out_calls, toggleMethod);
     const out_nodes = out_calls.map((call, idx) =>
@@ -109,18 +130,9 @@ export function handleExpansionToggle(cur_nodes, cur_edges, toggleData) {
      */
 
     if (isAlreadyExpanded) {
-        // group nodes by incoming edges.
-        const incomingEdges = out_edges.reduce((accMap, edge) => {
-            accMap[edge.target] = (accMap[edge.target] || 0) + 1;
-            return accMap;
-        }, {});
-        // add only those nodes from [out_nodes] that have only 1 incoming edge
-        // accumulate into a map
-        const delNodes = out_nodes.filter(node => incomingEdges[node.id] == 1).reduce((acc, node) => { acc[node.id] = node; return acc; }, {});
-        const delEdges = out_edges.reduce((acc, edge) => { acc[edge.id] = edge; return acc; }, {});
-
+        const delNodes = getExpandedNodesChildrenIds(cur_edges, toggleNode);
         cur_nodes = cur_nodes.filter(node => delNodes[node.id] == undefined); // filter those that are not deleted.
-        cur_edges = cur_edges.filter(edge => delEdges[edge.id] == undefined); // filter those that are not deleted.
+        cur_edges = cur_edges.filter(edge => delNodes[edge.target] == undefined); // filter those that are not deleted.
     } else {
         cur_nodes = cur_nodes.concat(out_nodes);
         cur_edges = cur_edges.concat(out_edges);
@@ -143,8 +155,6 @@ export function handleExpansionToggle(cur_nodes, cur_edges, toggleData) {
     cur_nodes = cur_nodes.map((node, idx, _) => {
         return { ...node, position: { x: 0, y: 100 * idx } };
     });
-
-    console.log("RETURN DATA", toggleData, cur_nodes, cur_edges);
 
     return {
         gen_nodes: cur_nodes,
