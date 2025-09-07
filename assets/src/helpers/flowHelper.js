@@ -117,7 +117,7 @@ export function handleExpansionToggle(cur_nodes, cur_edges, toggleData) {
         // add only those nodes from [out_nodes] that have only 1 incoming edge
         // accumulate into a map
         const delNodes = out_nodes.filter(node => incomingEdges[node.id] == 1).reduce((acc, node) => { acc[node.id] = node; return acc; }, {});
-        const delEdges = out_edges.reduce((acc, edge) => acc[edge.id] = edge, {});
+        const delEdges = out_edges.reduce((acc, edge) => { acc[edge.id] = edge; return acc; }, {});
 
         cur_nodes = cur_nodes.filter(node => delNodes[node.id] == undefined); // filter those that are not deleted.
         cur_edges = cur_edges.filter(edge => delEdges[edge.id] == undefined); // filter those that are not deleted.
