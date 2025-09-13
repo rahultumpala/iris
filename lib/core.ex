@@ -461,6 +461,8 @@ defmodule Iris.Core do
             Map.put(acc, key, method_doc)
           end)
       end
+
+    method_docs
   end
 
   defp filter_empty_docs(doc) do
