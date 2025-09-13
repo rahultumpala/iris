@@ -3,6 +3,7 @@ import {
   getTogglePathExpansionDetails,
   getAllModules,
 } from "../helpers/stateHelper";
+import { GlobalConstants } from "../constants";
 
 const GlobalCtx = createContext(null);
 const GlobalDispatchCtx = createContext(null);
@@ -94,6 +95,9 @@ function globalReducer(curState, action) {
         Path expansion triggers a flow re-render
       */
       return togglePathExpansion(curState, action.toggleNode);
+    }
+    case GlobalConstants.ENTITY_FETCH_FAILED: {
+      return GlobalConstants.ENTITY_FETCH_FAILED;
     }
     default: {
       throw Error("Unknown action: " + action.type);

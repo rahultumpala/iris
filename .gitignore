@@ -46,3 +46,4 @@ dist-ssr
 *.sw?
 
 entity.json
+entity.js

@@ -32,9 +32,11 @@ defmodule Mix.Tasks.Iris do
     core_entity = Core.build(config)
     {:ok, json} = Jason.encode(core_entity, [{:escape, :unicode_safe}, {:pretty, true}])
 
-    path = "assets/entity.json"
+    content = "const getGlobalEntity = () => { return #{json}; }"
+
+    path = "assets/entity.js"
     IO.puts("Writing to #{path}")
-    File.write!(path, json)
+    File.write!(path, content)
   end
 
   defp normalize_source_beam(config) do
