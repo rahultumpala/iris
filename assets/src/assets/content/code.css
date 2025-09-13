@@ -1,0 +1,87 @@
+/* The Consolas font on Windows is too small compared to other ones */
+@font-face {
+  font-family: "Consolas";
+  src: local("Consolas");
+  size-adjust: 110%;
+}
+
+.content-inner.content-inner :is(a:has(code, img), pre a) {
+  color: var(--link-color);
+  text-shadow: none;
+  text-decoration: none;
+  background-image: none;
+}
+
+.content-inner.content-inner :is(a:has(code, img), pre a):is(:visited, :active, :focus, :hover) {
+  color: var(--link-visited-color);
+}
+
+.content-inner code {
+  background-color: var(--codeBackground);
+  vertical-align: baseline;
+  border-radius: var(--borderRadius-sm);
+  padding: .1em .2em;
+  border: 1px solid var(--codeBorder);
+  text-transform: none;
+}
+
+.content-inner code.inline {
+  border-radius: var(--borderRadius-sm);
+  word-wrap: break-word;
+}
+
+.content-inner pre {
+  margin: var(--baseLineHeight) 0;
+}
+
+.content-inner pre code {
+  display: block;
+  overflow-x: auto;
+  white-space: inherit;
+  padding: 1em;
+  scrollbar-width: thin;
+}
+
+.content-inner pre code.output {
+  margin: 0 12px;
+  max-height: 400px;
+  overflow: auto;
+}
+
+.content-inner pre code.output + .copy-button {
+  margin-right: 12px;
+}
+
+.content-inner pre code.output:before {
+  content: "Output";
+  display: block;
+  position: absolute;
+  top: -16px;
+  left: 12px;
+  padding: 2px 4px;
+  font-size: var(--text-xs);
+  font-family: var(--monoFontFamily);
+  line-height: 1;
+  color: var(--textHeaders);
+  background-color: var(--codeBackground);
+  border: 1px solid var(--codeBorder);
+  border-bottom: 0;
+  border-radius: 2px;
+}
+
+@media screen and (max-width: 768px) {
+  .content-inner > pre:has(code),
+  .content-inner section > pre:has(code) {
+    margin-left: calc(-1 * var(--content-gutter));
+    margin-right: calc(-1 * var(--content-gutter));
+  }
+
+  .content-inner > pre code,
+  .content-inner section > pre code {
+    padding-left: var(--content-gutter);
+    padding-right: var(--content-gutter);
+    border-radius: 0;
+    border-left-width: 0;
+    border-right-width: 0;
+  }
+}

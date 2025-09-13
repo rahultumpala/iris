@@ -1,0 +1,246 @@
+@import "tailwindcss";
+@plugin "flowbite-react/plugin/tailwindcss";
+@source "../../.flowbite-react/class-list.json";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --dark-gray-bg: rgb(100, 100, 100);
+  --text-on-dark-bg: gainsboro;
+}
+
+body {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+}
+
+.col_title_text {
+  padding: 0.5em 0.5em;
+}
+
+.module_item,
+.application_item {
+  width: 100%;
+  cursor: pointer;
+  color: black;
+}
+
+.selected-module {
+  background-color: rgb(31, 31, 31);
+}
+
+.selected-module .module_item {
+  color: gainsboro;
+}
+
+.selected-app {
+  background-color: rgb(31, 31, 31);
+}
+
+.selected-app .application_item {
+  color: gainsboro;
+}
+
+.sidebar {
+  min-width: 15w;
+  width: max-content;
+  height: 100vh;
+}
+
+.vertical-separator {
+  height: 100vh;
+  background-color: #f9fafb;
+  display: flex;
+  align-items: center;
+}
+
+.vertical-separator .child {
+  height: 95vh;
+  background-color: #e5e7eb;
+  width: 1px;
+}
+
+.right-half {
+  height: 100vh;
+  width: 100%;
+}
+
+.flow {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+/* METHODS RELATED */
+
+.method-text {
+  color: lightgray;
+}
+
+.method-type {
+  background-color: var(--text-on-dark-bg);
+  color: darkgray;
+  padding: 2px 5px;
+  margin: 0 0 0 2em;
+  border-radius: 5px;
+  min-width: 3em;
+  text-align: center;
+}
+
+.method-item {
+  padding-right: 0;
+  margin-right: 0;
+  min-width: 10vw;
+}
+
+.method-header {
+  max-height: 5vh;
+  min-height: fit-content;
+  border-bottom: 0.5px ridge #e5e7eb;
+}
+
+.clickable-method {
+  cursor: pointer;
+}
+
+.selected-method {
+  background-color: rgb(31, 31, 31);
+}
+
+.selected-method .method-text {
+  color: gainsboro !important;
+}
+
+.selected-method .method-type {
+  background-color: gainsboro !important;
+}
+
+.selected-method .method-ext {
+  color: black;
+}
+
+.selected-method .method-type-internal {
+  color: black;
+}
+
+.clickable-method .method-type {
+  background-color: rgb(31, 31, 31);
+  /* color: white; */
+  padding: 2px 5px;
+  margin: 0 0 0 2em;
+  border-radius: 5px;
+  min-width: 3em;
+  text-align: center;
+}
+
+.clickable-method .method-text {
+  color: black;
+}
+
+.method-type-internal {
+  background-color: var(--dark-gray-bg) !important;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px #e5e7eb;
+}
+
+::-webkit-scrollbar {
+  width: 1px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* NODE */
+
+.node-base {
+  height: auto;
+  width: auto;
+  padding: 5px;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-radius: 5px;
+  align-content: center;
+  border: 1px solid #e5e7eb;
+}
+
+.node-base:hover {
+  cursor: pointer;
+}
+
+.node-recursive-tag,
+.node-docs-icon {
+  align-content: center;
+  width: fit-content;
+  position: relative;
+  font-size: 10px;
+  margin: 0 0 0 1em;
+  /* background-color: var(--text-on-dark-bg); */
+  /* filter: invert(); */
+  padding: 0 2px;
+  border-radius: 5px;
+}
+
+.node-recursive-tag .in-method-col {
+  align-content: center;
+  width: fit-content;
+  font-size: small;
+  padding: 2px 5px;
+}
+
+.selected-method .recursion-svg {
+  filter: invert(100%);
+}
+
+/* Documentation */
+
+.doc-card {
+  z-index: 9;
+  position: absolute;
+  min-width: 50%;
+  max-width: 75%;
+  max-height: 100%;
+  justify-self: end;
+  overflow: scroll;
+}
+
+.doc-card-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+  justify-items: center;
+  height: fit-content;
+}
+
+.doc-card-close-btn {
+  height: fit-content;
+  width: fit-content;
+  padding: 1px 7px;
+  background-color: rgb(31, 31, 31);
+  color: white;
+  font-size: small;
+  border-radius: 5px;
+}
+
+.not-clickable-method-node {
+  color: gray;
+}
+
+.not-clickable-method-node:hover {
+  cursor: not-allowed;
+}

@@ -1,0 +1,18 @@
+:root {
+  --main:          hsl(0, 100%, 44%);
+  --mainDark:      hsl(0, 100%, 34%);
+  --mainDarkest:   hsl(0, 100%, 24%);
+  --mainLight:     hsl(0, 100%, 64%);
+  --mainLightest:  hsl(0, 100%, 74%);
+
+  --searchBarFocusColor:  hsl(0, 100%, 50%);
+  --searchBarBorderColor: rgb(255, 71, 71, 0.1);
+
+  --link-color:           hsl(212, 96%, 45%);
+  --link-visited-color:   hsl(212, 96%, 40%);
+}
+
+body.dark {
+  --link-color:           hsl(212, 56%, 72%);
+  --link-visited-color:   hsl(212, 56%, 67%);
+}
