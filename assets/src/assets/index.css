@@ -217,7 +217,19 @@ body {
   height: 20px !important;
   width: 25px !important;
 }
- 
+
+.module-item-container .docs-icon-svg:hover {
+  cursor: pointer;
+}
+
+.method-item .docs-icon-svg:hover {
+  cursor: default;
+}
+
+.recursion-svg:hover {
+  cursor: default;
+}
+
 /* Documentation */
 
 .doc-card {
