@@ -1,14 +1,15 @@
 import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
 import { Card, Button } from "flowbite-react";
 import Markdown from "react-markdown";
-import { getMethodDocs } from "../helpers/stateHelper.js";
+import { getDocumentation } from "../helpers/stateHelper.js";
 
 export function Documentation({}) {
   const state = useGlobalState();
   const dispatch = useGlobalDispatch();
 
-  const method = state.docsMethod;
-  const docMarkdown = getMethodDocs(method);
+  const docsType = state.docsType;
+  const docsEntity = state.docsEntity;
+  const docMarkdown = getDocumentation(docsType, docsEntity);
   const showDocumentation = state.showDocumentation;
 
   const toggle = () => {

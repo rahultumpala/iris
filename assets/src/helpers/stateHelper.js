@@ -31,6 +31,21 @@ export function methodHasDocumentation(method) {
     return method?.["ex_doc"]?.["source_doc"]?.["en"] != null;
 }
 
-export function getMethodDocs(method) {
+export function moduleHasDocumentation(module) {
+    return module?.["ex_doc"]?.["source_doc"]?.["en"] != null;
+}
+
+export function getDocumentation(docsType, docsEntity) {
+    switch (docsType) {
+        case "method": return getMethodDocs(docsEntity);
+        case "module": return getModuleDocs(docsEntity);
+    }
+}
+
+function getMethodDocs(method) {
     return method?.["ex_doc"]?.["source_doc"]?.["en"];
+}
+
+function getModuleDocs(module) {
+    return module?.["ex_doc"]?.["source_doc"]?.["en"];
 }

@@ -2,6 +2,9 @@ import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
 
 import { SidebarItem } from "flowbite-react";
 
+import { moduleHasDocumentation } from "../helpers/stateHelper.js";
+import { DocumentationIcon } from "./DocumentationIcon.jsx";
+
 function ModuleItem({ module, selectedModule }) {
   const dispatch = useGlobalDispatch();
   let selectModule = () => {
@@ -13,8 +16,15 @@ function ModuleItem({ module, selectedModule }) {
   return (
     <>
       <SidebarItem className={className}>
-        <div className="module_item" onClick={selectModule}>
-          {module.module}
+        <div className="flex flex-row module-item-container">
+          <div className="module_item" onClick={selectModule}>
+            {module.module}
+          </div>
+          {moduleHasDocumentation(module) ? (
+            <DocumentationIcon module={module}></DocumentationIcon>
+          ) : (
+            <></>
+          )}
         </div>
       </SidebarItem>
     </>

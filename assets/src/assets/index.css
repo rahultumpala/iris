@@ -205,6 +205,19 @@ body {
   filter: invert(100%);
 }
 
+.selected-method .docs-icon-svg {
+  filter: invert(100%);
+}
+
+.selected-module .docs-icon-svg {
+  filter: invert(100%);
+}
+
+.module-item-container .docs-icon-svg {
+  height: 20px !important;
+  width: 25px !important;
+}
+ 
 /* Documentation */
 
 .doc-card {
