@@ -1,6 +1,5 @@
 defmodule Mix.Tasks.Iris do
   use Mix.Task
-  alias Iris.Core
 
   @moduledoc ~S"""
   Generates an interactive web page from project sources.
@@ -23,20 +22,13 @@ defmodule Mix.Tasks.Iris do
       Mix.raise("Extraneous arguments on the command line")
     end
 
-    IO.inspect({"Project Config", config})
+    # IO.inspect({"Project Config", config})
 
     compile_path = normalize_source_beam(config)
     config = config |> Iris.ExDoc.Config.build(config[:version] || "dev", [])
     config = %Iris.ExDoc.Config{config | source_beam: compile_path}
 
-    core_entity = Core.build(config)
-    {:ok, json} = Jason.encode(core_entity, [{:escape, :unicode_safe}, {:pretty, true}])
-
-    content = "const getGlobalEntity = () => { return #{json}; }"
-
-    path = "iris/entity.js"
-    IO.puts("Writing to #{path}")
-    File.write!(path, content)
+    Iris.build(config)
   end
 
   defp normalize_source_beam(config) do

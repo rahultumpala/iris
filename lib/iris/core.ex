@@ -11,7 +11,7 @@ defmodule Iris.Core do
     modules = Enum.map(files, &build_from_beam_file(&1, config))
     apps = build_applications(modules)
 
-    IO.inspect("ALL MODULES")
+    # IO.inspect("ALL MODULES")
     Enum.each(apps, fn app -> Enum.each(app.modules, fn mod -> IO.inspect(mod.module) end) end)
 
     all_methods = flatten_all_methods(apps)
@@ -260,7 +260,8 @@ defmodule Iris.Core do
     and dissassembles them using :beam_disasm
   """
   def get_beam_files(config) do
-    IO.inspect({"CONFIG", config})
+    # IO.inspect({"CONFIG", config})
+    
     path = config.source_beam
 
     files =

@@ -11,7 +11,7 @@ defmodule Iris.DocGen do
         module_node
 
       {:error, err} ->
-        IO.inspect({"Error generating module doc for:", err})
+        # IO.inspect({"Error generating module doc for:", err})
         nil
     end
   end
