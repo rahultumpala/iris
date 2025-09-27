@@ -19,6 +19,10 @@ The following features are yet to be implemented.
 - Support for umbrella projects
 - Search feature to search methods
 
+### Screenshot
+
+![Iris for Elixir screenshot](./screenshot.png)
+
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
@@ -35,6 +39,14 @@ end
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/iris>.
+
+## Usage
+
+Execute the following command after ensuring `iris` is added to your dependency list.
+
+```
+mix iris
+```
 
 ## Contribution
 
