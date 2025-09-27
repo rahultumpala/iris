@@ -22,7 +22,6 @@ defmodule Iris.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:floki, ">= 0.37.0"},
       {:jason, "~> 1.2"},
     ]
   end
@@ -35,7 +34,8 @@ defmodule Iris.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get"]
+      setup: ["deps.get"],
+      build: ["cmd --cd assets npm run build"],
     ]
   end
 end

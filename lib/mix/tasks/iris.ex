@@ -34,7 +34,7 @@ defmodule Mix.Tasks.Iris do
 
     content = "const getGlobalEntity = () => { return #{json}; }"
 
-    path = "assets/entity.js"
+    path = "iris/entity.js"
     IO.puts("Writing to #{path}")
     File.write!(path, content)
   end
