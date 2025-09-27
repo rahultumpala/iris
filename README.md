@@ -36,6 +36,10 @@ Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_do
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/iris>.
 
+## Contribution
+
+Raise an issue with a minimally reproducible example. Pull requests that address any issues within the codebase are also welcome.
+
 ## License
 
 Iris source code is released under the Apache 2 License.
