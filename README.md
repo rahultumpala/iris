@@ -10,13 +10,13 @@ The following features are implemented.
 - Generate & View inbound and outbound calls from a selected method
 - Click on outbound call method to expand the method and view its outbound calls
 - Show Method documentation
+- Show Module documentation
 - Detect and denote recursive methods with a recursion icon
 - Detect and denote methods that have documentation with a docs icon
 
 The following features are yet to be implemented.
 
 - Support for umbrella projects
-- Show Module documentation
 - Search feature to search methods
 
 ## Installation
@@ -35,3 +35,7 @@ end
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/iris>.
+
+## Attribution
+
+This project is heavily inspired by [ex_doc](https://github.com/elixir-lang/ex_doc) and uses some of its source code in generating and viewing documentation. The icon used to denote recursive methods is from [Grommet](https://seekicon.com/artist/grommet).
