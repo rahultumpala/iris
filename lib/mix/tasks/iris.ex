@@ -7,6 +7,14 @@ defmodule Mix.Tasks.Iris do
   @shortdoc "Generates iris view for the project"
   @requirements ["compile", "app.config"]
 
+  @switches [
+    verbose: :boolean
+  ]
+
+  @aliases [
+    v: :verbose
+  ]
+
   @doc false
   def run(args, config \\ Mix.Project.config()) do
     {:ok, _} = Application.ensure_all_started(:iris)
@@ -18,6 +26,8 @@ defmodule Mix.Tasks.Iris do
       )
     end
 
+    {cli_opts, args, _} = OptionParser.parse(args, aliases: @aliases, switches: @switches)
+
     if args != [] do
       Mix.raise("Extraneous arguments on the command line")
     end
@@ -26,7 +36,12 @@ defmodule Mix.Tasks.Iris do
 
     compile_path = normalize_source_beam(config)
     config = config |> Iris.ExDoc.Config.build(config[:version] || "dev", [])
-    config = %Iris.ExDoc.Config{config | source_beam: compile_path}
+
+    config = %Iris.ExDoc.Config{
+      config
+      | source_beam: compile_path,
+        verbose: Keyword.get(cli_opts, :verbose, false)
+    }
 
     Iris.build(config)
   end

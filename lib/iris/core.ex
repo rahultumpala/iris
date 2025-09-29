@@ -11,8 +11,10 @@ defmodule Iris.Core do
     modules = Enum.map(files, &build_from_beam_file(&1, config))
     apps = build_applications(modules)
 
-    # IO.inspect("ALL MODULES")
-    Enum.each(apps, fn app -> Enum.each(app.modules, fn mod -> IO.inspect(mod.module) end) end)
+    if config.verbose do
+      Mix.shell().info("All modules: ")
+      Enum.each(apps, fn app -> Enum.each(app.modules, fn mod -> IO.inspect(mod.module) end) end)
+    end
 
     all_methods = flatten_all_methods(apps)
 
@@ -261,7 +263,7 @@ defmodule Iris.Core do
   """
   def get_beam_files(config) do
     # IO.inspect({"CONFIG", config})
-    
+
     path = config.source_beam
 
     files =
