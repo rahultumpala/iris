@@ -1,2 +1,3 @@
 iris/* -diff
-iris/ linguist-vendored
+iris/** linguist-vendored=false
+iris/** linguist-documentation=false
