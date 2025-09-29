@@ -1,6 +1,6 @@
 # Iris
 
-A tool to visualize your elixir codebase.
+A tool for visualizing your Elixir codebase.
 
 ![Iris for Elixir screenshot](./screenshot.png)
 
