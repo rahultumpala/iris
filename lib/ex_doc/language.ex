@@ -91,16 +91,6 @@ defmodule Iris.ExDoc.Language do
               | false
 
   @doc """
-  Autolinks docs.
-  """
-  @callback autolink_doc(doc :: Iris.ExDoc.DocAST.t(), opts :: keyword()) :: Iris.ExDoc.DocAST.t()
-
-  @doc """
-  Autolinks typespecs.
-  """
-  @callback autolink_spec(spec :: term(), opts :: keyword()) :: iodata()
-
-  @doc """
   Returns information for syntax highlighting.
   """
   @callback highlight_info() :: %{
@@ -127,30 +117,6 @@ defmodule Iris.ExDoc.Language do
   """
   @callback parse_module(String.t(), mode :: :regular_link | :custom_link) ::
               {:module, atom()} | :error
-
-  @doc """
-  Return a URL to autoimported function if atom+arity are autoimported
-  """
-  @callback try_autoimported_function(
-              name :: atom(),
-              arity :: non_neg_integer(),
-              mode :: :regular_link | :custom_link,
-              opts :: keyword(),
-              original_text :: String.t()
-            ) ::
-              nil | String.t()
-
-  @doc """
-  Return a URL to built-in type if atom+arity are built-in
-  """
-  @callback try_builtin_type(
-              name :: atom(),
-              arity :: non_neg_integer(),
-              mode :: :regular_link | :custom_link,
-              opts :: keyword(),
-              original_text :: String.t()
-            ) ::
-              nil | String.t()
 
   def get(:elixir, _module), do: {:ok, Iris.ExDoc.Language.Elixir}
   def get(:erlang, _module), do: {:ok, Iris.ExDoc.Language.Erlang}
