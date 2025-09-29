@@ -26,52 +26,21 @@ modifies curState based on the action and returns new state
 function globalReducer(curState, action) {
   switch (action.type) {
     case "selectApplication": {
-      return {
-        ...curState,
-        ...chooseApplicationAndDescendants(action.application),
-        showDocumentation: false,
-      };
+      return selectApplication(curState, action);
     }
     case "selectModule": {
-      return {
-        ...curState,
-        ...chooseModuleAndDescendants(curState, action.module),
-        showDocumentation: false,
-      };
+      return selectModule(curState, action);
     }
     case "selectMethod": {
-      return {
-        ...curState,
-        selectedMethod: action.method,
-        showDocumentation: false,
-      };
+      return selectMethod(curState, action);
     }
-    // <<< SET INIT DEFAULTS HERE >>>
     case "setGlobalState": {
       // invoked only at the beginning of the app
       console.log("Setting Global State", action.globalState);
-      return {
-        ...action.globalState,
-        // DEFAULTS: Flow direction, Toggle Button Text, Documentation Card Display
-        flowDirection: "V",
-        flowDirectionToggleText: "View Horizontal",
-        showDocumentation: false,
-        docsMethod: undefined, // this will be used when set. else [selectedMethod] will be used as fallback
-        // this is to be used when pathExpansion is toggled by clicking on a clickable node in the flow
-        togglePathExpansion: {
-          method: undefined,
-          module: undefined,
-          node: undefined,
-        },
-      };
+      return setGlobalState(action.globalState);
     }
     case "toggleFlowDirection": {
       // ignores the action as this is only a toggle.
-      console.log(
-        "toggling flow direction",
-        curState,
-        toggleFlowDirection(curState)
-      );
       return toggleFlowDirection(curState);
     }
     case "toggleDocumentationDisplay": {
@@ -81,11 +50,7 @@ function globalReducer(curState, action) {
             do not stop displaying the docs component. update the content.
             when false - stop displaying the docs component.
       */
-      return toggleDocumentationDisplay(
-        curState,
-        action.docsMethod,
-        action.keepDisplaying
-      );
+      return toggleDocumentationDisplay(curState, action);
     }
     case "togglePathExpansion": {
       /*
@@ -117,6 +82,48 @@ export function useGlobalDispatch() {
 }
 
 /* internal helpers */
+function setGlobalState(globalState) {
+  // <<< SET INIT DEFAULTS HERE >>>
+  return {
+    ...globalState,
+    // DEFAULTS: Flow direction, Toggle Button Text, Documentation Card Display
+    flowDirection: "V",
+    flowDirectionToggleText: "View Horizontal",
+    showDocumentation: false,
+    docsMethod: undefined, // this will be used when set. else [selectedMethod] will be used as fallback
+    // this is to be used when pathExpansion is toggled by clicking on a clickable node in the flow
+    togglePathExpansion: {
+      method: undefined,
+      module: undefined,
+      node: undefined,
+    },
+  };
+}
+
+function selectApplication(curState, action) {
+  return {
+    ...curState,
+    ...chooseApplicationAndDescendants(action.application),
+    showDocumentation: false,
+  };
+}
+
+function selectModule(curState, action) {
+  return {
+    ...curState,
+    ...chooseModuleAndDescendants(curState, action.module),
+    showDocumentation: false,
+  };
+}
+
+function selectMethod(curState, action) {
+  return {
+    ...curState,
+    selectedMethod: action.method,
+    showDocumentation: false,
+  };
+}
+
 function chooseModuleAndDescendants(state, module) {
   const app = state.entity.applications.filter(
     (app) => app.application === module.application
@@ -161,12 +168,14 @@ function toggleFlowDirection(state) {
   };
 }
 
-function toggleDocumentationDisplay(state, method, keepDisplaying) {
+function toggleDocumentationDisplay(state, action) {
+  const keepDisplaying = action.keepDisplaying;
   return {
     ...state,
     showDocumentation:
       keepDisplaying == false && state.showDocumentation ? false : true,
-    docsMethod: method || state.selectedMethod, // use state.selectedMethod as the default fallback
+    docsEntity: action.docsEntity, // use state.selectedMethod as the default fallback
+    docsType: action.docsType
   };
 }
 

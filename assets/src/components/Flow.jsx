@@ -99,7 +99,7 @@ export function Flow() {
   };
 
   return (
-    <div className="flow">
+    <div className="flow grid">
       <Documentation></Documentation>
       <ReactFlow
         nodes={nodes}

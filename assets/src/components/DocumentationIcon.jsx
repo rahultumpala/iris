@@ -1,14 +1,14 @@
 import { Tooltip } from "flowbite-react";
 import { useGlobalDispatch, useGlobalState } from "../ctx/globalContext";
 
-export function DocumentationIcon({ className, method }) {
+export function DocumentationIcon({ className, method, module }) {
   const dispatch = useGlobalDispatch();
 
   const showDocumentation = () => {
-    console.log("clicked");
     dispatch({
       type: "toggleDocumentationDisplay",
-      docsMethod: method,
+      docsEntity: method != null ? method : module,
+      docsType: method != null ? "method" : "module",
     });
   };
 
@@ -24,8 +24,8 @@ export function DocumentationIcon({ className, method }) {
             className="docs-icon-svg"
             src="docs.png"
             alt="docs-icon"
-            width="15"
-            height="10"
+            width="20"
+            height="15"
           ></img>
         </div>
       </Tooltip>

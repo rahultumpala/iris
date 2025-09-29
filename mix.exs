@@ -1,12 +1,16 @@
 defmodule Iris.MixProject do
   use Mix.Project
 
+  @source_url "https://github.com/rahultumpala/iris"
+
   def project do
     [
       app: :iris,
       version: "0.1.0",
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
+      description: description(),
+      package: package(),
       deps: deps(),
       aliases: aliases()
     ]
@@ -22,9 +26,13 @@ defmodule Iris.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:floki, ">= 0.37.0"},
       {:jason, "~> 1.2"},
+      {:ex_doc, "~> 0.38.4"}
     ]
+  end
+
+   defp description() do
+    "Iris is a tool for visualizing your Elixir codebase."
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
@@ -35,7 +43,19 @@ defmodule Iris.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get"]
+      setup: ["deps.get", "cmd --cd assets npm install"],
+      build: ["cmd --cd assets npm run build"]
+    ]
+  end
+
+  defp package() do
+    [
+      licenses: ["Apache-2.0"],
+      maintainers: ["Rahul Tumpala"],
+      files: ~w(iris lib LICENSE mix.exs README.md),
+      links: %{
+        "GitHub" => @source_url
+      }
     ]
   end
 end

@@ -15,7 +15,8 @@ export function MethodHeader() {
   const showDocumentation = () => {
     dispatch({
       type: "toggleDocumentationDisplay",
-      docsMethod: method,
+      docsEntity: method,
+      docsType: "method",
       keepDisplaying: false,
     });
   };

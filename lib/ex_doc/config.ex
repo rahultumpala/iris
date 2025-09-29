@@ -54,7 +54,8 @@ defmodule Iris.ExDoc.Config do
             source_url_pattern: &__MODULE__.source_url_pattern/2,
             title: nil,
             version: nil,
-            warnings_as_errors: false
+            warnings_as_errors: false,
+            verbose: false
 
   @type t :: %__MODULE__{
           annotations_for_docs: (map() -> list()),
@@ -96,7 +97,8 @@ defmodule Iris.ExDoc.Config do
           source_url_pattern: (String.t(), integer() -> String.t() | nil),
           title: nil | String.t(),
           version: nil | String.t(),
-          warnings_as_errors: boolean()
+          warnings_as_errors: boolean(),
+          verbose: boolean()
         }
 
   def build(project, vsn, options) do

@@ -3,6 +3,8 @@ import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
 import { SidebarItem, Tooltip } from "flowbite-react";
 
 import { RecursionIcon } from "./RecursionIcon.jsx";
+import { methodHasDocumentation } from "../helpers/stateHelper.js";
+import { DocumentationIcon } from "./DocumentationIcon.jsx";
 
 function MethodType({ text, tooltip }) {
   const attributes = {
@@ -44,6 +46,8 @@ function MethodItem({ method, selectedMethod }) {
       (isSelected ? "selected-method" : ""),
   };
 
+  const hasDocumentation = methodHasDocumentation(method);
+
   return (
     <>
       <SidebarItem {...attributes}>
@@ -55,6 +59,12 @@ function MethodItem({ method, selectedMethod }) {
 
           {/* RIGHT HALF */}
           <div className="right-end flex flex-row justify-between items-center">
+            {hasDocumentation ? (
+              <DocumentationIcon method={method}></DocumentationIcon>
+            ) : (
+              <></>
+            )}
+
             {method.is_recursive ? (
               <RecursionIcon
                 className={"in-method-col"}
