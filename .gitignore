@@ -54,3 +54,5 @@ erl_crash.dump
 *.beam
 /config/*.secret.exs
 .elixir_ls/
+
+iris/**
