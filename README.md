@@ -2,6 +2,8 @@
 
 A tool for visualizing your Elixir codebase.
 
+Iris aims to reduce the time taken to skim through an Elixir codebase by rendering an interactive GUI displaying the constituent applications, modules, methods and method call paths, even documentation!
+
 ![Iris for Elixir screenshot](./screenshot.png)
 
 The following features are implemented.
@@ -28,7 +30,7 @@ def deps do
 end
 ```
 
-The docs found at <https://hexdocs.pm/iris>.
+Hex package located at <https://hexdocs.pm/iris>.
 
 ## Usage
 
