@@ -3,7 +3,7 @@
 ## v0.1.2
 
 - Enhancements
-    - Show iris GUI in generated documentation
+    - Show iris GUI in generated documentation with `iris.docs` task
 - Bug Fixes
     - Fix nil mod_name error when mod_name doesn't contain Elixir prefix
 
