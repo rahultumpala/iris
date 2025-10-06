@@ -11,11 +11,14 @@ defmodule Iris.MixProject do
     [
       app: :iris,
       version: @version,
+      version: @version,
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),
       deps: deps(),
+      aliases: aliases(),
+      docs: docs()
       aliases: aliases(),
       docs: docs()
     ]
@@ -67,6 +70,8 @@ defmodule Iris.MixProject do
       setup: ["deps.get", "cmd --cd assets npm install"],
       build: ["cmd --cd assets npm run build"],
       docs: ["docs.override"]
+      build: ["cmd --cd assets npm run build"],
+      docs: ["docs.override"]
     ]
   end
 
@@ -80,6 +85,7 @@ defmodule Iris.MixProject do
     [
       licenses: ["Apache-2.0"],
       maintainers: ["Rahul Tumpala"],
+      files: ~w(iris lib LICENSE mix.exs README.md CHANGELOG.md),
       files: ~w(iris lib LICENSE mix.exs README.md CHANGELOG.md),
       links: %{
         "GitHub" => @source_url,
