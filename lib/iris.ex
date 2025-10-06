@@ -1,6 +1,8 @@
 defmodule Iris do
   alias Iris.Core
 
+  @iris_dir Application.compile_env(:iris, :target_dir, "iris")
+
   defmacrop list_static() do
     "iris/*"
     |> Path.wildcard()
@@ -15,10 +17,15 @@ defmodule Iris do
     {:ok, json} = Jason.encode(core_entity, [{:escape, :unicode_safe}, {:pretty, true}])
 
     entity_content = "const getGlobalEntity = () => { return #{json}; }"
-    entity_path = "iris/entity.js"
+    entity_path = Path.join([@iris_dir, "entity.js"])
     entity_asset = {entity_path, entity_content}
 
-    Mix.shell().info("Writing to iris/")
+    if not File.exists?(@iris_dir) do
+      Mix.shell().info("Creating directory #{@iris_dir}")
+      File.mkdir_p!(@iris_dir)
+    end
+
+    Mix.shell().info("Writing to #{@iris_dir}")
 
     [entity_asset | list_static()]
     |> Enum.each(fn {path, content} ->
