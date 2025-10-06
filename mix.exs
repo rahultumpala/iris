@@ -2,11 +2,12 @@ defmodule Iris.MixProject do
   use Mix.Project
 
   @source_url "https://github.com/rahultumpala/iris"
+  @version "0.1.1"
 
   def project do
     [
       app: :iris,
-      version: "0.1.0",
+      version: @version,
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       description: description(),
@@ -52,7 +53,7 @@ defmodule Iris.MixProject do
     [
       licenses: ["Apache-2.0"],
       maintainers: ["Rahul Tumpala"],
-      files: ~w(iris lib LICENSE mix.exs README.md),
+      files: ~w(iris lib LICENSE mix.exs README.md CHANGELOG.md),
       links: %{
         "GitHub" => @source_url
       }
