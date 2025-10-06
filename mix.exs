@@ -2,17 +2,19 @@ defmodule Iris.MixProject do
   use Mix.Project
 
   @source_url "https://github.com/rahultumpala/iris"
+  @version "0.1.1"
 
   def project do
     [
       app: :iris,
-      version: "0.1.0",
+      version: @version,
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),
       deps: deps(),
-      aliases: aliases()
+      aliases: aliases(),
+      docs: docs()
     ]
   end
 
@@ -35,6 +37,22 @@ defmodule Iris.MixProject do
     "Iris is a tool for visualizing your Elixir codebase."
   end
 
+  defp docs do
+    [
+      main: "readme",
+      extras:
+        [
+          "README.md",
+          "CHANGELOG.md"
+        ],
+      source_ref: "v#{@version}",
+      source_url: @source_url,
+      skip_undefined_reference_warnings_on: [
+        "CHANGELOG.md"
+      ]
+    ]
+  end
+
   # Aliases are shortcuts or tasks specific to the current project.
   # For example, to install project dependencies and perform other setup tasks, run:
   #
@@ -44,7 +62,8 @@ defmodule Iris.MixProject do
   defp aliases do
     [
       setup: ["deps.get", "cmd --cd assets npm install"],
-      build: ["cmd --cd assets npm run build"]
+      build: ["cmd --cd assets npm run build"],
+      docs: ["docs.override"]
     ]
   end
 
@@ -52,9 +71,10 @@ defmodule Iris.MixProject do
     [
       licenses: ["Apache-2.0"],
       maintainers: ["Rahul Tumpala"],
-      files: ~w(iris lib LICENSE mix.exs README.md),
+      files: ~w(iris lib LICENSE mix.exs README.md CHANGELOG.md),
       links: %{
-        "GitHub" => @source_url
+        "GitHub" => @source_url,
+        "Changelog" => "https://hexdocs.pm/iris/changelog.html",
       }
     ]
   end
