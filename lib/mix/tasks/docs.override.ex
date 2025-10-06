@@ -9,9 +9,10 @@ defmodule Mix.Tasks.Docs.Override do
   @img_file "screenshot.png"
 
   @doc false
-  def run(args, config \\ Mix.Project.config()) do
+  def run(args, _config \\ Mix.Project.config()) do
+    Mix.Task.run("iris.docs", args)
+
     docs_dir = Path.expand(@docs_dir)
-    Kernel.apply(Mix.Tasks.Docs, :run, [args, config])
 
     if File.exists?(@docs_dir) do
       content = File.read!(Path.expand(@img_file))

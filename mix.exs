@@ -1,8 +1,11 @@
 defmodule Iris.MixProject do
   use Mix.Project
 
+  @iris_dir "./iris"
+  @entity_js "entity.js"
+
   @source_url "https://github.com/rahultumpala/iris"
-  @version "0.1.1"
+  @version "0.1.2"
 
   def project do
     [
@@ -33,18 +36,18 @@ defmodule Iris.MixProject do
     ]
   end
 
-   defp description() do
+  defp description() do
     "Iris is a tool for visualizing your Elixir codebase."
   end
 
   defp docs do
     [
       main: "readme",
-      extras:
-        [
-          "README.md",
-          "CHANGELOG.md"
-        ],
+      extras: [
+        "README.md",
+        "CHANGELOG.md",
+        "IrisGUI.md"
+      ],
       source_ref: "v#{@version}",
       source_url: @source_url,
       skip_undefined_reference_warnings_on: [
@@ -68,13 +71,19 @@ defmodule Iris.MixProject do
   end
 
   defp package() do
+    local_entity_js = Path.join(@iris_dir, @entity_js)
+
+    if File.exists?(local_entity_js) do
+      File.rm!(local_entity_js)
+    end
+
     [
       licenses: ["Apache-2.0"],
       maintainers: ["Rahul Tumpala"],
       files: ~w(iris lib LICENSE mix.exs README.md CHANGELOG.md),
       links: %{
         "GitHub" => @source_url,
-        "Changelog" => "https://hexdocs.pm/iris/changelog.html",
+        "Changelog" => "https://hexdocs.pm/iris/changelog.html"
       }
     ]
   end
