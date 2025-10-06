@@ -90,7 +90,11 @@ defmodule Iris.Core do
         {Atom.to_string(name), Integer.to_string(arity)}
       end)
 
-    mod_name_str = mod_name |> Atom.to_string() |> String.split("Elixir.") |> Enum.at(1)
+    mod_name_str = mod_name |> Atom.to_string() |> String.split("Elixir.") |> case do
+      [ _elixir_prefix , mod_name ] -> mod_name
+      [mod_name] -> mod_name
+    end
+
     module_doc = DocGen.generate_docs(mod_name, config)
     # group method docs by {name}/{arity} as key
     method_docs = module_doc |> group_method_docs()
