@@ -37,7 +37,7 @@ defmodule Mix.Tasks.Iris do
     compile_path = normalize_source_beam(config)
     config = config |> Iris.ExDoc.Config.build(config[:version] || "dev", [])
 
-    config = %Iris.ExDoc.Config{
+    config = %{
       config
       | source_beam: compile_path,
         verbose: Keyword.get(cli_opts, :verbose, false)

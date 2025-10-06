@@ -38,7 +38,7 @@ defmodule Iris.Core do
 
         Map.merge(acc, in_calls, fn _k, v1, v2 -> v2 ++ v1 end)
       end)
-      |> Enum.into(%{}, fn {callee, callers} ->
+      |> Map.new(fn {callee, callers} ->
         # generate %Call{} from %Method{} caller
         # Always clickable since they are not BIF/IMP methods
         calls = Enum.map(callers, &Call.new(&1, true))
@@ -47,14 +47,14 @@ defmodule Iris.Core do
       end)
 
     apps =
-      Enum.map(apps, fn app ->
+      Enum.map(apps, fn %Application{} = app ->
         modules =
           Enum.map(
             app.modules,
             &assign_in_out_calls(&1, all_methods, all_out_calls, all_in_calls)
           )
 
-        %Application{app | modules: modules}
+        %{app | modules: modules}
       end)
 
     %Entity{
@@ -106,13 +106,12 @@ defmodule Iris.Core do
       |> Enum.map(&filter_recursive_calls/1)
       |> Enum.map(&filter_duplicate_calls/1)
       |> Enum.map(&set_method_docs(&1, method_docs))
+      |> Enum.sort_by(fn %Method{name: name, arity: arity} ->
+        Enum.join([name, arity], "/")
+      end)
 
     # set docs as null to avoid repetition
-    module_doc =
-      case module_doc do
-        nil -> nil
-        %Iris.ExDoc.ModuleNode{} -> %Iris.ExDoc.ModuleNode{module_doc | docs: nil}
-      end
+    module_doc = with %Iris.ExDoc.ModuleNode{} <- module_doc, do: %{module_doc | docs: nil}
 
     module_doc =
       cond do
@@ -170,9 +169,9 @@ defmodule Iris.Core do
 
         # append call instructions if already found one method (auto generated or actual) with same name
         if Map.has_key?(acc, {name, arity}) do
-          actual_method = Map.get(acc, {name, arity})
+          %Method{} = actual_method = Map.get(acc, {name, arity})
 
-          actual_method = %Method{
+          actual_method = %{
             actual_method
             | call_instructions: actual_method.call_instructions ++ method.call_instructions
           }
@@ -232,13 +231,13 @@ defmodule Iris.Core do
   # assigns the text EXP(when found in exports) or INT(when found in locals)
   defp assign_html_type_text(methods, exports_map, locals_map) do
     methods
-    |> Enum.map(fn method ->
+    |> Enum.map(fn %Method{} = method ->
       cond do
         Map.has_key?(exports_map, {method.name, method.arity}) ->
-          %Method{method | is_export: true, html_type_text: "EXP", view: true}
+          %{method | is_export: true, html_type_text: "EXP", view: true}
 
         Map.has_key?(locals_map, {method.name, method.arity}) ->
-          %Method{method | html_type_text: "INT", view: true}
+          %{method | html_type_text: "INT", view: true}
 
         true ->
           method
@@ -312,7 +311,7 @@ defmodule Iris.Core do
 
   # returns the instruction in {m,f,a} format
   # see [get_call_instructions/1] return type to understand instruction format
-  defp normalize_call_instructions(method) do
+  defp normalize_call_instructions(%Method{} = method) do
     normalized_instr =
       method.call_instructions
       |> Enum.map(fn instr ->
@@ -355,13 +354,13 @@ defmodule Iris.Core do
         {m, f, a}
       end)
 
-    %Method{method | call_instructions: normalized_instr}
+    %{method | call_instructions: normalized_instr}
   end
 
   # divides instructions into recursive and non-recursive
   # if more than one recursive instruction is found method is flagged as recursive and only non_recursive instructions are returned
   # else return all instructions
-  defp filter_recursive_calls(method) do
+  defp filter_recursive_calls(%Method{} = method) do
     {recursive_calls, non_recursive_calls} =
       method.call_instructions
       |> Enum.reduce({[], []}, fn {m, f, a} = call, {rec, non_rec} ->
@@ -373,13 +372,13 @@ defmodule Iris.Core do
 
     case recursive_calls do
       [] -> method
-      _ -> %Method{method | call_instructions: non_recursive_calls, is_recursive: true}
+      _ -> %{method | call_instructions: non_recursive_calls, is_recursive: true}
     end
   end
 
   # remove duplicate instructions
-  defp filter_duplicate_calls(method) do
-    %Method{method | call_instructions: Enum.uniq(method.call_instructions)}
+  defp filter_duplicate_calls(%Method{} = method) do
+    %{method | call_instructions: Enum.uniq(method.call_instructions)}
   end
 
   defp flatten_all_methods(apps) do
@@ -406,7 +405,7 @@ defmodule Iris.Core do
         Map.put(acc, method, Map.get(all_in_calls, method, []))
       end)
 
-    %Module{module | out_calls: module_out_calls, in_calls: module_in_calls}
+    %{module | out_calls: module_out_calls, in_calls: module_in_calls}
   end
 
   defp set_method_docs(%Method{} = method, %{} = method_docs) do
@@ -414,13 +413,13 @@ defmodule Iris.Core do
 
     case Map.get(method_docs, key, nil) do
       nil -> method
-      doc -> %Method{method | ex_doc: doc}
+      doc -> %{method | ex_doc: doc}
     end
 
     with doc <- Map.get(method_docs, key, nil),
          false <- is_nil(doc),
          false <- doc.source_doc == :none do
-      %Method{method | ex_doc: doc}
+      %{method | ex_doc: doc}
     else
       _ -> method
     end
@@ -446,8 +445,8 @@ defmodule Iris.Core do
 
         method =
           case call_m do
-            "erlang" -> %Method{method | html_type_text: "BIF"}
-            _ -> %Method{method | html_type_text: "IMP"}
+            "erlang" -> %{method | html_type_text: "BIF"}
+            _ -> %{method | html_type_text: "IMP"}
           end
 
         %Call{clickable: false, method: method}
@@ -461,22 +460,19 @@ defmodule Iris.Core do
 
   defp group_method_docs(module_doc) do
     # group method docs by {name}/{arity} as key from module docs node
-    method_docs =
-      case module_doc do
-        nil ->
-          %{}
+    case module_doc do
+      nil ->
+        %{}
 
-        %Iris.ExDoc.ModuleNode{} ->
-          module_doc.docs
-          # remove empty doc structs
-          |> Enum.filter(&filter_empty_docs/1)
-          |> Enum.reduce(%{}, fn method_doc, acc ->
-            key = Atom.to_string(method_doc.name) <> "/" <> Integer.to_string(method_doc.arity)
-            Map.put(acc, key, method_doc)
-          end)
-      end
-
-    method_docs
+      %Iris.ExDoc.ModuleNode{} ->
+        module_doc.docs
+        # remove empty doc structs
+        |> Enum.filter(&filter_empty_docs/1)
+        |> Enum.reduce(%{}, fn method_doc, acc ->
+          key = Atom.to_string(method_doc.name) <> "/" <> Integer.to_string(method_doc.arity)
+          Map.put(acc, key, method_doc)
+        end)
+    end
   end
 
   defp filter_empty_docs(doc) do
