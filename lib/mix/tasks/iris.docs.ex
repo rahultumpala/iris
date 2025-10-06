@@ -6,24 +6,24 @@ defmodule Mix.Tasks.Iris.Docs do
   @moduledoc ~S"""
   Runs on top of ExDocs' Mix.Tasks.Doc to include the generated Iris GUI
 
-  Requires IrisGUI.md to be present in the projects root directory and added to docs method in mix.exs as such
+  Requires IrisUI.md to be present in the projects root directory and added to docs method in mix.exs as such
 
       defp docs do
         [
           extras:
             [
-              "iris-view.md"
+              "IrisUI.md"
             ],
         ]
       end
 
-  The generated iris UI can be found by clicking on the iris-view link in the pages section of generated docs.
+  The generated iris UI can be found by clicking on the IrisUI link in the pages section of generated docs.
   """
 
   @docs_dir "./doc"
   @iris_dir "./iris"
   @index_html "index.html"
-  @iris_html "irisgui.html"
+  @iris_html "irisui.html"
 
   @doc false
   def run(args, config \\ Mix.Project.config()) do

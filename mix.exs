@@ -19,8 +19,6 @@ defmodule Iris.MixProject do
       deps: deps(),
       aliases: aliases(),
       docs: docs()
-      aliases: aliases(),
-      docs: docs()
     ]
   end
 
@@ -49,7 +47,7 @@ defmodule Iris.MixProject do
       extras: [
         "README.md",
         "CHANGELOG.md",
-        "IrisGUI.md"
+        "IrisUI.md"
       ],
       source_ref: "v#{@version}",
       source_url: @source_url,
@@ -70,9 +68,7 @@ defmodule Iris.MixProject do
       setup: ["deps.get", "cmd --cd assets npm install"],
       build: ["cmd --cd assets npm run build"],
       docs: ["docs.override"]
-      build: ["cmd --cd assets npm run build"],
-      docs: ["docs.override"]
-    ]
+      ]
   end
 
   defp package() do
@@ -89,7 +85,8 @@ defmodule Iris.MixProject do
       files: ~w(iris lib LICENSE mix.exs README.md CHANGELOG.md),
       links: %{
         "GitHub" => @source_url,
-        "Changelog" => "https://hexdocs.pm/iris/changelog.html"
+        "Changelog" => "https://hexdocs.pm/iris/changelog.html",
+        "IrisUI" => "https://hexdocs.pm/iris/irisui.html"
       }
     ]
   end
