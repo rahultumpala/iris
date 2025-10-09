@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.1.3
+
+- Bug Fix
+    - Use `ex_doc` only in `dev` env to avoid dependency conflicts.
+
 ## v0.1.2
 
 - Enhancements

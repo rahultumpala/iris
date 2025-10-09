@@ -5,7 +5,7 @@ defmodule Iris.MixProject do
   @entity_js "entity.js"
 
   @source_url "https://github.com/rahultumpala/iris"
-  @version "0.1.2"
+  @version "0.1.3"
 
   def project do
     [
@@ -33,7 +33,7 @@ defmodule Iris.MixProject do
   defp deps do
     [
       {:jason, "~> 1.2"},
-      {:ex_doc, "~> 0.38.4"}
+      {:ex_doc, "~> 0.38.4", only: :dev}
     ]
   end
 
