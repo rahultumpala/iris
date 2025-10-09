@@ -33,7 +33,7 @@ defmodule Iris.MixProject do
   defp deps do
     [
       {:jason, "~> 1.2"},
-      {:ex_doc, "~> 0.38.4"}
+      {:ex_doc, "~> 0.38.4", only: :dev}
     ]
   end
 
