@@ -1,0 +1,20 @@
+name: Publish to Hex
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  publish:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22.15.0
+      - name: build and publish
+        run: |
+          mix setup
+          mix build
+          HEX_API_KEY=${{ secrets.HEX_PKG_SECRET_KEY }} mix hex.publish --yes
