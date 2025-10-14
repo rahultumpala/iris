@@ -39,21 +39,22 @@ function MethodItem({ method, selectedMethod }) {
     method.html_type_text == "INT" || method.html_type_text == "EXP";
   const isSelected = method == selectedMethod;
 
-  const attributes = {
-    onClick: clickable ? selectMethod : null,
-    className:
-      (clickable ? "method-item clickable-method " : "method-item ") +
-      (isSelected ? "selected-method" : ""),
-  };
+  const onClick = clickable ? selectMethod : null;
+  const containerClassName =
+    "method-item " + (isSelected ? "selected-method" : "");
+  const clickableItemClassName = clickable ? "clickable-function-div" : "";
 
   const hasDocumentation = methodHasDocumentation(method);
 
   return (
     <>
-      <SidebarItem {...attributes}>
-        {/* LEFT HALF */}
-        <div className="flex flex-row justify-between items-center">
-          <div className="method-text mr-5 text-sm">
+      <SidebarItem className={containerClassName}>
+        <div className="flex flex-row justify-between items-center ">
+          {/* LEFT HALF */}
+          <div
+            className={clickableItemClassName + " method-text mr-5 text-sm grow"}
+            onClick={onClick}
+          >
             {method.name} / {method.arity}
           </div>
 
