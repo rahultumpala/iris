@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.1.4
+
+- Bug Fix
+  - Allow clicking on the documentation icon in the functions column to open function doc
+- Enhancement
+  - Support Umbrella projects
+
 ## v0.1.3
 
 - Bug Fix
