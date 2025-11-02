@@ -19,7 +19,9 @@ jobs:
           elixir-version: '1.19.1'
           otp-version: '28'
       - name: build and publish
+        env:
+          HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
         run: |
           mix setup
           mix build
-          HEX_API_KEY=${{ secrets.HEX_PKG_SECRET_KEY }} mix hex.publish --yes
+          mix hex.publish --yes
