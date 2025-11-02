@@ -90,10 +90,14 @@ defmodule Iris.Core do
         {Atom.to_string(name), Integer.to_string(arity)}
       end)
 
-    mod_name_str = mod_name |> Atom.to_string() |> String.split("Elixir.") |> case do
-      [ _elixir_prefix , mod_name ] -> mod_name
-      [mod_name] -> mod_name
-    end
+    mod_name_str =
+      mod_name
+      |> Atom.to_string()
+      |> String.split("Elixir.")
+      |> case do
+        [_elixir_prefix, mod_name] -> mod_name
+        [mod_name] -> mod_name
+      end
 
     module_doc = DocGen.generate_docs(mod_name, config)
     # group method docs by {name}/{arity} as key
@@ -268,7 +272,7 @@ defmodule Iris.Core do
     # IO.inspect({"CONFIG", config})
 
     paths = config.source_beam
-    files = Enum.map(paths, &list_beam_files/1)
+    files = Enum.map(paths, &list_beam_files/1) |> List.flatten()
 
     files =
       for fileName <- files do
