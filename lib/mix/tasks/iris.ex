@@ -51,7 +51,7 @@ defmodule Mix.Tasks.Iris do
       if Mix.Project.umbrella?(config) do
         umbrella_compile_paths()
       else
-        Mix.Project.compile_path()
+        [Mix.Project.compile_path()]
       end
 
     compile_path
@@ -60,8 +60,10 @@ defmodule Mix.Tasks.Iris do
   defp umbrella_compile_paths() do
     build = Mix.Project.build_path()
 
-    for {app, _} <- Mix.Project.apps_paths() do
+    paths = for {app, _} <- Mix.Project.apps_paths() do
       Path.join([build, "lib", Atom.to_string(app), "ebin"])
     end
+
+    paths
   end
 end
