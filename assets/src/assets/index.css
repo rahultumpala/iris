@@ -106,7 +106,7 @@ body {
   border-bottom: 0.5px ridge #e5e7eb;
 }
 
-.clickable-method {
+.clickable-function-div {
   cursor: pointer;
 }
 
@@ -130,7 +130,7 @@ body {
   color: black;
 }
 
-.clickable-method .method-type {
+.method-item .method-type {
   background-color: rgb(31, 31, 31);
   /* color: white; */
   padding: 2px 5px;
@@ -140,7 +140,7 @@ body {
   text-align: center;
 }
 
-.clickable-method .method-text {
+.method-item .method-text {
   color: black;
 }
 
@@ -223,7 +223,7 @@ body {
 }
 
 .method-item .docs-icon-svg:hover {
-  cursor: default;
+  cursor: pointer;
 }
 
 .recursion-svg:hover {

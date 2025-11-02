@@ -267,11 +267,8 @@ defmodule Iris.Core do
   def get_beam_files(config) do
     # IO.inspect({"CONFIG", config})
 
-    path = config.source_beam
-
-    files =
-      path
-      |> list_beam_files()
+    paths = config.source_beam
+    files = Enum.map(paths, &list_beam_files/1)
 
     files =
       for fileName <- files do
