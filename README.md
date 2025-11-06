@@ -1,6 +1,6 @@
 # Iris
 
-A tool for visualizing your Elixir codebase.
+Iris is an Elixir library to help visualize your codebase. Iris also plots function call paths as an interactive graph in your browser.
 
 Iris aims to reduce the time taken to skim through an Elixir codebase by rendering an interactive GUI displaying the constituent applications, modules, methods and method call paths, even documentation!
 
