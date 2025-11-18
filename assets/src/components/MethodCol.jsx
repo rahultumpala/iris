@@ -1,6 +1,7 @@
 import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
 
-import { SidebarItem, Tooltip } from "flowbite-react";
+import { Tooltip } from "flowbite-react";
+import { SidebarItem } from "./CustomSidebar.jsx";
 
 import { RecursionIcon } from "./RecursionIcon.jsx";
 import { methodHasDocumentation } from "../helpers/stateHelper.js";
@@ -8,9 +9,8 @@ import { DocumentationIcon } from "./DocumentationIcon.jsx";
 
 function MethodType({ text, tooltip }) {
   const attributes = {
-    className: `method-type text-xs ${
-      text == "INT" ? "method-type-internal" : "method-ext"
-    }`,
+    className: `method-type text-xs ${text == "INT" ? "method-type-internal" : "method-ext"
+      }`,
   };
 
   return (

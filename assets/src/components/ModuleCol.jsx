@@ -1,6 +1,6 @@
 import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
 
-import { SidebarItem } from "flowbite-react";
+import { SidebarItem } from "./CustomSidebar.jsx";
 
 import { moduleHasDocumentation } from "../helpers/stateHelper.js";
 import { DocumentationIcon } from "./DocumentationIcon.jsx";

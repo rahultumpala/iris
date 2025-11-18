@@ -1,6 +1,6 @@
 import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
 
-import { SidebarItem } from "flowbite-react";
+import { SidebarItem } from "./CustomSidebar.jsx";
 
 function ApplicationItem({ app, selectedApp }) {
   const dispatch = useGlobalDispatch();
