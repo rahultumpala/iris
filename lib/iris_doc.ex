@@ -21,24 +21,13 @@ defmodule IrisDoc do
   """
   def on_definition(env, kind, name, args, _guards, _body) when kind == :defp do
     module = env.module
-    pending = is_pending?(module)
     idoc = Module.get_attribute(module, :idoc)
-    doc_line = Module.get_attribute(module, :__idoc_line__)
-    def_line = env.line
     arity = length(args)
 
     cond do
-      # Pending @idoc, but the next node WASN'T a function (caught too late)
-      pending && idoc == nil ->
-        raise CompileError,
-          file: env.file,
-          line: def_line,
-          description:
-            "@idoc set at line #{doc_line}, but non-function code appeared before #{name}/#{arity}"
-
-      # A correct doc/function pairing
+      # Checks that idoc isn't nil
       idoc ->
-        Module.put_attribute(module, :__idocs__, {name, arity, idoc, doc_line})
+        Module.put_attribute(module, :__idocs__, {name, arity, idoc})
         cleanup_attributes(module)
         :ok
 

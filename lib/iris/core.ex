@@ -106,6 +106,8 @@ defmodule Iris.Core do
     module_doc = DocGen.generate_docs(mod_name, config)
     # group method docs by {name}/{arity} as key
     method_docs = module_doc |> group_method_docs()
+    idocs = get_iris_docs_from_module(mod_name)
+    method_docs = Map.merge(method_docs, idocs)
 
     methods =
       build_methods(compiled_code, mod_name_str)
@@ -139,6 +141,40 @@ defmodule Iris.Core do
       methods: methods,
       ex_doc: module_doc
     }
+  end
+
+  @idoc """
+    Fetches the value of @idoc attribute defined before private functions.
+    Returns as a map with key = function_name/arity
+    and value = documentation
+  """
+  defp get_iris_docs_from_module(module) do
+    uses_iris_docs =
+      module.__info__(:functions)
+      |> Keyword.filter(fn {key, _val} -> key == :__idocs__ end)
+      |> length() > 0
+
+    cond do
+      uses_iris_docs ->
+        module.__idocs__()
+        |> Map.new(fn {f_name, arity, doc} ->
+          # return in {key, value} notation
+          key = "#{f_name}/#{arity}"
+
+          # Creating a new DocNode to avoid breaking things as ExDoc already returns in this format.
+          doc_node = %Iris.ExDoc.DocNode{
+            id: key,
+            name: f_name,
+            arity: arity,
+            source_doc: %{"en" => doc}
+          }
+
+          {key, doc_node}
+        end)
+
+      true ->
+        %{}
+    end
   end
 
   # Extracts defined private methods from beam binary, groups them by {name, arity} and returns a map.
