@@ -2,6 +2,7 @@ defmodule Iris.Core do
   alias Iris.{Entity, Entity.Module, Entity.Application}
   alias Iris.Entity.Module.{Method, Method.Call}
   alias Iris.DocGen
+  use IrisDoc
 
   @doc ~S"""
    Main entry pont.
@@ -63,6 +64,9 @@ defmodule Iris.Core do
     }
   end
 
+  @idoc """
+    Builds the applications object by extracting info from the module objects passed as argument.
+  """
   defp build_applications(modules) do
     modules
     |> Enum.group_by(fn mod ->
