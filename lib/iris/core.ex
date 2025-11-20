@@ -64,7 +64,7 @@ defmodule Iris.Core do
     }
   end
 
-  @idoc """
+  @idoc ~S"""
     Builds the applications object by extracting info from the module objects passed as argument.
   """
   defp build_applications(modules) do
@@ -143,7 +143,7 @@ defmodule Iris.Core do
     }
   end
 
-  @idoc """
+  @idoc ~S"""
     Fetches the value of @idoc attribute defined before private functions.
     Returns as a map with key = function_name/arity
     and value = documentation
@@ -177,7 +177,7 @@ defmodule Iris.Core do
     end
   end
 
-  @idoc """
+  @idoc ~S"""
     Extracts defined private methods from beam binary, groups them by {name, arity} and returns a map.
   """
   defp extract_locals_from_beam(beam_bin) do
@@ -192,7 +192,7 @@ defmodule Iris.Core do
     locals_map
   end
 
-  @idoc """
+  @idoc ~S"""
     Builds a list of %Method{} from compiled_code extracted from beam binary
   """
   defp build_methods(compiled_code, mod_name_str) do
@@ -209,7 +209,7 @@ defmodule Iris.Core do
     end)
   end
 
-  @idoc """
+  @idoc ~S"""
    Condense auto generated inlined, intermediate methods into the actual one
    expects method list with each item being %Method{} struct
   """
@@ -244,7 +244,7 @@ defmodule Iris.Core do
     methods
   end
 
-  @idoc """
+  @idoc ~S"""
    Filters auto generated methods.
    these methods are condensed into actual defined ones in [condense_methods/2]
    and are no longer required to be part of [methods] list
@@ -261,7 +261,7 @@ defmodule Iris.Core do
         Regex.match?(~r/^-(.*)-(fun|inlined)-(.*)-$/, name))
   end
 
-  @idoc """
+  @idoc ~S"""
    returns {name, arity} from auto generated methods
    "-inlined-__help__/1-" --> {"__help__", 1}
    "-build_applications/1-(fun|inlined)-1-" --> {"build_applications", 1}
@@ -286,7 +286,7 @@ defmodule Iris.Core do
     end
   end
 
-  @idoc """
+  @idoc ~S"""
    Assigns the text EXP(when found in exports) or INT(when found in locals)
   """
   defp assign_html_type_text(methods, exports_map, locals_map) do
@@ -305,7 +305,7 @@ defmodule Iris.Core do
     end)
   end
 
-  @idoc """
+  @idoc ~S"""
     Sort based on the criteria EXP > INT
   """
   defp sort_methods(methods) do
@@ -339,7 +339,7 @@ defmodule Iris.Core do
     files
   end
 
-  @idoc """
+  @idoc ~S"""
     List all the .beam files from given path.
     path is usually `_build/dev/{app_name}/ebin/`
   """
@@ -347,7 +347,7 @@ defmodule Iris.Core do
     Path.wildcard(Path.expand("*.beam", path))
   end
 
-  @idoc """
+  @idoc ~S"""
    All call instructions that can be extracted from compiled code
    returns a list of instructions
    format { type, arity, function }
@@ -374,7 +374,7 @@ defmodule Iris.Core do
     |> Enum.filter(fn val -> val != nil end)
   end
 
-  @idoc """
+  @idoc ~S"""
    Returns the instruction in {m,f,a} format
    see [get_call_instructions/1] return type to understand instruction format
   """
@@ -424,7 +424,7 @@ defmodule Iris.Core do
     %{method | call_instructions: normalized_instr}
   end
 
-  @idoc """
+  @idoc ~S"""
    Divides instructions into recursive and non-recursive
    if more than one recursive instruction is found method is flagged as recursive and only non_recursive instructions are returned
    else return all instructions
@@ -445,7 +445,7 @@ defmodule Iris.Core do
     end
   end
 
-  @idoc """
+  @idoc ~S"""
     Remove duplicate instructions
   """
   defp filter_duplicate_calls(%Method{} = method) do
