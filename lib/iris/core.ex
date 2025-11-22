@@ -65,7 +65,7 @@ defmodule Iris.Core do
   end
 
   @idoc ~S"""
-    Builds the applications object by extracting info from the module objects passed as argument.
+    Builds the applications struct by extracting info from the module structs passed as argument.
   """
   defp build_applications(modules) do
     modules
