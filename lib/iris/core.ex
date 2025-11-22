@@ -1,9 +1,8 @@
 defmodule Iris.Core do
   alias Iris.{Entity, Entity.Module, Entity.Application}
   alias Iris.Entity.Module.{Method, Method.Call}
-  alias Iris.DocGen
 
-  import Iris.{Calls, Functions}
+  import Iris.{Calls, Functions, DocGen}
 
   use IrisDoc
 
@@ -106,11 +105,11 @@ defmodule Iris.Core do
         [mod_name] -> mod_name
       end
 
-    module_doc = DocGen.generate_docs(mod_name, config)
+    module_doc = generate_docs(mod_name, config)
     # group method docs by {name}/{arity} as key
-    method_docs = module_doc |> group_method_docs()
+    all_docs = module_doc |> group_function_docs()
     idocs = get_iris_docs_from_module(mod_name)
-    method_docs = Map.merge(method_docs, idocs)
+    all_docs = Map.merge(all_docs, idocs)
 
     methods =
       build_functions(compiled_code, mod_name_str)
@@ -121,7 +120,7 @@ defmodule Iris.Core do
       |> Enum.map(&normalize_call_instructions/1)
       |> Enum.map(&filter_recursive_calls/1)
       |> Enum.map(&filter_duplicate_calls/1)
-      |> Enum.map(&set_method_docs(&1, method_docs))
+      |> Enum.map(&set_function_docs(&1, all_docs))
       |> Enum.sort_by(fn %Method{name: name, arity: arity} ->
         Enum.join([name, arity], "/")
       end)
@@ -129,54 +128,12 @@ defmodule Iris.Core do
     # set docs as null to avoid repetition
     module_doc = with %Iris.ExDoc.ModuleNode{} <- module_doc, do: %{module_doc | docs: nil}
 
-    module_doc =
-      cond do
-        filter_empty_docs(module_doc) != false -> module_doc
-        # return nil when filter evaluates to false
-        true -> nil
-      end
-
-    # return
     %Module{
       application: String.split(mod_name_str, ".") |> Enum.at(0),
       module: mod_name_str,
       methods: methods,
       ex_doc: module_doc
     }
-  end
-
-  @idoc ~S"""
-    Fetches the value of @idoc attribute defined before private functions.
-    Returns as a map with key = function_name/arity
-    and value = documentation
-  """
-  defp get_iris_docs_from_module(module) do
-    uses_iris_docs =
-      module.__info__(:functions)
-      |> Keyword.filter(fn {key, _val} -> key == :__idocs__ end)
-      |> length() > 0
-
-    cond do
-      uses_iris_docs ->
-        module.__idocs__()
-        |> Map.new(fn {f_name, arity, doc} ->
-          # return in {key, value} notation
-          key = "#{f_name}/#{arity}"
-
-          # Creating a new DocNode to avoid breaking things as ExDoc already returns in this format.
-          doc_node = %Iris.ExDoc.DocNode{
-            id: key,
-            name: f_name,
-            arity: arity,
-            source_doc: %{"en" => doc}
-          }
-
-          {key, doc_node}
-        end)
-
-      true ->
-        %{}
-    end
   end
 
   @idoc ~S"""
@@ -213,11 +170,11 @@ defmodule Iris.Core do
     end)
   end
 
-  @doc ~S"""
+  @idoc ~S"""
     Fetches generated .beam files from local build directory
     and dissassembles them using :beam_disasm
   """
-  def get_beam_files(config) do
+  defp get_beam_files(config) do
     # IO.inspect({"CONFIG", config})
 
     paths = config.source_beam
@@ -240,47 +197,5 @@ defmodule Iris.Core do
   """
   defp list_beam_files(path) do
     Path.wildcard(Path.expand("*.beam", path))
-  end
-
-  defp set_method_docs(%Method{} = method, %{} = method_docs) do
-    key = method.name <> "/" <> method.arity
-
-    case Map.get(method_docs, key, nil) do
-      nil -> method
-      doc -> %{method | ex_doc: doc}
-    end
-
-    with doc <- Map.get(method_docs, key, nil),
-         false <- is_nil(doc),
-         false <- doc.source_doc == :none do
-      %{method | ex_doc: doc}
-    else
-      _ -> method
-    end
-  end
-
-  defp group_method_docs(module_doc) do
-    # group method docs by {name}/{arity} as key from module docs node
-    case module_doc do
-      nil ->
-        %{}
-
-      %Iris.ExDoc.ModuleNode{} ->
-        module_doc.docs
-        # remove empty doc structs
-        |> Enum.filter(&filter_empty_docs/1)
-        |> Enum.reduce(%{}, fn method_doc, acc ->
-          key = Atom.to_string(method_doc.name) <> "/" <> Integer.to_string(method_doc.arity)
-          Map.put(acc, key, method_doc)
-        end)
-    end
-  end
-
-  defp filter_empty_docs(doc) do
-    case doc do
-      %Iris.ExDoc.ModuleNode{} -> doc.source_doc != :none
-      %Iris.ExDoc.DocNode{} -> doc.source_doc != :none
-      _ -> false
-    end
   end
 end

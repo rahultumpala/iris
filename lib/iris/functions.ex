@@ -87,4 +87,25 @@ defmodule Iris.Functions do
       Entity.Application.get_all_functions(app) ++ acc
     end)
   end
+
+  @doc ~S"""
+    Set docs field for function if doc exists.
+    Doc can be fetched from either @doc or @idoc
+  """
+  def set_function_docs(%Method{} = method, %{} = method_docs) do
+    key = method.name <> "/" <> method.arity
+
+    case Map.get(method_docs, key, nil) do
+      nil -> method
+      doc -> %{method | ex_doc: doc}
+    end
+
+    with doc <- Map.get(method_docs, key, nil),
+         false <- is_nil(doc),
+         false <- doc.source_doc == :none do
+      %{method | ex_doc: doc}
+    else
+      _ -> method
+    end
+  end
 end
