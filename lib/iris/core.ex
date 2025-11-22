@@ -3,6 +3,7 @@ defmodule Iris.Core do
   alias Iris.Entity.Module.{Method, Method.Call}
 
   import Iris.{Calls, Functions, DocGen}
+  import Iris.Utils, only: [log_verbose: 1]
 
   use IrisDoc
 
@@ -14,9 +15,11 @@ defmodule Iris.Core do
     modules = Enum.map(files, &build_from_beam_file(&1, config))
     apps = build_applications(modules)
 
-    if config.verbose do
-      Mix.shell().info("All modules: ")
-      Enum.each(apps, fn app -> Enum.each(app.modules, fn mod -> IO.inspect(mod.module) end) end)
+    log_verbose do
+      Mix.shell().info("List of apps: ")
+      Enum.each(apps, fn app ->  Mix.shell().info("\t#{app.application}") end)
+      Mix.shell().info("List of modules: ")
+      Enum.each(apps, fn app -> Enum.each(app.modules, fn mod -> Mix.shell().info("\t#{mod.module}") end) end)
     end
 
     all_functions = flatten_all_functions(apps)

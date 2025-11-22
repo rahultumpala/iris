@@ -36,4 +36,17 @@ defmodule Iris.Utils do
         {name, arity}
     end
   end
+
+  @doc ~S"""
+    Used for logging if verbose flag is passed when mix iris is invoked.
+    Violates macro hygiene and fetches `config` from user context with the var!() macro,
+    checks if verbose flag is set, and logs if set, else does nothing.
+  """
+  defmacro log_verbose(do: block) do
+    quote do
+      if var!(config).verbose do
+        unquote(block)
+      end
+    end
+  end
 end
