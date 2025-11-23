@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.0
+
+- Enhancement
+  - Supports `@idoc` attribute definition prior to a private function definition.
+  - The doc written with the `@idoc` attribute is fetched and rendered in the UI the same way docs generated using ExDoc are rendered.
+
 ## v0.1.4
 
 - Bug Fix
