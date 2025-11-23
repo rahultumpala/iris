@@ -16,7 +16,7 @@ defmodule Iris.Entity.Application do
 
   def new(), do: %Iris.Entity.Application{}
 
-  def get_all_methods(%__MODULE__{} = app) do
+  def get_all_functions(%__MODULE__{} = app) do
     Enum.reduce(app.modules, [], fn module, acc ->
       module.methods ++ acc
     end)
