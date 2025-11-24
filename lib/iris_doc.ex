@@ -16,7 +16,7 @@ defmodule IrisDoc do
   This hook is triggered when a function or macro is defined.
   Uses Pattern matching to execute only when private functions are defined.
   """
-  def on_definition(env, kind, name, args, _guards, _body) when kind == :defp do
+  def on_definition(env, kind, name, args, _guards, _body) when kind in [:defp, :defmacrop] do
     module = env.module
     idoc = Module.get_attribute(module, :idoc)
     arity = length(args)
@@ -41,7 +41,7 @@ defmodule IrisDoc do
       raise CompileError,
         file: env.file,
         description:
-          "@idoc supports only private functions defined in the module. Using @idoc before `#{kind} #{name}/#{length(args)}` is not supported."
+          "@idoc supports only private functions and macros defined in the module. Using @idoc before `#{kind} #{name}/#{length(args)}` is not supported."
     end
 
     cleanup_attributes(env.module)

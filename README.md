@@ -13,7 +13,7 @@ The following features are implemented.
 - List all functions in an application
 - Generate & View inbound and outbound calls from a selected function
 - Click on outbound call function to expand the function and view its outbound calls
-- Show Function documentation for both public and private functions
+- Show Function documentation for both public and private functions and private macros
 - Show Module documentation
 - Detect and denote recursive functions with a recursion icon
 - Detect and denote functions that have documentation with a docs icon

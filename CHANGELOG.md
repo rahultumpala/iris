@@ -4,6 +4,7 @@
 
 - Enhancement
   - Detect and denote macros with an M icon.
+  - Extend `@idoc` support for private macros
 
 ## v0.2.0
 
