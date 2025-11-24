@@ -103,9 +103,26 @@ defmodule IrisDocTest do
       end
 
     assert_raise CompileError,
-                 ~r/.* @idoc supports only private functions defined in the module. Using @idoc before .* is not supported./,
+                 ~r/.* @idoc supports only private functions and macros defined in the module. Using @idoc before .* is not supported./,
                  fn ->
                    Module.create(TestMod, test_mod, Macro.Env.location(__ENV__))
                  end
+  end
+
+  test "works with private macros" do
+    test_mod =
+      quote do
+        defmodule TestMod do
+          use IrisDoc
+
+          @idoc "Using it before a private macro declaration"
+          defmacrop private_macro do
+            "Nothing."
+          end
+        end
+      end
+
+    Module.create(TestMod, test_mod, Macro.Env.location(__ENV__))
+    assert true
   end
 end
