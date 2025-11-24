@@ -17,6 +17,7 @@ The following features are implemented.
 - Show Module documentation
 - Detect and denote recursive functions with a recursion icon
 - Detect and denote functions that have documentation with a docs icon
+- Detect and denote Macros with a macro icon
 
 ## Installation
 
@@ -25,7 +26,7 @@ The package can be installed by adding `iris` to your list of dependencies in `m
 ```elixir
 def deps do
   [
-    {:iris, "~> 0.2.0"}
+    {:iris, "~> 0.2.1"}
   ]
 end
 ```

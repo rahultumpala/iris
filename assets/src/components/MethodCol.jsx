@@ -5,12 +5,12 @@ import { SidebarItem, Tooltip } from "flowbite-react";
 import { RecursionIcon } from "./RecursionIcon.jsx";
 import { methodHasDocumentation } from "../helpers/stateHelper.js";
 import { DocumentationIcon } from "./DocumentationIcon.jsx";
+import { MacroIcon } from "./MacroIcon.jsx";
 
 function MethodType({ text, tooltip }) {
   const attributes = {
-    className: `method-type text-xs ${
-      text == "INT" ? "method-type-internal" : "method-ext"
-    }`,
+    className: `method-type text-xs ${text == "INT" ? "method-type-internal" : "method-ext"
+      }`,
   };
 
   return (
@@ -60,6 +60,9 @@ function MethodItem({ method, selectedMethod }) {
 
           {/* RIGHT HALF */}
           <div className="right-end flex flex-row justify-between items-center">
+
+            {method.is_macro ? (<MacroIcon></MacroIcon>) : (<></>)}
+
             {hasDocumentation ? (
               <DocumentationIcon method={method}></DocumentationIcon>
             ) : (

@@ -7,6 +7,8 @@ defmodule Iris.Functions do
 
   import Iris.{Utils, Calls}
 
+  use IrisDoc
+
   @doc ~S"""
     Builds a list of %Method{} from compiled_code extracted from beam binary
   """
@@ -22,6 +24,19 @@ defmodule Iris.Functions do
         call_instructions: code |> get_call_instructions()
       }
     end)
+    |> Enum.map(&indicate_macro(&1))
+  end
+
+
+  @idoc ~S"""
+    Macros extracted from compiled .beam files all start with the prefix "MACRO-".
+    Pattern match on the prefix to indicate the function is a macro and render accordingly.
+  """
+  defp indicate_macro(%Method{} = function) do
+    case Regex.match?(~r/^MACRO-/, function.name) do
+      true -> %{function | is_macro: true, name: String.trim_leading(function.name, "MACRO-") }
+      false -> function
+    end
   end
 
   @doc ~S"""

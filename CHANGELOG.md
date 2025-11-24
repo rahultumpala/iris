@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.1
+
+- Enhancement
+  - Detect and denote macros with an M icon.
+
 ## v0.2.0
 
 - Enhancement
