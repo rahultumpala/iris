@@ -47,6 +47,7 @@ defmodule Iris.Entity.Module do
       view: false,
       is_export: false,
       is_recursive: false,
+      is_macro: false,
       html_type_text: "INT",
       call_instructions: []
     ]

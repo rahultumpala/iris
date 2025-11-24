@@ -52,6 +52,7 @@ defimpl Jason.Encoder, for: [Iris.Entity.Module.Method] do
         "view" => struct.view,
         "is_export" => struct.is_export,
         "is_recursive" => struct.is_recursive,
+        "is_macro" => struct.is_macro,
         "html_type_text" => struct.html_type_text,
         "call_instructions" => struct.call_instructions,
         "tooltip_text" => get_tooltip_text(struct.html_type_text)
