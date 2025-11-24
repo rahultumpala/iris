@@ -34,7 +34,7 @@ defmodule Iris.Functions do
   """
   defp indicate_macro(%Method{} = function) do
     case Regex.match?(~r/^MACRO-/, function.name) do
-      true -> %{function | is_macro: true}
+      true -> %{function | is_macro: true, name: String.trim_leading(function.name, "MACRO-") }
       false -> function
     end
   end
