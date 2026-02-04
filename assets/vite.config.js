@@ -10,6 +10,11 @@ export default defineConfig({
     outDir: "../iris", // relative to source dir
     emptyOutDir: true
   },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
   plugins: [react(),
   tailwindcss(),
   flowbiteReact(),
