@@ -18,6 +18,7 @@ import { SidebarItem } from "./CustomSidebar.jsx";
 import { RecursionIcon } from "./RecursionIcon.jsx";
 import { methodHasDocumentation } from "../helpers/stateHelper.js";
 import { DocumentationIcon } from "./DocumentationIcon.jsx";
+import { Heading } from "./ui/heading.jsx";
 
 function MethodType({ text, tooltip }) {
   const attributes = {
@@ -134,7 +135,7 @@ export function MethodColumn() {
           // Title
           <GridListSection id="functions">
             <GridListHeader className={"pr-2"}>
-              <div>{module.module}</div>
+              <Heading level={3}>{module.module}</Heading>
             </GridListHeader>
 
             {fnGlobal.items.map((item) => (
