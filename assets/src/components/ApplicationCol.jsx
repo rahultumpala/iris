@@ -24,7 +24,7 @@ function ApplicationItem({ app, selectedApp }) {
   return (
     <>
       <GridListItem
-        key={app.id}
+        key={app.key}
         id={app.id}
         textValue={app.application}
         isSelected={app.application == selectedApp}

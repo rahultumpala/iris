@@ -1,3 +1,15 @@
+"use client";
+
+import {
+  GridList,
+  GridListHeader,
+  GridListItem,
+  GridListLabel,
+  GridListSection,
+  GridListSpacer,
+  GridListStart,
+} from "@/components/ui/grid-list";
+
 import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
 
 import { SidebarItem } from "./CustomSidebar.jsx";
@@ -15,18 +27,26 @@ function ModuleItem({ module, selectedModule }) {
 
   return (
     <>
-      <SidebarItem className={className}>
-        <div className="flex flex-row module-item-container">
-          <div className="module_item" onClick={selectModule}>
-            {module.module}
+      <GridListItem
+        key={module.key}
+        id={module.id}
+        textValue={module.module}
+        isSelected={module == selectedModule}
+        onClick={selectModule}
+        className="sm:items-center"
+      >
+        <GridListStart className="sm:items-center">
+          <div className="flex flex-col gap-x-2 sm:flex-row sm:items-center">
+            <GridListLabel>{module.module}</GridListLabel>
           </div>
-          {moduleHasDocumentation(module) ? (
-            <DocumentationIcon module={module}></DocumentationIcon>
-          ) : (
-            <></>
-          )}
-        </div>
-      </SidebarItem>
+        </GridListStart>
+        <GridListSpacer />
+        {moduleHasDocumentation(module) ? (
+          <DocumentationIcon module={module}></DocumentationIcon>
+        ) : (
+          <></>
+        )}
+      </GridListItem>
     </>
   );
 }
@@ -43,23 +63,42 @@ export function ModuleColumn() {
     );
   }
 
+  // wrapping in an array to use the Section view from IntentUI gridList
+  const modules = [
+    {
+      id: "modules-global",
+      key: "modules-global",
+      items: app.modules.map((mod, index) => {
+        return {
+          id: `module-${index}`,
+          key: `module-${index}`,
+          ...mod,
+        };
+      }),
+    },
+  ];
+
   return (
     <>
-      {/* Title */}
-      <div className="col_title_text">
-        <p className="">{app.application}</p>
-      </div>
+      <GridList aria-label="Modules" selectionMode="single" items={modules}>
+        {(modGlobal) => (
+          // Title
+          <GridListSection id="applications">
+            <GridListHeader>
+              <div>Modules</div>
+            </GridListHeader>
 
-      {/* Module Items List */}
-      <div className="module_col">
-        {app.modules.map((mod, idx) => (
-          <ModuleItem
-            key={mod.module}
-            module={mod}
-            selectedModule={state.selectedModule}
-          ></ModuleItem>
-        ))}
-      </div>
+            {modGlobal.items.map((item) => (
+              // List Items
+              <ModuleItem
+                key={item.id}
+                module={item}
+                selectedModule={state.selectModule}
+              ></ModuleItem>
+            ))}
+          </GridListSection>
+        )}
+      </GridList>
     </>
   );
 }
