@@ -1,3 +1,14 @@
+"use client";
+
+import {
+  GridList,
+  GridListHeader,
+  GridListItem,
+  GridListLabel,
+  GridListSection,
+  GridListStart,
+} from "@/components/ui/grid-list";
+
 import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
 
 import { SidebarItem } from "./CustomSidebar.jsx";
@@ -10,23 +21,44 @@ function ApplicationItem({ app, selectedApp }) {
 
   const isSelected = app == selectedApp;
   const className = isSelected ? "selected-app" : "";
-
   return (
     <>
-      <SidebarItem className={className}>
-        <div className="application_item text-md" onClick={selectApplication}>
-          {app.application}
-        </div>
-      </SidebarItem>
+      <GridListItem
+        key={app.id}
+        id={app.id}
+        textValue={app.application}
+        isSelected={app.application == selectedApp}
+        onClick={selectApplication}
+        className="sm:items-center"
+      >
+        <GridListStart className="sm:items-center">
+          <div className="flex flex-col gap-x-2 sm:flex-row sm:items-center">
+            <GridListLabel>{app.application}</GridListLabel>
+          </div>
+        </GridListStart>
+      </GridListItem>
     </>
   );
 }
 
 export function ApplicationColumn() {
   const state = useGlobalState();
-  const applications = state.entity?.applications;
+  // wrapping in an array to use the Section view from IntentUI gridList
+  const applications = [
+    {
+      id: "apps-global",
+      key: "apps-global",
+      items: state.entity?.applications.map((app, index) => {
+        return {
+          id: `apps-${index}`,
+          key: `apps-${index}`,
+          ...app,
+        };
+      }),
+    },
+  ];
 
-  if (applications == undefined || applications == null) {
+  if (applications[0].items == undefined || applications[0].items == null) {
     return (
       <SidebarItem>
         {" "}
@@ -36,22 +68,28 @@ export function ApplicationColumn() {
   }
 
   return (
-    <>
-      <div className="app_col">
-        {/* Title */}
-        <div className="col_title_text">
-          <p className="">Applications</p>
-        </div>
+    <GridList
+      aria-label="Applications"
+      selectionMode="single"
+      items={applications}
+    >
+      {(appGlobal) => (
+        // Title
+        <GridListSection id="applications">
+          <GridListHeader>
+            <div>Applications</div>
+          </GridListHeader>
 
-        {/* Application Items List */}
-        {applications.map((app, idx) => (
-          <ApplicationItem
-            key={app.application}
-            app={app}
-            selectedApp={state.selectedApplication}
-          ></ApplicationItem>
-        ))}
-      </div>
-    </>
+          {appGlobal.items.map((item) => (
+            // List Items
+            <ApplicationItem
+              key={item.id}
+              app={item}
+              selectedApp={state.selectedApplication}
+            ></ApplicationItem>
+          ))}
+        </GridListSection>
+      )}
+    </GridList>
   );
 }
