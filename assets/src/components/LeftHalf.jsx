@@ -14,7 +14,10 @@ export function LeftHalf() {
         MODULES
          */}
 
-        <Sidebar aria-label="Sidebar with apps and modules" className="sidebar bg-white">
+        <Sidebar
+          aria-label="Sidebar with apps and modules"
+          className="sidebar bg-white"
+        >
           {/* <SidebarItems> */}
           {/* IRIS TITLE */}
           <SidebarItemGroup>

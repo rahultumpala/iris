@@ -1,3 +1,15 @@
+"use client";
+
+import {
+  GridList,
+  GridListHeader,
+  GridListItem,
+  GridListLabel,
+  GridListSection,
+  GridListSpacer,
+  GridListStart,
+} from "@/components/ui/grid-list";
+
 import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
 
 import { Tooltip } from "flowbite-react";
@@ -9,8 +21,9 @@ import { DocumentationIcon } from "./DocumentationIcon.jsx";
 
 function MethodType({ text, tooltip }) {
   const attributes = {
-    className: `method-type text-xs ${text == "INT" ? "method-type-internal" : "method-ext"
-      }`,
+    className: `method-type text-xs ${
+      text == "INT" ? "method-type-internal" : "method-ext"
+    }`,
   };
 
   return (
@@ -38,49 +51,47 @@ function MethodItem({ method, selectedMethod }) {
   const clickable =
     method.html_type_text == "INT" || method.html_type_text == "EXP";
   const isSelected = method == selectedMethod;
-
   const onClick = clickable ? selectMethod : null;
-  const containerClassName =
-    "method-item " + (isSelected ? "selected-method" : "");
-  const clickableItemClassName = clickable ? "clickable-function-div" : "";
-
   const hasDocumentation = methodHasDocumentation(method);
 
   return (
     <>
-      <SidebarItem className={containerClassName}>
-        <div className="flex flex-row justify-between items-center ">
-          {/* LEFT HALF */}
-          <div
-            className={clickableItemClassName + " method-text mr-5 text-sm grow"}
-            onClick={onClick}
-          >
-            {method.name} / {method.arity}
+      <GridListItem
+        key={method.key}
+        id={method.id}
+        textValue={`${method.name} / ${method.arity}`}
+        isSelected={method == selectedMethod}
+        onClick={onClick}
+        className="sm:items-center"
+        isDisabled={clickable ? false : true}
+      >
+        <GridListStart className="sm:items-center">
+          <div className="flex flex-col gap-x-2 sm:flex-row sm:items-center">
+            <GridListLabel>
+              {method.name} / {method.arity}
+            </GridListLabel>
           </div>
+        </GridListStart>
+        <GridListSpacer />
+        {hasDocumentation ? (
+          <DocumentationIcon method={method}></DocumentationIcon>
+        ) : (
+          <></>
+        )}
 
-          {/* RIGHT HALF */}
-          <div className="right-end flex flex-row justify-between items-center">
-            {hasDocumentation ? (
-              <DocumentationIcon method={method}></DocumentationIcon>
-            ) : (
-              <></>
-            )}
-
-            {method.is_recursive ? (
-              <RecursionIcon
-                className={"in-method-col"}
-                selectedMethod={isSelected}
-              ></RecursionIcon>
-            ) : (
-              <></>
-            )}
-            <MethodType
-              text={method.html_type_text}
-              tooltip={method.tooltip_text}
-            ></MethodType>
-          </div>
-        </div>
-      </SidebarItem>
+        {method.is_recursive ? (
+          <RecursionIcon
+            className={"in-method-col"}
+            selectedMethod={isSelected}
+          ></RecursionIcon>
+        ) : (
+          <></>
+        )}
+        <MethodType
+          text={method.html_type_text}
+          tooltip={method.tooltip_text}
+        ></MethodType>
+      </GridListItem>
     </>
   );
 }
@@ -96,27 +107,47 @@ export function MethodColumn() {
   ) {
     return (
       <SidebarItem>
-        <div className="no_methods">No Methods</div>
+        <div className="no_methods">No Functions</div>
       </SidebarItem>
     );
   }
 
+  // wrapping in an array to use the Section view from IntentUI gridList
+  const functions = [
+    {
+      id: "functions-global",
+      key: "functions-global",
+      items: module.methods.map((method, index) => {
+        return {
+          id: `function-${index}`,
+          key: `function-${index}`,
+          ...method,
+        };
+      }),
+    },
+  ];
+
   return (
     <>
-      {/* Title */}
-      <div className="col_title_text">
-        <p className="">{module.module}</p>
-      </div>
-      {/* Method Items List */}
-      <div className="method_col">
-        {module.methods.map((method, idx) => (
-          <MethodItem
-            key={idx}
-            method={method}
-            selectedMethod={state.selectedMethod}
-          ></MethodItem>
-        ))}
-      </div>
+      <GridList aria-label="Functions" selectionMode="single" items={functions}>
+        {(fnGlobal) => (
+          // Title
+          <GridListSection id="functions">
+            <GridListHeader className={"pr-2"}>
+              <div>{module.module}</div>
+            </GridListHeader>
+
+            {fnGlobal.items.map((item) => (
+              // List Items
+              <MethodItem
+                key={item.id}
+                method={item}
+                selectedMethod={state.selectedMethod}
+              ></MethodItem>
+            ))}
+          </GridListSection>
+        )}
+      </GridList>
     </>
   );
 }

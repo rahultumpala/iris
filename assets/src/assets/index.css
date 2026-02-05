@@ -545,3 +545,7 @@ body {
     z-index: 9999;
   }
 }
+
+.left_half {
+  background-color: oklch(0.985 0 0);
+}
