@@ -152,7 +152,7 @@ const GridListStart = ({
   return (
     <div
       ref={ref}
-      className={twMerge("relative flex items-center gap-x-2.5 sm:gap-x-3", className)}
+      className={twMerge("relative flex items-center gap-x-2.5 sm:gap-x-3 pr-1", className)}
       {...props} />
   );
 }
