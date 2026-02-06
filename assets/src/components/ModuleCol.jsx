@@ -22,8 +22,6 @@ function ModuleItem({ module, selectedModule }) {
   let selectModule = () => {
     dispatch({ type: "selectModule", module: module });
   };
-  const isSelected = module == selectedModule;
-  const className = "text-sm w-auto " + (isSelected ? "selected-module" : "");
 
   return (
     <>
@@ -34,7 +32,10 @@ function ModuleItem({ module, selectedModule }) {
         isSelected={module == selectedModule}
         className="sm:items-center"
       >
-        <GridListStart className="sm:items-center cursor-pointer" onClick={selectModule} >
+        <GridListStart
+          className="sm:items-center cursor-pointer"
+          onClick={selectModule}
+        >
           <div className="flex flex-col gap-x-2 sm:flex-row sm:items-center">
             <GridListLabel>{module.module}</GridListLabel>
           </div>
@@ -77,9 +78,21 @@ export function ModuleColumn() {
     },
   ];
 
+  // to show the selected UI by default
+  const selectedKeys = [
+    modules[0].items.filter((mod, _idx, _) => {
+      return mod.module == state.selectedModule.module;
+    })[0].key,
+  ];
+
   return (
     <>
-      <GridList aria-label="Modules" selectionMode="single" items={modules}>
+      <GridList
+        aria-label="Modules"
+        selectionMode="single"
+        items={modules}
+        selectedKeys={selectedKeys}
+      >
         {(modGlobal) => (
           // Title
           <GridListSection id="applications">

@@ -20,11 +20,13 @@ import { methodHasDocumentation } from "../helpers/stateHelper.js";
 import { DocumentationIcon } from "./DocumentationIcon.jsx";
 import { Heading } from "./ui/heading.jsx";
 import { MacroIcon } from "./MacroIcon.jsx";
+import { generate_method_display_name } from "@/helpers/flowHelper.js";
 
 function MethodType({ text, tooltip }) {
   const attributes = {
-    className: `method-type text-xs ${text == "INT" ? "method-type-internal" : "method-ext"
-      }`,
+    className: `method-type text-xs ${
+      text == "INT" ? "method-type-internal" : "method-ext"
+    }`,
   };
 
   return (
@@ -65,7 +67,10 @@ function MethodItem({ method, selectedMethod }) {
         className="sm:items-center"
         isDisabled={clickable ? false : true}
       >
-        <GridListStart className="sm:items-center cursor-pointer" onClick={onClick}>
+        <GridListStart
+          className="sm:items-center cursor-pointer"
+          onClick={onClick}
+        >
           <div className="flex flex-col gap-x-2 sm:flex-row sm:items-center">
             <GridListLabel>
               {method.name} / {method.arity}
@@ -74,7 +79,7 @@ function MethodItem({ method, selectedMethod }) {
         </GridListStart>
         <GridListSpacer />
 
-            {method.is_macro ? (<MacroIcon></MacroIcon>) : (<></>)}
+        {method.is_macro ? <MacroIcon></MacroIcon> : <></>}
 
         {hasDocumentation ? (
           <DocumentationIcon method={method}></DocumentationIcon>
@@ -130,9 +135,23 @@ export function MethodColumn() {
     },
   ];
 
+  // to show the selected UI by default
+  const selectedKeys = [
+    functions[0].items.filter((f, _idx, _) => {
+      const l = generate_method_display_name(f);
+      const r = generate_method_display_name(state.selectedMethod);
+      return l == r;
+    })[0].key,
+  ];
+
   return (
     <>
-      <GridList aria-label="Functions" selectionMode="single" items={functions}>
+      <GridList
+        aria-label="Functions"
+        selectionMode="single"
+        items={functions}
+        selectedKeys={selectedKeys}
+      >
         {(fnGlobal) => (
           // Title
           <GridListSection id="functions">

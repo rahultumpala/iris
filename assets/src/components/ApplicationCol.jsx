@@ -19,15 +19,12 @@ function ApplicationItem({ app, selectedApp }) {
     dispatch({ type: "selectApplication", application: app });
   };
 
-  const isSelected = app == selectedApp;
-  const className = isSelected ? "selected-app" : "";
   return (
     <>
       <GridListItem
         key={app.key}
         id={app.id}
         textValue={app.application}
-        isSelected={app.application == selectedApp}
         onClick={selectApplication}
         className="sm:items-center"
       >
@@ -67,10 +64,18 @@ export function ApplicationColumn() {
     );
   }
 
+  // to show the selected UI by default
+  const selectedKeys = [
+    applications[0].items.filter((app, _idx, _) => {
+      return app.application == state.selectedApplication.application;
+    })[0].key,
+  ];
+
   return (
     <GridList
       aria-label="Applications"
       selectionMode="single"
+      selectedKeys={selectedKeys}
       items={applications}
     >
       {(appGlobal) => (
