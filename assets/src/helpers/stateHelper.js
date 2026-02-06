@@ -42,6 +42,13 @@ export function getDocumentation(docsType, docsEntity) {
     }
 }
 
+export function getDocumentationCardHeader(docsType, docsEntity) {
+    switch (docsType) {
+        case "method": return `${docsEntity.name} / ${docsEntity.arity}`;
+        case "module": return docsEntity.module;
+    }
+}
+
 function getMethodDocs(method) {
     return method?.["ex_doc"]?.["source_doc"]?.["en"];
 }

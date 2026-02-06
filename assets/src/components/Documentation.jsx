@@ -1,7 +1,11 @@
 import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
 import { Card, Button } from "flowbite-react";
 import Markdown from "react-markdown";
-import { getDocumentation } from "../helpers/stateHelper.js";
+import {
+  getDocumentation,
+  getDocumentationCardHeader,
+} from "../helpers/stateHelper.js";
+import { Heading } from "./ui/heading.jsx";
 
 export function Documentation({}) {
   const state = useGlobalState();
@@ -19,13 +23,13 @@ export function Documentation({}) {
     });
   };
 
+  const headerText = getDocumentationCardHeader(docsType, docsEntity);
+
   if (showDocumentation) {
     return (
       <Card className="doc-card">
         <div className="doc-card-header">
-          <h5 className="text-xl font-bold tracking-tight text-gray-900">
-            Documentation
-          </h5>
+          <Heading level={3}>{headerText}</Heading>
           <Button
             size="sm"
             color="alternative"

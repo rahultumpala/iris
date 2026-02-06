@@ -1,5 +1,4 @@
 import { Heading } from "@/components/ui/heading";
-import { IconBrandGithub } from "@intentui/icons";
 
 export function IrisTitle() {
   return (
