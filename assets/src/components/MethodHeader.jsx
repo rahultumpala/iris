@@ -2,6 +2,7 @@ import { useGlobalDispatch, useGlobalState } from "../ctx/globalContext.jsx";
 import { useRef } from "react";
 import { Button } from "flowbite-react";
 import { methodHasDocumentation } from "../helpers/stateHelper.js";
+import { Heading } from "./ui/heading.jsx";
 
 export function MethodHeader() {
   const state = useGlobalState();
@@ -38,8 +39,10 @@ export function MethodHeader() {
         className="method-header flex flex-row items-center align-center"
         ref={ref}
       >
-        <div className="col_title_text text-md">
-          {method.name} / {method.arity}{" "}
+        <div className="col_title_text">
+          <Heading level={4}>
+            {method.name} / {method.arity}
+          </Heading>
         </div>
         <div className="m-2">
           <Button
