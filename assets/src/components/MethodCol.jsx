@@ -21,6 +21,7 @@ import { DocumentationIcon } from "./DocumentationIcon.jsx";
 import { Heading } from "./ui/heading.jsx";
 import { MacroIcon } from "./MacroIcon.jsx";
 import { generate_method_display_name } from "@/helpers/flowHelper.js";
+import { Badge } from "./ui/badge.jsx";
 
 function MethodType({ text, tooltip }) {
   const attributes = {
@@ -36,7 +37,8 @@ function MethodType({ text, tooltip }) {
         placement="right"
         className="text-xs font-normal bg-gray-900 "
       >
-        <div {...attributes}>{text}</div>
+        {/* <div {...attributes}>{text}</div> */}
+        <Badge intent={"secondary"} isCircle={false}>{text == "INT" ? "int" : "exp"}</Badge>
       </Tooltip>
     </>
   );

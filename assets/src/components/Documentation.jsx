@@ -1,13 +1,14 @@
 import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
-import { Card, Button } from "flowbite-react";
+import { Card } from "flowbite-react";
 import Markdown from "react-markdown";
 import {
   getDocumentation,
   getDocumentationCardHeader,
 } from "../helpers/stateHelper.js";
 import { Heading } from "./ui/heading.jsx";
+import { Toggle } from "./ui/toggle.jsx";
 
-export function Documentation({ }) {
+export function Documentation({}) {
   const state = useGlobalState();
   const dispatch = useGlobalDispatch();
 
@@ -31,14 +32,7 @@ export function Documentation({ }) {
       <Card className="doc-card">
         <div className="doc-card-header">
           <Heading level={3}>{headerText}</Heading>
-          <Button
-            size="sm"
-            color="alternative"
-            onClick={toggle}
-            className="doc-card-close-btn"
-          >
-            x
-          </Button>
+          {get_close_button(toggle)}
         </div>
         <div className="markdown content-inner">
           <Markdown>{docMarkdown}</Markdown>
@@ -50,9 +44,31 @@ export function Documentation({ }) {
   return <></>;
 }
 
+function get_close_button(onClick) {
+  return (
+    <Toggle onClick={onClick} className="cursor-pointer">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        stroke="currentColor"
+        className="size-6"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+        />
+      </svg>
+    </Toggle>
+  );
+}
+
 function get_attribution_component(docsType, docsEntity) {
   switch (docsType) {
-    case "module": return ex_doc_attribution();
+    case "module":
+      return ex_doc_attribution();
     case "method": {
       if (docsEntity.html_type_text == "EXP") return ex_doc_attribution();
       return iris_doc_attribution();

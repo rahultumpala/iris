@@ -70,11 +70,11 @@ defimpl Jason.Encoder, for: [Iris.Entity.Module.Method] do
 
   defp get_tooltip_text(html_type) do
     case html_type do
-      "INT" -> "Private Method"
-      "EXP" -> "Exported Method"
-      "AGF" -> "Auto Generated Function"
-      "BIF" -> "Built-In Function"
-      "IMP" -> "Imported Method"
+      "INT" -> "Private function"
+      "EXP" -> "Exported function"
+      "AGF" -> "Auto Generated function"
+      "BIF" -> "Built-In function"
+      "IMP" -> "Imported function"
       _ -> ""
     end
   end

@@ -20,7 +20,7 @@
     "lucide-react": "^0.563.0",
     "radix-ui": "^1.4.3",
     "react": "^19.1.0",
-    "react-aria-components": "^1.15.0",
+    "react-aria-components": "^1.15.1",
     "react-dom": "^19.1.0",
     "react-markdown": "^10.1.0",
     "tailwind-merge": "^3.4.0",
