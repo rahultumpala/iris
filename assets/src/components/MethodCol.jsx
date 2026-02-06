@@ -62,11 +62,10 @@ function MethodItem({ method, selectedMethod }) {
         id={method.id}
         textValue={`${method.name} / ${method.arity}`}
         isSelected={method == selectedMethod}
-        onClick={onClick}
         className="sm:items-center"
         isDisabled={clickable ? false : true}
       >
-        <GridListStart className="sm:items-center">
+        <GridListStart className="sm:items-center cursor-pointer" onClick={onClick}>
           <div className="flex flex-col gap-x-2 sm:flex-row sm:items-center">
             <GridListLabel>
               {method.name} / {method.arity}

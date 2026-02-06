@@ -32,10 +32,9 @@ function ModuleItem({ module, selectedModule }) {
         id={module.id}
         textValue={module.module}
         isSelected={module == selectedModule}
-        onClick={selectModule}
         className="sm:items-center"
       >
-        <GridListStart className="sm:items-center">
+        <GridListStart className="sm:items-center cursor-pointer" onClick={selectModule} >
           <div className="flex flex-col gap-x-2 sm:flex-row sm:items-center">
             <GridListLabel>{module.module}</GridListLabel>
           </div>

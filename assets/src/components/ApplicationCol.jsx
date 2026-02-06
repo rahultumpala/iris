@@ -31,7 +31,7 @@ function ApplicationItem({ app, selectedApp }) {
         onClick={selectApplication}
         className="sm:items-center"
       >
-        <GridListStart className="sm:items-center">
+        <GridListStart className="sm:items-center cursor-pointer">
           <div className="flex flex-col gap-x-2 sm:flex-row sm:items-center">
             <GridListLabel>{app.application}</GridListLabel>
           </div>
