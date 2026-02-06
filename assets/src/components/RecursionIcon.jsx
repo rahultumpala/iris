@@ -4,7 +4,7 @@ export function RecursionIcon({ className }) {
   return (
     <div className={"node-recursive-tag " + className}>
       <Tooltip
-        content="Recursive Method"
+        content="Recursive Function"
         placement="right"
         className="text-xs font-normal bg-gray-900"
       >
