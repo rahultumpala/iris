@@ -7,6 +7,7 @@ import {
 } from "../helpers/stateHelper.js";
 import { Heading } from "./ui/heading.jsx";
 import { Toggle } from "./ui/toggle.jsx";
+import { Badge } from "./ui/badge.jsx";
 
 export function Documentation({}) {
   const state = useGlobalState();
@@ -46,7 +47,7 @@ export function Documentation({}) {
 
 function get_close_button(onClick) {
   return (
-    <Toggle onClick={onClick} className="cursor-pointer">
+    <Badge onClick={onClick} className="cursor-pointer" isCircle={false} intent={"danger"}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -61,7 +62,7 @@ function get_close_button(onClick) {
           d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
         />
       </svg>
-    </Toggle>
+    </Badge>
   );
 }
 
