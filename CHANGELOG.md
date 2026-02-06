@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.2
+
+- Enhancement
+  - UI Revamp
+  - Change all user visible "method" texts to "function"
+
 ## v0.2.1
 
 - Enhancement

@@ -13,7 +13,7 @@ export function DocumentationIcon({ className, method, module }) {
   };
 
   return (
-    <div className={"node-docs-icon " + className} onClick={showDocumentation}>
+    <div className={"node-docs-icon cursor-pointer " + className} onClick={showDocumentation}>
       <Tooltip
         content="Documentation"
         placement="right"

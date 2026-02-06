@@ -1,8 +1,8 @@
-import { Sidebar, SidebarItemGroup, SidebarItems } from "flowbite-react";
 import { MethodColumn } from "./MethodCol.jsx";
 import { IrisTitle } from "./IrisTitle.jsx";
 import { ApplicationColumn } from "./ApplicationCol.jsx";
 import { ModuleColumn } from "./ModuleCol.jsx";
+import { Sidebar, SidebarItemGroup } from "./CustomSidebar.jsx";
 
 export function LeftHalf() {
   return (
@@ -14,21 +14,24 @@ export function LeftHalf() {
         MODULES
          */}
 
-        <Sidebar aria-label="Sidebar with apps and modules" className="sidebar">
-          <SidebarItems>
-            {/* IRIS TITLE */}
-            <SidebarItemGroup>
-              <IrisTitle></IrisTitle>
-            </SidebarItemGroup>
-            {/* Applications Column */}
-            <SidebarItemGroup>
-              <ApplicationColumn></ApplicationColumn>
-            </SidebarItemGroup>
-            {/* Modules Column */}
-            <SidebarItemGroup>
-              <ModuleColumn></ModuleColumn>
-            </SidebarItemGroup>
-          </SidebarItems>
+        <Sidebar
+          aria-label="Sidebar with apps and modules"
+          className="sidebar bg-white"
+        >
+          {/* <SidebarItems> */}
+          {/* IRIS TITLE */}
+          <SidebarItemGroup>
+            <IrisTitle></IrisTitle>
+          </SidebarItemGroup>
+          {/* Applications Column */}
+          <SidebarItemGroup>
+            <ApplicationColumn></ApplicationColumn>
+          </SidebarItemGroup>
+          {/* Modules Column */}
+          <SidebarItemGroup>
+            <ModuleColumn></ModuleColumn>
+          </SidebarItemGroup>
+          {/* </SidebarItems> */}
         </Sidebar>
 
         {/*
@@ -42,11 +45,9 @@ export function LeftHalf() {
         METHODS
          */}
         <Sidebar aria-label="sidebar with methods" className="sidebar">
-          <SidebarItems>
-            <SidebarItemGroup>
-              <MethodColumn></MethodColumn>
-            </SidebarItemGroup>
-          </SidebarItems>
+          <SidebarItemGroup>
+            <MethodColumn></MethodColumn>
+          </SidebarItemGroup>
         </Sidebar>
       </div>
     </>
