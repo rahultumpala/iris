@@ -1,8 +1,8 @@
 import { Panel } from "@xyflow/react";
-import { ButtonGroup, Button } from "flowbite-react";
 import { useGlobalState, useGlobalDispatch } from "../ctx/globalContext.jsx";
+import { Button } from "./ui/button.jsx";
 
-export function LayoutPanel({}) {
+export function LayoutPanel({ }) {
   /*
    state is not being used, it is here to listen to changes
    and to reset the direction toggle button.
@@ -20,15 +20,16 @@ export function LayoutPanel({}) {
 
   return (
     <Panel position="top-right">
-      <ButtonGroup>
-        <Button
+      <Button intent={"outline"} onClick={toggleDirection}>
+        {text}
+      </Button>
+      {/* <Button
           color="alternative"
           className="text-sm"
           onClick={toggleDirection}
         >
           {text}
-        </Button>
-      </ButtonGroup>
+        </Button> */}
     </Panel>
   );
 }
