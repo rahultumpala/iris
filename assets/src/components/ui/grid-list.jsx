@@ -66,7 +66,7 @@ const GridListItem = ({
         (className, { isHovered, isFocusVisible, isSelected, isDisabled }) =>
           twMerge(
             "[--grid-list-item-bg-active:var(--color-primary-subtle)] [--grid-list-item-text-active:var(--color-primary-subtle-fg)]",
-            "group inset-ring inset-ring-border rounded-lg px-3 py-2.5",
+            " inset-ring-border rounded-lg px-3 py-2.5",
             "relative min-w-0 outline-hidden [--me-icon:--spacing(2)]",
             "flex min-w-0 cursor-default items-center gap-2 sm:gap-2.5",
             "dragging:cursor-grab dragging:opacity-70 dragging:**:[[slot=drag]]:text-(--grid-list-item-text-active)",

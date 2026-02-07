@@ -1,8 +1,8 @@
 import { useGlobalDispatch, useGlobalState } from "../ctx/globalContext.jsx";
 import { useRef } from "react";
-import { Button } from "flowbite-react";
 import { methodHasDocumentation } from "../helpers/stateHelper.js";
 import { Heading } from "./ui/heading.jsx";
+import { Button } from "./ui/button.jsx";
 
 export function MethodHeader() {
   const state = useGlobalState();
@@ -46,9 +46,8 @@ export function MethodHeader() {
         </div>
         <div className="m-2">
           <Button
-            size="sm"
-            color="alternative"
-            disabled={!hasDoc}
+            intent={"outline"}
+            isDisabled={!hasDoc}
             onClick={showDocumentation}
           >
             Doc

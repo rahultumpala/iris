@@ -4,6 +4,8 @@ Iris is a library to help visualize your Elixir codebase.
 
 Iris aims to reduce the time taken to skim through an Elixir codebase by rendering an interactive GUI displaying the constituent applications, modules, functions and function call paths, even documentation!
 
+Iris generates a single HTML file you can host practically anywhere — no dependencies whatsoever.
+
 ![Iris for Elixir screenshot](./screenshot.png)
 
 The following features are provided:

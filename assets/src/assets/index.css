@@ -21,7 +21,8 @@
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.546 0.245 262.881);
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.92 0.004 286.32);
+  /* --secondary: oklch(0.92 0.004 286.32); */
+  --secondary: #8D67AF35;
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.967 0.001 286.375);
   --muted-foreground: oklch(0.556 0 0);
@@ -48,8 +49,12 @@
   --bg: oklch(1 0 0);
   --fg: oklch(0.21 0.006 285.885);
   --primary-fg: oklch(1 0 0);
-  --primary-subtle: oklch(0.623 0.214 259.815 / 0.15);
-  --primary-subtle-fg: oklch(0.488 0.243 264.376);
+  /* --primary-subtle: oklch(0.623 0.214 259.815 / 0.15); */
+  /* --primary-subtle: rgba(141, 103, 175, 0.33); */
+  --primary-subtle: rgba(211, 198, 222, 1);
+  /* --primary-subtle-fg: #8D67AF54; */
+  --primary-subtle-fg: oklch(0.21 0.006 285.885);
+  /* --primary-subtle-fg: oklch(0.488 0.243 264.376); */
   --secondary-fg: oklch(0.141 0.005 285.823);
   --overlay: oklch(1 0 0);
   --overlay-fg: oklch(0.141 0.005 285.823);
@@ -98,6 +103,10 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: row;
+}
+
+.iris_title h1 {
+  color: #48205D !important;
 }
 
 .col_title_text {

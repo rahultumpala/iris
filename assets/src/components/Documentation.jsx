@@ -52,7 +52,7 @@ function get_close_button(onClick) {
         fill="none"
         viewBox="0 0 24 24"
         strokeWidth={1.5}
-        stroke="currentColor"
+        stroke="#8D67AF"
         className="size-6"
       >
         <path

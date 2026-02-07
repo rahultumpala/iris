@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.3
+
+- Enhancement
+  - UI Polishing
+  - Remove macro.svg from exports. Iris now needs only 3 external icons
+
 ## v0.2.2
 
 - Enhancement
