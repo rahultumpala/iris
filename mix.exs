@@ -5,7 +5,7 @@ defmodule Iris.MixProject do
   @entity_js "entity.js"
 
   @source_url "https://github.com/rahultumpala/iris"
-  @version "0.2.2"
+  @version "0.2.3"
 
   def project do
     [
