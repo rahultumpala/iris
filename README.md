@@ -21,7 +21,7 @@ The package can be installed by adding `iris` to your list of dependencies in `m
 ```elixir
 def deps do
   [
-    {:iris, "~> 0.2.1"}
+    {:iris, "~> 0.2"}
   ]
 end
 ```
